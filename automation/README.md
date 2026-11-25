@@ -15,19 +15,21 @@ Całość zajmuje ok. 15 minut. Potrzebujesz tylko konta Google.
 
 ---
 
-## Krok 1. Utwórz arkusz
+## Krok 1. Utwórz projekt skryptu
 
-1. Wejdź na <https://sheets.new> (utworzy się nowy, pusty arkusz).
-2. Nazwij go, np. **„Gerdzio Koduje — zgłoszenia”** (klik w „Arkusz bez nazwy” w lewym górnym rogu).
-3. Zakładek **nie musisz** tworzyć ręcznie — skrypt sam założy „Leady” i „Lista oczekujących” z nagłówkami przy pierwszym zgłoszeniu.
+1. Otwórz <https://script.new> (zalogowany na swoje konto Google). Utworzy się nowy projekt Apps Script.
+   Na telefonie: w Chrome włącz menu **⋮ → Wersja na komputer**.
+2. Kliknij „Projekt bez tytułu” na górze i nazwij go np. **„Formularze GK”**.
+
+Arkusza **nie musisz** tworzyć — skrypt sam założy arkusz „Gerdzio Koduje — zgłoszenia” (z zakładkami „Leady” i „Lista oczekujących”) przy pierwszym uruchomieniu.
+Wolisz własny arkusz? Otwórz go i wejdź w **Rozszerzenia → Apps Script** — wtedy skrypt użyje tego arkusza.
 
 ## Krok 2. Wklej skrypt
 
-1. W arkuszu: menu **Rozszerzenia → Apps Script**. Otworzy się edytor w nowej karcie.
-2. Usuń wszystko z pliku `Kod.gs` (`Code.gs`).
-3. Skopiuj całą zawartość pliku [`apps-script.gs`](./apps-script.gs) i wklej.
-4. Sprawdź na górze stałą `OWNER_EMAIL` — tam przychodzą powiadomienia.
-5. Kliknij ikonę dyskietki (**Zapisz projekt**). Nazwij projekt np. „Formularze GK”.
+1. W edytorze zaznacz i usuń wszystko w pliku `Kod.gs` (`Code.gs`).
+2. Skopiuj całą zawartość pliku [`apps-script.gs`](./apps-script.gs) i wklej.
+3. Sprawdź na górze stałą `OWNER_EMAIL` — tam przychodzą powiadomienia.
+4. Kliknij ikonę dyskietki (**Zapisz projekt**).
 
 ## Krok 3. Ustaw sekret
 
@@ -49,7 +51,7 @@ Sekret to hasło, które zna tylko Twoja strona i skrypt — bez niego nikt nie 
 3. Google poprosi o autoryzację: **Sprawdź uprawnienia → wybierz konto → „Google nie zweryfikował tej aplikacji” → Zaawansowane → Przejdź do (nazwa projektu) → Zezwól**.
    To normalne — to Twój własny skrypt.
 4. Sprawdź:
-   - w arkuszu pojawiła się zakładka **Leady** z wierszem „Test”,
+   - na dole otworzy się **Dziennik wykonania** z linkiem „Arkusz: https://docs.google.com/…” — otwórz go; jest tam zakładka **Leady** z wierszem „Test” (arkusz znajdziesz też na Dysku Google),
    - na `OWNER_EMAIL` przyszły 2 maile (potwierdzenie „do klienta” i powiadomienie).
 5. Analogicznie możesz uruchomić `testWaitlist`. Wiersze testowe potem usuń.
 

@@ -1,8 +1,10 @@
 /**
  * Gerdzio Koduje — obsługa formularzy (Google Apps Script)
  *
- * Skrypt przypięty do arkusza Google. Odbiera dane z funkcji Cloudflare
- * (/api/lead i /api/waitlist), zapisuje je w arkuszu i wysyła maile.
+ * Odbiera dane z funkcji Cloudflare (/api/lead i /api/waitlist),
+ * zapisuje je w arkuszu Google i wysyła maile.
+ * Arkusz „Gerdzio Koduje — zgłoszenia” tworzy się SAM przy pierwszym uruchomieniu
+ * (możesz też wkleić skrypt do istniejącego arkusza: Rozszerzenia → Apps Script).
  * Instrukcja wdrożenia: automation/README.md
  */
 
@@ -19,6 +21,7 @@ const SITE_URL = 'https://gerdziokoduje.pl';
  */
 const SECRET_FALLBACK = '';
 
+const SPREADSHEET_NAME = 'Gerdzio Koduje — zgłoszenia';
 const SHEET_LEADS = 'Leady';
 const SHEET_WAITLIST = 'Lista oczekujących';
 const HEADERS = {
@@ -103,7 +106,7 @@ function handleLead_(d) {
       'Pakiet: ' + d.package + '\n' +
       'Strona: ' + site + '\n\n' +
       'Wiadomość:\n' + d.message + '\n\n' +
-      'Arkusz: ' + SpreadsheetApp.getActiveSpreadsheet().getUrl(),
+      'Arkusz: ' + spreadsheet_().getUrl(),
   });
 }
 
@@ -132,8 +135,26 @@ function handleWaitlist_(d) {
 }
 
 // ===== POMOCNICZE =====
+/**
+ * Arkusz ze zgłoszeniami: ten, do którego przypięty jest skrypt, a jeśli skrypt
+ * jest samodzielny — arkusz utworzony automatycznie (jego ID zapisuje się we właściwościach).
+ */
+function spreadsheet_() {
+  const active = SpreadsheetApp.getActiveSpreadsheet();
+  if (active) return active;
+  const props = PropertiesService.getScriptProperties();
+  const id = props.getProperty('SHEET_ID');
+  if (id) {
+    try { return SpreadsheetApp.openById(id); } catch (err) { /* arkusz usunięty — utwórz nowy */ }
+  }
+  const ss = SpreadsheetApp.create(SPREADSHEET_NAME);
+  props.setProperty('SHEET_ID', ss.getId());
+  console.log('Utworzono arkusz: ' + ss.getUrl());
+  return ss;
+}
+
 function sheet_(name) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = spreadsheet_();
   let sh = ss.getSheetByName(name);
   if (!sh) {
     sh = ss.insertSheet(name);
@@ -168,13 +189,19 @@ function json_(obj) {
  * Za pierwszym razem Google poprosi o uprawnienia — zaakceptuj.
  */
 function testLead() {
+  // Po uruchomieniu w „Dzienniku wykonania” zobaczysz link do arkusza.
   const secret = PropertiesService.getScriptProperties().getProperty('SECRET') || SECRET_FALLBACK;
+  if (!secret) {
+    console.log('Najpierw ustaw SECRET: zębatka (Ustawienia projektu) → Właściwości skryptu.');
+    return;
+  }
   const res = doPost({ postData: { contents: JSON.stringify({
     type: 'lead', secret: secret,
     name: 'Test', company: 'Firma Testowa', email: OWNER_EMAIL, phone: '000 000 000',
     industry: 'test', package: 'Wizytówka', hasSite: 'nie', siteUrl: '', message: 'To jest testowe zapytanie.',
   }) } });
   console.log(res.getContent());
+  console.log('Arkusz: ' + spreadsheet_().getUrl());
 }
 
 function testWaitlist() {

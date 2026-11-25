@@ -158,5 +158,5 @@ export const demos = [
   },
 ];
 
-/** Klucz publiczny Turnstile (ustawiany przy buildzie). Pusty = brak widgetu (tryb dev). */
+/** Klucz publiczny Turnstile — ustawiany przy buildzie ze zmiennej TURNSTILE_SITE_KEY (patrz astro.config.mjs). Pusty = brak widgetu. */
 export const turnstileSiteKey: string = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';

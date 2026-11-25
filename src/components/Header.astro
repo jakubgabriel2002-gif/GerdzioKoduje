@@ -14,7 +14,6 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       type="button"
       aria-expanded="false"
       aria-controls="site-nav"
-      hidden
     >
       <span class="menu-toggle__icon" aria-hidden="true"><span></span></span>
       <span class="menu-toggle__label">menu</span>
@@ -68,7 +67,8 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   .site-nav__list a:hover { color: var(--accent); }
 
   /* Z JS: menu chowane za przyciskiem na mobile */
-  :global(.js) .menu-toggle[hidden] { display: inline-flex; }
+  .menu-toggle { display: none; }
+  :global(.js) .menu-toggle { display: inline-flex; }
   :global(.js) .site-nav { display: none; }
   :global(.js) .site-nav.is-open { display: flex; }
 
@@ -95,7 +95,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
   @media (min-width: 60rem) {
     .site-header__inner { flex-wrap: nowrap; }
-    .menu-toggle, :global(.js) .menu-toggle[hidden] { display: none; }
+    .menu-toggle, :global(.js) .menu-toggle { display: none; }
     .site-nav, :global(.js) .site-nav {
       display: flex;
       flex-direction: row;

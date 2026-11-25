@@ -3,6 +3,8 @@ export interface Env {
   APPS_SCRIPT_URL?: string;
   /** Wspólny sekret — ten sam co SECRET w apps-script.gs. */
   APPS_SCRIPT_SECRET?: string;
+  /** Publiczny klucz Turnstile (Site Key) — podawany przeglądarce przez /api/turnstile-key. */
+  TURNSTILE_SITE_KEY?: string;
   /** Sekretny klucz Turnstile. Brak = weryfikacja pominięta (tryb dev). */
   TURNSTILE_SECRET?: string;
 }

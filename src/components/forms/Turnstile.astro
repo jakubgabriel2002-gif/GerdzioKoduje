@@ -1,14 +1,14 @@
 ---
 /**
- * Widget Cloudflare Turnstile. Renderuje się tylko, gdy ustawiono
- * PUBLIC_TURNSTILE_SITE_KEY. Bez klucza (np. lokalnie) — nic się nie wyświetla,
- * a funkcja po stronie serwera pomija weryfikację, jeśli nie ma TURNSTILE_SECRET.
+ * Miejsce na widget Cloudflare Turnstile (antyspam). Widget wstawia skrypt
+ * src/scripts/turnstile.ts — klucz pobiera z /api/turnstile-key (zmienna
+ * TURNSTILE_SITE_KEY w Cloudflare). Bez klucza nic się nie wyświetla.
  */
 import { turnstileSiteKey } from '../../config';
 ---
-{turnstileSiteKey && (
-  <>
-    <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="dark" data-language="pl" data-size="flexible"></div>
-    <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-  </>
-)}
+<div class="ts-slot" data-sitekey={turnstileSiteKey || undefined}></div>
+
+<style>
+  .ts-slot:empty { display: none; }
+  .ts-slot { min-height: 65px; }
+</style>

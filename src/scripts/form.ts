@@ -3,9 +3,7 @@
  * Bez JS: zwykły POST → funkcja Cloudflare przekierowuje na /dziekuje.
  * Z JS: wysyłka fetch, stan ładowania, komunikat w formularzu.
  */
-declare global {
-  interface Window { turnstile?: { reset: (el?: Element | string) => void } }
-}
+import './turnstile';
 
 const NETWORK_ERROR = 'Nie udało się połączyć z serwerem. Sprawdź internet i spróbuj ponownie.';
 
@@ -50,8 +48,9 @@ function enhance(form: HTMLFormElement) {
         button.disabled = false;
         button.textContent = label;
       }
-      const ts = form.querySelector('.cf-turnstile');
-      if (ts && window.turnstile) window.turnstile.reset(ts);
+      // Token Turnstile jest jednorazowy — po wysyłce pobieramy nowy.
+      const ts = form.querySelector<HTMLElement>('.ts-slot');
+      if (ts?.dataset.widgetId && window.turnstile) window.turnstile.reset(ts.dataset.widgetId);
     }
   });
 }

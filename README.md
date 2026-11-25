@@ -113,7 +113,7 @@ npm run build && npm run images
 
 5. **Save and Deploy.** Folder `functions/` zostanie automatycznie wdrożony jako Pages Functions.
 
-Klucze Turnstile: **Cloudflare → Turnstile → Add widget**, domena `gerdziokoduje.pl` (do testów dodaj też `*.pages.dev`), tryb **Managed**. Zmiana `TURNSTILE_SITE_KEY` wymaga nowego wdrożenia (klucz trafia do HTML przy buildzie).
+Klucze Turnstile: **Cloudflare → Turnstile → Add widget**, domena `gerdziokoduje.pl` (do testów dodaj też `*.pages.dev`), tryb **Managed**. Klucz publiczny strona pobiera na żywo z `/api/turnstile-key`, więc zmiana kluczy działa bez nowego builda (wystarczy zapisać zmienne).
 
 ### Podpięcie domeny gerdziokoduje.pl
 

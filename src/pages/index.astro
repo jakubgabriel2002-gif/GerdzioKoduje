@@ -6,7 +6,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { packages, formatPrice, apps } from '../config';
 
-const minPrice = Math.min(...packages.filter((p) => p.inForm).map((p) => p.price));
+const minPrice = Math.min(...packages.filter((p) => p.inForm && p.price !== undefined).map((p) => p.price!));
 const appsAvailable = apps.filter((a) => a.status === 'dostępna').length;
 ---
 <BaseLayout

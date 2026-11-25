@@ -47,8 +47,13 @@ export const nav = [
 export type Pkg = {
   id: string;
   name: string;
-  price: number;
+  /** Cena „od” w zł. Brak ceny = pakiet wyceniany indywidualnie. */
+  price?: number;
   period?: string;
+  /** Tekst zamiast ceny (np. przy indywidualnej wycenie). */
+  priceLabel?: string;
+  /** Tekst przycisku (domyślnie „Zapytaj o ten pakiet”). */
+  cta?: string;
   featured?: boolean;
   badge?: string;
   summary: string;
@@ -79,6 +84,15 @@ export const packages: Pkg[] = [
       'zapis zapytań w arkuszu',
       'wersja mobilna',
     ],
+    inForm: true,
+  },
+  {
+    id: 'indywidualna',
+    name: 'Indywidualna wycena',
+    priceLabel: 'do ustalenia',
+    summary: 'Masz pomysł, którego nie ma w pakietach? Opisz go — przygotuję wycenę dopasowaną do Ciebie.',
+    features: ['sklep internetowy', 'rezerwacje i zapisy online', 'aplikacja PWA dla firmy', 'integracje (kalendarz, płatności, CRM)', 'wszystko, co wymyślisz'],
+    cta: 'Poproś o wycenę',
     inForm: true,
   },
   {

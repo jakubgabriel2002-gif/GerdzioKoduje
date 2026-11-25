@@ -10,21 +10,28 @@ import { packages, formatPrice } from '../../config';
 
     <ul class="packages">
       {packages.map((p) => (
-        <li class:list={['pkg', { 'pkg--featured': p.featured }]}>
+        <li class:list={['pkg', { 'pkg--featured': p.featured, 'pkg--custom': p.price === undefined }]}>
           <div class="pkg__top">
             <h3 class="pkg__name">{p.name}</h3>
             {p.badge && <p class="pkg__badge">{p.badge}</p>}
           </div>
-          <p class="pkg__price">
-            <span class="pkg__from">od</span>
-            <span class="pkg__amount"><strong>{formatPrice(p.price)}</strong>{p.period && <span class="pkg__period">{p.period}</span>}</span>
-          </p>
+          {p.price !== undefined ? (
+            <p class="pkg__price">
+              <span class="pkg__from">od</span>
+              <span class="pkg__amount"><strong>{formatPrice(p.price)}</strong>{p.period && <span class="pkg__period">{p.period}</span>}</span>
+            </p>
+          ) : (
+            <p class="pkg__price">
+              <span class="pkg__from">cena</span>
+              <span class="pkg__amount pkg__amount--custom"><strong>{p.priceLabel ?? 'Wycena indywidualna'}</strong></span>
+            </p>
+          )}
           <p class="pkg__summary">{p.summary}</p>
           <ul class="check-list pkg__features">
             {p.features.map((f) => <li>{f}</li>)}
           </ul>
           <a href="#kontakt" class:list={['btn', 'btn--block', { 'btn--secondary': !p.featured }]} data-package={p.inForm ? p.name : undefined}>
-            Zapytaj o ten pakiet<span class="visually-hidden">: {p.name}</span>
+            {p.cta ?? 'Zapytaj o ten pakiet'}<span class="visually-hidden">: {p.name}</span>
           </a>
         </li>
       ))}
@@ -70,9 +77,17 @@ import { packages, formatPrice } from '../../config';
   .pkg__summary { color: var(--text-muted); padding-bottom: 1.1rem; border-bottom: 1px solid var(--border); }
   .pkg--featured .pkg__summary { border-color: var(--accent-line); }
   .pkg__features { margin-bottom: 0.75rem; }
+  .pkg__amount--custom strong { font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem); letter-spacing: -0.03em; }
+  .pkg--custom { background: var(--bg); border-style: dashed; border-color: var(--border-strong); }
+  .pkg--custom:hover { border-color: var(--accent-line); }
   .pkg .btn { margin-top: auto; }
   .offer-note { margin-top: 2.5rem; color: var(--text-muted); max-width: 46rem; }
-  @media (min-width: 60rem) {
-    .packages { grid-template-columns: repeat(3, 1fr); }
+  @media (min-width: 44rem) {
+    .packages { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 72rem) {
+    .packages { grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .pkg { padding: 1.6rem; }
+    .pkg .btn { font-size: var(--step--1); padding-inline: 1rem; }
   }
 </style>

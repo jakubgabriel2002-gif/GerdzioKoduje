@@ -9,11 +9,15 @@ import Faq from '../components/home/Faq.astro';
 import Contact from '../components/home/Contact.astro';
 import { packages, formatPrice } from '../config';
 
-const prices = packages.map((p) => `${p.name} od ${formatPrice(p.price)}${p.period ?? ''}`).join(', ').replace(/\.$/, '');
+const prices = packages
+  .filter((p) => p.price !== undefined)
+  .map((p) => `${p.name} od ${formatPrice(p.price!)}${p.period ?? ''}`)
+  .join(', ')
+  .replace(/\.$/, '');
 ---
 <BaseLayout
   title="Strony internetowe dla firm | Gerdzio Koduje"
-  description={`Strony internetowe dla lokalnych firm z automatyczną obsługą zapytań. ${prices}. Makieta w 1–2 dni.`}
+  description={`Strony internetowe dla lokalnych firm z automatyczną obsługą zapytań. ${prices}, indywidualne wyceny. Makieta w 1–2 dni.`}
 >
   <Hero />
   <Offer />

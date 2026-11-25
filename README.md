@@ -49,7 +49,7 @@ Bez `TURNSTILE_SECRET` weryfikacja antyspamowa jest pomijana (tryb dev).
 │  │  ├─ forms/            LeadForm, WaitlistForm, Turnstile
 │  │  └─ demo/             pasek demo, formularz demo, mapa, godziny
 │  ├─ scripts/form.ts      wysyłka formularzy przez fetch (progressive enhancement)
-│  └─ pages/               podstrony: /, /nauka, /polityka-prywatnosci, /dziekuje, 404, /demo/*
+│  └─ pages/               podstrony: / (ekran wyboru), /dla-firm, /nauka, /aplikacje, /polityka-prywatnosci, /dziekuje, 404, /demo/*
 ├─ functions/
 │  ├─ _lib/                walidacja, Turnstile, wysyłka do Apps Script, odpowiedzi
 │  └─ api/                 lead.ts, waitlist.ts → endpointy POST /api/lead i /api/waitlist
@@ -91,6 +91,16 @@ npm run build && npm run images
 ```
 
 ---
+
+## Statystyki odwiedzin (Cloudflare Web Analytics)
+
+Darmowe, bez ciasteczek — nie wymagają banera cookies. Włączasz je w panelu, bez zmian w kodzie:
+
+1. Cloudflare → **Workers & Pages** → projekt **gerdziokoduje** → zakładka **Metrics** (albo **Analytics**).
+2. W sekcji **Web Analytics** kliknij **Enable**.
+3. Przy następnym wdrożeniu Cloudflare sam doda skrypt statystyk do strony. Dane zobaczysz w tej samej zakładce (oraz w **Analytics & Logs → Web Analytics**).
+
+Polityka prywatności już opisuje te statystyki.
 
 ## Wdrożenie na Cloudflare Pages
 

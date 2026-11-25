@@ -1,0 +1,358 @@
+---
+import '@fontsource/dm-serif-display/latin-400.css';
+import '@fontsource/dm-serif-display/latin-ext-400.css';
+import '@fontsource/dm-serif-display/latin-400-italic.css';
+import '@fontsource/dm-serif-display/latin-ext-400-italic.css';
+import '@fontsource/manrope/latin-400.css';
+import '@fontsource/manrope/latin-ext-400.css';
+import '@fontsource/manrope/latin-600.css';
+import '@fontsource/manrope/latin-ext-600.css';
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoForm from '../../components/demo/DemoForm.astro';
+import DemoMap from '../../components/demo/DemoMap.astro';
+import DemoHours from '../../components/demo/DemoHours.astro';
+
+const menu = [
+  {
+    id: 'sniadania',
+    name: 'Śniadania',
+    items: [
+      { name: 'Szakszuka z kozim serem', desc: 'pomidory, papryka, jajka, pieczywo na zakwasie', price: '32 zł' },
+      { name: 'Omlet z kurkami', desc: 'masło klarowane, szczypiorek, sałatka', price: '34 zł' },
+      { name: 'Granola z jogurtem', desc: 'domowa granola, owoce sezonowe, miód', price: '24 zł' },
+    ],
+  },
+  {
+    id: 'obiady',
+    name: 'Obiady',
+    items: [
+      { name: 'Pierś z kaczki', desc: 'puree z pieczonej dyni, sos wiśniowy', price: '62 zł' },
+      { name: 'Pierogi z kaszanką', desc: 'cebula karmelizowana, jabłko, majeranek', price: '36 zł' },
+      { name: 'Risotto z grzybami leśnymi', desc: 'parmezan, tymianek, oliwa truflowa', price: '44 zł' },
+      { name: 'Zupa dnia', desc: 'zapytaj obsługę', price: '18 zł' },
+    ],
+  },
+  {
+    id: 'desery',
+    name: 'Desery',
+    items: [
+      { name: 'Sernik baskijski', desc: 'sos z kwaśnej wiśni', price: '22 zł' },
+      { name: 'Szarlotka na ciepło', desc: 'lody waniliowe, kruszonka', price: '20 zł' },
+    ],
+  },
+];
+const hours: [string, string][] = [
+  ['Poniedziałek', 'zamknięte'],
+  ['Wtorek – czwartek', '12:00 – 21:00'],
+  ['Piątek – sobota', '10:00 – 22:00'],
+  ['Niedziela', '10:00 – 20:00'],
+];
+const reviews = [
+  { text: 'Kaczka rozpływa się w ustach. Wracamy z rodziną co niedzielę.', who: 'Paweł' },
+  { text: 'Najlepsza szakszuka w okolicy i świetna kawa. Obsługa bardzo miła.', who: 'Magda' },
+  { text: 'Zamówiłam stolik przez stronę — wszystko gotowe, nawet tort przechowali.', who: 'Ola' },
+];
+---
+<DemoLayout
+  title="Bistro Kminek — restauracja (demo) | Gerdzio Koduje"
+  description="Strona pokazowa fikcyjnej restauracji Bistro Kminek. Projekt: Gerdzio Koduje."
+  themeColor="#f6efe4"
+  theme="restauracja"
+>
+  <header class="r-header">
+    <div class="d-container r-header__in">
+      <a href="#tresc" class="r-logo">Bistro <em>Kminek</em></a>
+      <nav aria-label="Menu restauracji">
+        <ul>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#o-nas">O nas</a></li>
+          <li><a href="#opinie">Opinie</a></li>
+        </ul>
+      </nav>
+      <a class="r-btn r-btn--sm" href="#rezerwacja">Zarezerwuj stolik</a>
+    </div>
+  </header>
+
+  <main id="tresc">
+    <section class="r-hero">
+      <div class="d-container r-hero__in">
+        <div class="r-hero__copy">
+          <p class="r-kicker">Kuchnia sezonowa · Przykładowo</p>
+          <h1>Domowe smaki,<br /><em>podane z pomysłem.</em></h1>
+          <p class="r-lead">Lokalne produkty, menu zmieniane z porami roku i kuchnia, w której wszystko robimy sami — od pieczywa po lody.</p>
+          <div class="r-cta">
+            <a class="r-btn" href="#rezerwacja">Zarezerwuj stolik</a>
+            <a class="r-btn r-btn--ghost" href="#menu">Zobacz menu</a>
+          </div>
+        </div>
+        <div class="r-hero__art" aria-hidden="true">
+          <span class="r-plate">
+            <span class="r-plate__food">
+              <i class="r-f r-f--1"></i><i class="r-f r-f--2"></i><i class="r-f r-f--3"></i><i class="r-f r-f--4"></i><i class="r-f r-f--5"></i>
+            </span>
+          </span>
+          <span class="r-steam"><i></i><i></i><i></i></span>
+          <span class="r-leaf r-leaf--1"></span>
+          <span class="r-leaf r-leaf--2"></span>
+          <div class="r-dish">
+            <p>Danie dnia</p>
+            <b>Pierś z kaczki</b>
+            <span>z puree z dyni · 62 zł</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="menu" class="d-section r-menu">
+      <div class="d-container">
+        <div class="r-head" data-anim>
+          <p class="r-kicker">Menu</p>
+          <h2>Co dziś gotujemy</h2>
+        </div>
+        <div class="r-tabs" role="tablist" aria-label="Kategorie menu">
+          {menu.map((c, i) => (
+            <button type="button" role="tab" id={`tab-${c.id}`} aria-controls={`panel-${c.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>{c.name}</button>
+          ))}
+        </div>
+        {menu.map((c, i) => (
+          <div class="r-panel" role="tabpanel" id={`panel-${c.id}`} aria-labelledby={`tab-${c.id}`} data-first={i === 0 ? '' : undefined}>
+            <h3 class="r-panel__title">{c.name}</h3>
+            <ul>
+              {c.items.map((it) => (
+                <li>
+                  <div class="r-item__top"><span class="r-item__name">{it.name}</span><span class="r-item__dots" aria-hidden="true"></span><span class="r-item__price">{it.price}</span></div>
+                  <p class="r-item__desc">{it.desc}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section id="o-nas" class="d-section r-about">
+      <div class="d-container r-about__in">
+        <div data-anim="left">
+          <p class="r-kicker">O nas</p>
+          <h2>Mała kuchnia, <em>wielkie serce</em></h2>
+          <p>Bistro Kminek prowadzimy we dwoje: ona gotuje, on piecze chleb i pilnuje sali. Produkty bierzemy od rolników z okolicy, dlatego menu zmienia się co kilka tygodni.</p>
+          <p>Organizujemy też małe przyjęcia — chrzciny, urodziny, spotkania firmowe do 30 osób.</p>
+        </div>
+        <ul class="r-facts" data-anim="right">
+          <li><b><span data-count="40">40</span></b><span>miejsc na sali</span></li>
+          <li><b><span data-count="12">12</span></b><span>lokalnych dostawców</span></li>
+          <li><b><span data-count="100" data-suffix="%">100%</span></b><span>pieczywa z naszego pieca</span></li>
+          <li><b>4×</b><span>w roku nowe menu</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="opinie" class="d-section">
+      <div class="d-container">
+        <div class="r-head" data-anim>
+          <p class="r-kicker">Opinie <span class="r-tag">przykładowe</span></p>
+          <h2>Goście o nas</h2>
+        </div>
+        <ul class="r-reviews">
+          {reviews.map((r) => (
+            <li data-anim>
+              <p class="r-stars" aria-label="Ocena 5 na 5">★★★★★</p>
+              <blockquote><p>„{r.text}”</p></blockquote>
+              <p class="r-reviews__who">— {r.who}</p>
+            </li>
+          ))}
+        </ul>
+        <p class="r-note">Opinie przykładowe — restauracja jest fikcyjna.</p>
+      </div>
+    </section>
+
+    <section id="rezerwacja" class="d-section r-contact">
+      <div class="d-container r-contact__in">
+        <div class="r-contact__info" data-anim>
+          <p class="r-kicker">Rezerwacja</p>
+          <h2>Zarezerwuj stolik</h2>
+          <p>ul. Przykładowa 1, 00-000 Przykładowo<br />tel. <a href="tel:000000000">000 000 000</a> · kontakt@example.com</p>
+          <h3>Godziny otwarcia</h3>
+          <DemoHours hours={hours} />
+          <DemoMap address="ul. Przykładowa 1, 00-000 Przykładowo" />
+        </div>
+        <div class="r-card" data-anim>
+          <h3>Rezerwacja online</h3>
+          <DemoForm id="r" services={['Stolik dla 2 osób', 'Stolik dla 4 osób', 'Stolik dla 6+ osób', 'Przyjęcie okolicznościowe']} submitLabel="Rezerwuję" />
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="r-footer">
+    <div class="d-container">
+      <p class="r-logo">Bistro <em>Kminek</em></p>
+      <p>Restauracja fikcyjna · dane przykładowe · ul. Przykładowa 1, 00-000 Przykładowo</p>
+    </div>
+  </footer>
+</DemoLayout>
+
+<script>
+  // Zakładki menu (bez JS widać wszystkie kategorie jedna pod drugą).
+  const tablist = document.querySelector<HTMLElement>('.r-tabs');
+  if (tablist) {
+    const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const select = (tab: HTMLButtonElement, focus = false) => {
+      tabs.forEach((t) => {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        const panel = document.getElementById(t.getAttribute('aria-controls')!);
+        if (panel) panel.hidden = !on;
+      });
+      if (focus) tab.focus();
+    };
+    document.documentElement.classList.add('r-tabs-ready');
+    select(tabs[0]);
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t));
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') select(tabs[(i + 1) % tabs.length], true);
+        if (e.key === 'ArrowLeft') select(tabs[(i - 1 + tabs.length) % tabs.length], true);
+      });
+    });
+  }
+</script>
+
+<style is:global>
+  .demo--restauracja {
+    --d-bg: #f6efe4;
+    --d-text: #2a2118;
+    --d-muted: #6a5b4a;
+    --d-accent: #a7471f;
+    --d-surface: #fffaf2;
+    --d-line: #e3d5c0;
+    --d-radius: 8px;
+    --d-font-head: 'DM Serif Display', Georgia, serif;
+    --d-font-body: 'Manrope', system-ui, sans-serif;
+    --d-input-border: #bfae95;
+    --d-status-bg: #f4e0cf;
+    --d-status-text: #6a2a0e;
+    --d-map-bg: #efe4d2;
+    --d-map-block: #e2d3bb;
+    --d-map-green: #d8dfc4;
+  }
+  .demo--restauracja h1, .demo--restauracja h2 { font-weight: 400; }
+  .demo--restauracja h2 { font-size: clamp(2.3rem, 1.7rem + 2.4vw, 3.6rem); }
+  .demo.demo--restauracja h3 { font-family: var(--d-font-head); font-weight: 400; font-size: 1.5rem; }
+  .demo--restauracja em { color: var(--d-accent); }
+  .r-kicker { color: #5d6b3a; text-transform: uppercase; letter-spacing: 0.22em; font-size: 0.75rem; font-weight: 600; margin-bottom: 1rem; }
+  .r-tag { color: var(--d-text); letter-spacing: 0.05em; text-transform: none; padding: 0.1rem 0.5rem; border: 1px solid var(--d-line); border-radius: 999px; margin-left: 0.4rem; }
+  .r-head { margin-bottom: 2.25rem; }
+  .r-note { color: var(--d-muted); font-size: 0.88rem; margin-top: 1.5rem; }
+
+  .r-btn, .demo--restauracja .d-btn {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 3.1rem; padding: 0.8rem 1.6rem;
+    background: var(--d-accent); color: #fffaf2 !important; border: 0; border-radius: 6px;
+    font-weight: 600; text-decoration: none; cursor: pointer; justify-self: start;
+    transition: background-color 0.25s, transform 0.25s;
+  }
+  .r-btn:hover, .demo--restauracja .d-btn:hover { background: #8a3a18; transform: translateY(-2px); }
+  .r-btn--sm { min-height: 2.5rem; padding: 0.45rem 1rem; font-size: 0.88rem; }
+  .r-btn--ghost { background: transparent; color: var(--d-text) !important; box-shadow: inset 0 0 0 1.5px var(--d-text); }
+  .r-btn--ghost:hover { background: var(--d-text); color: #fffaf2 !important; }
+
+  .r-header { border-bottom: 1px solid var(--d-line); }
+  .r-header__in { display: flex; justify-content: space-between; align-items: center; gap: 1rem; min-height: 4.25rem; }
+  .r-logo { font-family: var(--d-font-head); font-size: 1.6rem; color: var(--d-text) !important; text-decoration: none; }
+  .r-header nav { display: none; }
+  .r-header nav ul { list-style: none; display: flex; gap: 2rem; padding: 0; }
+  .r-header nav a { color: var(--d-text); text-decoration: none; font-weight: 600; font-size: 0.92rem; }
+  .r-header nav a:hover { color: var(--d-accent); }
+  @media (min-width: 52rem) { .r-header nav { display: block; } }
+
+  .r-hero { padding-block: clamp(2.5rem, 1.5rem + 5vw, 6rem); overflow: hidden; }
+  .r-hero__in { display: grid; gap: 3rem; align-items: center; }
+  .r-hero h1 { font-size: clamp(2.6rem, 1.7rem + 4.2vw, 5.2rem); line-height: 1.02; }
+  .r-lead { margin-top: 1.4rem; font-size: 1.1rem; color: var(--d-muted); max-width: 32rem; line-height: 1.7; }
+  .r-cta { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2rem; }
+  .r-hero__art { position: relative; height: clamp(19rem, 15rem + 12vw, 30rem); }
+  .r-plate { position: absolute; left: 50%; top: 52%; width: min(24rem, 82%); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: #fffaf2; box-shadow: 0 0 0 14px #efe2cf, 0 40px 80px -30px rgba(42, 33, 24, 0.55); display: grid; place-items: center; }
+  .r-plate__food { position: relative; width: 66%; aspect-ratio: 1; border-radius: 50%; }
+  .r-f { position: absolute; border-radius: 50%; }
+  .r-f--1 { inset: 18% 22% 30% 18%; background: #e6a14e; border-radius: 48% 52% 45% 55%; }
+  .r-f--2 { width: 40%; height: 30%; right: 10%; bottom: 18%; background: #8c2f1c; border-radius: 40% 60% 50% 50%; }
+  .r-f--3 { width: 14%; height: 14%; left: 22%; bottom: 20%; background: #5d6b3a; }
+  .r-f--4 { width: 10%; height: 10%; left: 40%; bottom: 12%; background: #7c8b4c; }
+  .r-f--5 { width: 9%; height: 9%; right: 22%; top: 14%; background: #5d6b3a; }
+  .r-steam { position: absolute; left: 50%; top: 6%; display: flex; gap: 14px; transform: translateX(-50%); }
+  .r-steam i { width: 6px; height: 54px; border-radius: 3px; background: rgba(106, 91, 74, 0.25); filter: blur(2px); }
+  .r-leaf { position: absolute; width: 3.4rem; height: 1.6rem; background: #5d6b3a; border-radius: 0 100% 0 100%; }
+  .r-leaf--1 { left: 6%; top: 18%; transform: rotate(-30deg); }
+  .r-leaf--2 { right: 8%; bottom: 14%; transform: rotate(150deg); background: #7c8b4c; }
+  .r-dish { position: absolute; right: 0; top: 8%; padding: 1rem 1.2rem; border-radius: 10px; background: var(--d-text); color: #fffaf2; box-shadow: 0 24px 50px -24px rgba(42, 33, 24, 0.7); }
+  .r-dish p { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: #e6a14e; }
+  .r-dish b { display: block; font-family: var(--d-font-head); font-weight: 400; font-size: 1.35rem; margin-top: 0.2rem; }
+  .r-dish span { font-size: 0.85rem; color: #d8cbb8; }
+  @media (min-width: 56rem) { .r-hero__in { grid-template-columns: 1.1fr 1fr; } }
+  @media (prefers-reduced-motion: no-preference) {
+    .r-hero__copy > * { animation: r-up 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+    .r-hero__copy > *:nth-child(2) { animation-delay: 0.1s; }
+    .r-hero__copy > *:nth-child(3) { animation-delay: 0.2s; }
+    .r-hero__copy > *:nth-child(4) { animation-delay: 0.3s; }
+    .r-plate { animation: r-plate 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+    .r-plate__food { animation: r-spin 60s linear infinite; }
+    .r-steam i { animation: r-steam 3.2s ease-in-out infinite; }
+    .r-steam i:nth-child(2) { animation-delay: 0.6s; }
+    .r-steam i:nth-child(3) { animation-delay: 1.2s; }
+    .r-leaf--1 { animation: r-sway 5s ease-in-out infinite; }
+    .r-dish { animation: r-pop 0.7s 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.3) backwards; }
+  }
+  @keyframes r-up { from { opacity: 0; transform: translateY(24px); } }
+  @keyframes r-plate { from { opacity: 0; transform: translate(-50%, -40%) rotate(-25deg) scale(0.9); } }
+  @keyframes r-spin { to { transform: rotate(360deg); } }
+  @keyframes r-steam { 0% { opacity: 0; transform: translateY(20px) scaleY(0.6); } 40% { opacity: 1; } 100% { opacity: 0; transform: translateY(-30px) scaleY(1.1); } }
+  @keyframes r-sway { 50% { transform: rotate(-12deg) translateY(-6px); } }
+  @keyframes r-pop { from { opacity: 0; transform: translateY(-14px) scale(0.9); } }
+
+  .r-menu { background: var(--d-surface); border-block: 1px solid var(--d-line); }
+  .r-tabs { display: none; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .r-tabs-ready .r-tabs { display: flex; }
+  .r-tabs button { min-height: 2.75rem; padding: 0.5rem 1.2rem; border-radius: 999px; border: 1.5px solid var(--d-line); background: transparent; font-weight: 600; cursor: pointer; transition: background-color 0.2s, color 0.2s, border-color 0.2s; }
+  .r-tabs button:hover { border-color: var(--d-text); }
+  .r-tabs button[aria-selected='true'] { background: var(--d-text); color: #fffaf2; border-color: var(--d-text); }
+  .r-panel + .r-panel { margin-top: 2.5rem; }
+  .r-tabs-ready .r-panel + .r-panel { margin-top: 0; }
+  .r-tabs-ready .r-panel__title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .r-panel__title { margin-bottom: 1rem; color: var(--d-accent); }
+  .r-panel ul { list-style: none; padding: 0; display: grid; gap: 1.4rem 3rem; }
+  .r-tabs-ready .r-panel:not([hidden]) ul li { animation: r-up 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+  .r-tabs-ready .r-panel:not([hidden]) ul li:nth-child(2) { animation-delay: 0.06s; }
+  .r-tabs-ready .r-panel:not([hidden]) ul li:nth-child(3) { animation-delay: 0.12s; }
+  .r-tabs-ready .r-panel:not([hidden]) ul li:nth-child(4) { animation-delay: 0.18s; }
+  .r-item__top { display: flex; align-items: baseline; gap: 0.6rem; }
+  .r-item__name { font-family: var(--d-font-head); font-size: 1.35rem; }
+  .r-item__dots { flex: 1; border-bottom: 1.5px dotted #bfae95; transform: translateY(-0.35rem); min-width: 1rem; }
+  .r-item__price { font-weight: 600; white-space: nowrap; }
+  .r-item__desc { color: var(--d-muted); font-size: 0.95rem; margin-top: 0.15rem; }
+  @media (min-width: 52rem) { .r-panel ul { grid-template-columns: 1fr 1fr; } }
+
+  .r-about__in { display: grid; gap: 3rem; align-items: center; }
+  .r-about__in p:not(.r-kicker) { color: var(--d-muted); margin-top: 1.1rem; max-width: 34rem; line-height: 1.75; }
+  .r-facts { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .r-facts li { padding: 1.5rem; border-radius: 10px; background: var(--d-surface); border: 1px solid var(--d-line); display: grid; gap: 0.2rem; }
+  .r-facts b { font-family: var(--d-font-head); font-weight: 400; font-size: 2.6rem; color: var(--d-accent); line-height: 1; }
+  .r-facts span:not([data-count]) { color: var(--d-muted); font-size: 0.9rem; }
+  @media (min-width: 56rem) { .r-about__in { grid-template-columns: 1.2fr 1fr; } }
+
+  .r-reviews { list-style: none; padding: 0; display: grid; gap: 1.25rem; }
+  .r-reviews li { padding: 1.75rem; border-radius: 10px; background: var(--d-surface); border: 1px solid var(--d-line); display: grid; gap: 0.9rem; }
+  .r-stars { color: #b07a2f; letter-spacing: 0.12em; }
+  .r-reviews blockquote p { font-family: var(--d-font-head); font-size: 1.3rem; line-height: 1.4; }
+  .r-reviews__who { color: var(--d-muted); font-weight: 600; }
+  @media (min-width: 52rem) { .r-reviews { grid-template-columns: repeat(3, 1fr); } }
+
+  .r-contact { background: #efe5d5; }
+  .r-contact__in { display: grid; gap: 2.5rem; }
+  .r-contact__info { display: grid; gap: 1.2rem; align-content: start; }
+  .r-card { padding: clamp(1.4rem, 1rem + 1.5vw, 2.4rem); border-radius: 12px; background: var(--d-surface); display: grid; gap: 1rem; align-self: start; box-shadow: 0 30px 60px -40px rgba(42, 33, 24, 0.5); }
+  @media (min-width: 60rem) { .r-contact__in { grid-template-columns: 1fr 1.2fr; } }
+
+  .r-footer { padding-block: 2.5rem; text-align: center; color: var(--d-muted); font-size: 0.88rem; border-top: 1px solid var(--d-line); }
+  .r-footer .d-container { display: grid; gap: 0.4rem; justify-items: center; }
+</style>

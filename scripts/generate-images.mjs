@@ -113,8 +113,9 @@ try {
   const port = 4791;
   const server = await serveDist(port);
   await mkdir(join(pub, 'img/portfolio'), { recursive: true });
-  const shot = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-  for (const slug of ['warsztat', 'barber', 'fizjo']) {
+  // reducedMotion: zrzut bez animacji wejścia (wszystko od razu widoczne)
+  const shot = await browser.newPage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
+  for (const slug of ['beauty', 'trener', 'restauracja', 'barber', 'fizjo']) {
     const res = await shot.goto(`http://localhost:${port}/demo/${slug}/`, { waitUntil: 'networkidle' });
     if (!res?.ok()) {
       console.warn(`! /demo/${slug} niedostępne — najpierw npm run build`);

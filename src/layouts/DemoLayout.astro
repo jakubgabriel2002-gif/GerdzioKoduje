@@ -14,6 +14,9 @@ const { title, description, themeColor, theme } = Astro.props;
     <a class="d-skip" href="#tresc">Przejdź do treści</a>
     <DemoBar />
     <slot />
+    <script>
+      import '../scripts/demo-anim';
+    </script>
   </body>
 </html>
 
@@ -40,5 +43,26 @@ const { title, description, themeColor, theme } = Astro.props;
   .d-skip:focus { top: 3.5rem; }
   .d-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   html:has(.demo) { scroll-padding-top: 4.5rem; }
+
+  /* Animacje przy przewijaniu (src/scripts/demo-anim.ts) — tylko gdy JS i ruch są dozwolone */
+  .anim-ready [data-anim] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: var(--anim-delay, 0s);
+  }
+  .anim-ready [data-anim='left'] { transform: translateX(-40px); }
+  .anim-ready [data-anim='right'] { transform: translateX(40px); }
+  .anim-ready [data-anim='zoom'] { transform: scale(0.94); }
+  .anim-ready [data-anim].is-in { opacity: 1; transform: none; }
+
+  /* Wspólne: przewijany pasek (marquee) */
+  .d-marquee { overflow: hidden; white-space: nowrap; }
+  .d-marquee__track { display: inline-flex; gap: 3rem; padding-right: 3rem; animation: d-marquee 28s linear infinite; }
+  @keyframes d-marquee { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .d-marquee__track { animation: none; }
+    .demo *, .demo *::before, .demo *::after { animation-duration: 0.001s !important; animation-iteration-count: 1 !important; transition-duration: 0.001s !important; }
+  }
   @media (prefers-reduced-motion: no-preference) { html:has(.demo) { scroll-behavior: smooth; } }
 </style>

@@ -12,8 +12,13 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.6",
+    "@fontsource/anton": "^5.3.0",
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/dm-serif-display": "^5.3.0",
     "@fontsource/inter": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/jost": "^5.3.0",
+    "@fontsource/manrope": "^5.3.0",
     "@fontsource/nunito": "^5.3.0",
     "@fontsource/oswald": "^5.3.0",
     "@fontsource/playfair-display": "^5.3.0",

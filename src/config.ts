@@ -146,11 +146,25 @@ export const faq = [
 /** Dema w portfolio. */
 export const demos = [
   {
-    slug: 'warsztat',
-    name: 'Tłok & Klucz',
-    industry: 'Warsztat samochodowy',
-    text: 'Mechanika, diagnostyka i wymiana opon. Cennik usług i szybki formularz umówienia wizyty.',
-    image: '/img/portfolio/warsztat.webp',
+    slug: 'beauty',
+    name: 'Atelier Malwa',
+    industry: 'Salon kosmetyczny',
+    text: 'Kosmetyka, paznokcie, brwi i rzęsy. Elegancki cennik, opinie klientek i prośba o termin.',
+    image: '/img/portfolio/beauty.webp',
+  },
+  {
+    slug: 'trener',
+    name: 'Forma Od Podstaw',
+    industry: 'Trener personalny',
+    text: 'Treningi 1:1 i prowadzenie online. Pakiety, metoda pracy, postępy i zapis na trening próbny.',
+    image: '/img/portfolio/trener.webp',
+  },
+  {
+    slug: 'restauracja',
+    name: 'Bistro Kminek',
+    industry: 'Restauracja',
+    text: 'Kuchnia sezonowa. Menu z zakładkami, danie dnia, godziny otwarcia i rezerwacja stolika.',
+    image: '/img/portfolio/restauracja.webp',
   },
   {
     slug: 'barber',

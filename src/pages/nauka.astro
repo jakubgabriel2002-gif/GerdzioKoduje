@@ -3,77 +3,83 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import WaitlistForm from '../components/forms/WaitlistForm.astro';
 
 const plans = [
-  { no: '01', title: 'Materiały', text: 'Poradniki i nagrania: od pomysłu do działającej aplikacji, krok po kroku, z AI jako pomocnikiem.' },
-  { no: '02', title: 'Kurs', text: 'Uporządkowana ścieżka, w której budujesz własny projekt — nie kolejną listę zadań z tutoriala.' },
-  { no: '03', title: 'Mentoring 1:1', text: 'Spotkania, na których razem przechodzimy przez Twój projekt: kod, decyzje i blokady.' },
+  { title: 'Materiały', text: 'Poradniki i nagrania: od pomysłu do działającej aplikacji, krok po kroku, z AI jako pomocnikiem.' },
+  { title: 'Kurs', text: 'Uporządkowana ścieżka, w której budujesz własny projekt — nie kolejną listę zadań z tutoriala.' },
+  { title: 'Mentoring 1:1', text: 'Spotkania, na których razem przechodzimy przez Twój projekt: kod, decyzje i blokady.' },
 ];
 ---
 <BaseLayout
   title="Nauka — buduj aplikacje z AI | Gerdzio Koduje"
   description="Uczę budować aplikacje z AI. Materiały, kurs i mentoring 1:1 — startujemy wkrótce. Zapisz się na listę oczekujących."
 >
-  <section class="section nauka-hero">
-    <div class="container">
-      <span class="eyebrow">nauka</span>
-      <h1>Uczę budować aplikacje z AI. <span class="accent">Startujemy wkrótce.</span></h1>
-      <p class="lead">Pokazuję, jak z pomysłu zrobić działającą aplikację — z AI jako pomocnikiem, bez magii i bez ściemy.</p>
+  <section class="nauka-hero" aria-labelledby="nauka-title">
+    <div class="container nauka-hero__grid">
+      <div class="nauka-hero__copy">
+        <p class="status"><span class="status__dot" aria-hidden="true"></span>Zapisy na listę oczekujących</p>
+        <h1 id="nauka-title">Uczę budować aplikacje z AI. <span class="accent">Startujemy wkrótce.</span></h1>
+        <p class="lead">Pokazuję, jak z pomysłu zrobić działającą aplikację — z AI jako pomocnikiem, bez magii i bez ściemy.</p>
+      </div>
+
+      <div class="form-card waitlist-card" id="zapisy">
+        <h2 class="waitlist-card__title">Zapisz się</h2>
+        <p class="muted">Zostaw maila — dam znać jako pierwszy, gdy ruszymy.</p>
+        <WaitlistForm />
+        <p class="dim small">Bez spamu. Wypisać się możesz w każdej chwili.</p>
+      </div>
     </div>
   </section>
 
   <section class="section" aria-labelledby="co-bedzie">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">co będzie</span>
-        <h2 id="co-bedzie">Trzy sposoby nauki</h2>
+        <h2 id="co-bedzie">Co będzie</h2>
+        <p>Trzy sposoby nauki — wybierzesz ten, który pasuje do Ciebie.</p>
       </div>
       <ul class="plans">
-        {plans.map((p) => (
+        {plans.map((p, i) => (
           <li class="card plan">
-            <span class="plan__no" aria-hidden="true">{p.no}</span>
+            <span class="plan__no" aria-hidden="true">{i + 1}</span>
             <h3>{p.title}</h3>
             <p class="muted">{p.text}</p>
           </li>
         ))}
       </ul>
-    </div>
-  </section>
-
-  <section class="section" id="zapisy" aria-labelledby="zapisy-title">
-    <div class="container waitlist">
-      <div>
-        <span class="eyebrow">lista oczekujących</span>
-        <h2 id="zapisy-title">Zapisz się</h2>
-        <p class="muted">Zostaw maila — dam znać jako pierwszy, gdy ruszymy.</p>
-        <p class="dim small">Żadnego spamu. Jedna wiadomość, gdy startujemy. Wypisać się możesz w każdej chwili.</p>
-      </div>
-      <div class="form-card">
-        <WaitlistForm />
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <p class="muted">Szukasz strony dla swojej firmy? <a href="/#oferta">Zobacz ofertę dla firm →</a></p>
+      <p class="for-business">Szukasz strony dla swojej firmy? <a href="/#oferta" class="link-arrow">Zobacz ofertę <span aria-hidden="true">→</span></a></p>
     </div>
   </section>
 </BaseLayout>
 
 <style>
   .nauka-hero {
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 5.5rem);
     background-image:
       linear-gradient(var(--grid-line) 1px, transparent 1px),
       linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-    background-size: 44px 44px;
+    background-size: 56px 56px;
   }
-  .nauka-hero h1 { max-width: 22ch; }
-  .lead { margin-top: var(--space-m); max-width: 42rem; color: var(--text-muted); font-size: var(--step-1); }
-  .plans { list-style: none; padding: 0; display: grid; gap: var(--space-m); }
-  .plan { display: grid; gap: 0.5rem; }
-  .plan__no { color: var(--accent); font-weight: 800; }
-  .waitlist { display: grid; gap: var(--space-l); }
-  .waitlist > div:first-child { display: grid; gap: var(--space-s); align-content: start; }
+  .nauka-hero__grid { display: grid; gap: 2rem; align-items: center; }
+  .nauka-hero h1 { font-size: clamp(2rem, 1.5rem + 2.6vw, 3.5rem); line-height: 1.08; letter-spacing: -0.035em; max-width: 17ch; }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .status__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(34, 224, 122, 0.15); }
+  .lead { margin-top: 1.25rem; max-width: 34rem; color: var(--text-muted); font-size: var(--step-1); line-height: 1.6; }
+  .waitlist-card { display: grid; gap: 1rem; background: #111113; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9); }
+  .waitlist-card__title { font-size: var(--step-2); }
   .small { font-size: var(--step--1); }
+  .plans { list-style: none; padding: 0; display: grid; gap: 1.25rem; }
+  .plan { display: grid; gap: 0.6rem; align-content: start; padding: clamp(1.5rem, 1.2rem + 1vw, 2rem); }
+  .plan__no { color: var(--accent); font-weight: 800; }
+  .for-business { margin-top: 3rem; color: var(--text-muted); display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.75rem; }
   @media (min-width: 48rem) { .plans { grid-template-columns: repeat(3, 1fr); } }
-  @media (min-width: 64rem) { .waitlist { grid-template-columns: 1fr 1.2fr; } }
+  @media (min-width: 60rem) { .nauka-hero__grid { grid-template-columns: 1.1fr 1fr; gap: 4rem; } }
 </style>

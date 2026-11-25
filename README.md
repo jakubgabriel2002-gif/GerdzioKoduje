@@ -158,5 +158,5 @@ Push na `main` = automatyczny build i wdrożenie na Cloudflare (ok. 1–2 min). 
 
 ## Do weryfikacji przed startem
 
-- **Polityka prywatności** (`src/pages/polityka-prywatnosci.astro`) to **szablon**. Uzupełnij pola `[DO UZUPEŁNIENIA]` (nazwisko, miasto, data, okresy przechowywania) i **zweryfikuj treść** — najlepiej z prawnikiem lub na podstawie aktualnych wytycznych UODO. Nie jest to porada prawna.
+- **Polityka prywatności** (`src/pages/polityka-prywatnosci.astro`) ma uzupełnione dane, ale warto **zweryfikować treść** — najlepiej z prawnikiem lub na podstawie aktualnych wytycznych UODO. Nie jest to porada prawna. Przy zmianach aktualizuj datę na górze dokumentu.
 - Linki social z komentarzami w `config.ts` (TikTok — zmiana nazwy ok. 14.12.2026, Facebook — docelowy adres strony).

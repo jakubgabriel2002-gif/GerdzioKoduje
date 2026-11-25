@@ -9,10 +9,14 @@
   --border: #2a2a2e;
   --border-strong: #3c3c41;
   --accent: #22e07a;      /* akcent na ciemnym tle */
+  --accent-hover: #4deb95;
+  --accent-tint: #0e1913;  /* tło wyróżnionych elementów */
+  --accent-line: rgba(34, 224, 122, 0.32);
+  --bg-input: #0e0e10;
   --accent-ink: #0b0b0c;  /* tekst na zielonym przycisku */
   --accent-light: #15803d;/* akcent na jasnym tle */
   --danger: #ff7a7a;
-  --grid-line: rgba(34, 224, 122, 0.07);
+  --grid-line: rgba(34, 224, 122, 0.06);
 
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 
@@ -27,9 +31,11 @@
   --space-s: 1rem;
   --space-m: 1.5rem;
   --space-l: 2.5rem;
-  --space-xl: clamp(4rem, 3rem + 5vw, 7.5rem);
+  --space-xl: clamp(3.5rem, 2.5rem + 3.5vw, 6rem);
 
-  --radius: 6px;
+  --radius: 8px;
+  --radius-btn: 10px;
+  --radius-lg: 16px;
   --container: 72rem;
   --gutter: clamp(1rem, 0.5rem + 2.5vw, 2rem);
   --header-h: 4.25rem;

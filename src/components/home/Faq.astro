@@ -2,15 +2,15 @@
 import { faq } from '../../config';
 ---
 <section id="faq" class="section" aria-labelledby="faq-title">
-  <div class="container">
-    <div class="section-head">
-      <span class="eyebrow">faq</span>
+  <div class="container faq-wrap">
+    <div class="faq-head">
       <h2 id="faq-title">Częste pytania</h2>
+      <p class="muted">Nie ma tu Twojego pytania? <a href="#kontakt">Napisz do mnie.</a></p>
     </div>
     <div class="faq">
       {faq.map((item) => (
         <details class="faq__item">
-          <summary><h3>{item.q}</h3></summary>
+          <summary><h3>{item.q}</h3><span class="faq__icon" aria-hidden="true"></span></summary>
           <p>{item.a}</p>
         </details>
       ))}
@@ -19,20 +19,30 @@ import { faq } from '../../config';
 </section>
 
 <style>
-  .faq { max-width: 50rem; border-top: 1px solid var(--border); }
+  .faq-wrap { display: grid; gap: 2rem; }
+  .faq-head { display: grid; gap: 1rem; align-content: start; }
   .faq__item { border-bottom: 1px solid var(--border); }
+  .faq__item:first-child { border-top: 1px solid var(--border); }
   .faq__item summary {
     display: flex;
-    gap: 1rem;
-    align-items: baseline;
-    padding: 1.1rem 0;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.35rem 0;
     cursor: pointer;
     list-style: none;
   }
   .faq__item summary::-webkit-details-marker { display: none; }
-  .faq__item summary::before { content: '+'; color: var(--accent); font-weight: 800; width: 1ch; flex: none; }
-  .faq__item[open] summary::before { content: '−'; }
+  .faq__item h3 { font-size: var(--step-1); font-weight: 800; letter-spacing: -0.02em; }
   .faq__item summary:hover h3 { color: var(--accent); }
-  .faq__item h3 { font-size: var(--step-1); font-weight: 800; }
-  .faq__item p { color: var(--text-muted); padding: 0 0 1.25rem calc(1ch + 1rem); max-width: 44rem; }
+  .faq__icon { position: relative; flex: none; width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid var(--border-strong); }
+  .faq__icon::before, .faq__icon::after { content: ''; position: absolute; left: 50%; top: 50%; width: 10px; height: 2px; background: var(--text); transform: translate(-50%, -50%); transition: transform 0.2s; }
+  .faq__icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+  .faq__item[open] .faq__icon { border-color: var(--accent); }
+  .faq__item[open] .faq__icon::after { transform: translate(-50%, -50%) rotate(0deg); }
+  .faq__item p { color: var(--text-muted); padding: 0 3.5rem 1.5rem 0; max-width: 44rem; }
+  @media (min-width: 60rem) {
+    .faq-wrap { grid-template-columns: 1fr 1.8fr; gap: 4rem; }
+    .faq-head { position: sticky; top: calc(var(--header-h) + 2rem); align-self: start; }
+  }
 </style>

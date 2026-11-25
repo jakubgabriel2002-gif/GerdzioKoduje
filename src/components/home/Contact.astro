@@ -5,10 +5,9 @@ import EmailLink from '../EmailLink.astro';
 <section id="kontakt" class="section" aria-labelledby="kontakt-title">
   <div class="container contact">
     <div class="contact__intro">
-      <span class="eyebrow">kontakt</span>
       <h2 id="kontakt-title">Wyceń stronę</h2>
-      <p>Opisz krótko firmę i czego potrzebujesz. Odpowiadam w ciągu 24 h — z konkretną propozycją, nie z ogólnikami.</p>
-      <ul class="prompt-list contact__list">
+      <p>Opisz krótko firmę i czego potrzebujesz. Odpowiadam z konkretną propozycją, nie z ogólnikami.</p>
+      <ul class="check-list contact__list">
         <li>odpowiedź w ciągu 24 h</li>
         <li>makieta w 1–2 dni od briefu</li>
         <li>domena zawsze rejestrowana na Ciebie</li>
@@ -22,10 +21,12 @@ import EmailLink from '../EmailLink.astro';
 </section>
 
 <style>
-  .contact { display: grid; gap: var(--space-l); }
-  .contact__intro { display: grid; gap: var(--space-s); align-content: start; }
-  .contact__intro > p { color: var(--text-muted); }
-  .contact__list { color: var(--text-muted); }
-  .contact__mail { font-size: var(--step--1); }
-  @media (min-width: 64rem) { .contact { grid-template-columns: 1fr 1.5fr; } .contact__intro { position: sticky; top: calc(var(--header-h) + 2rem); } }
+  .contact { display: grid; gap: 2.5rem; }
+  .contact__intro { display: grid; gap: 1.25rem; align-content: start; }
+  .contact__intro > p { color: var(--text-muted); font-size: var(--step-1); line-height: 1.6; }
+  .contact__mail { font-size: var(--step-0) !important; }
+  @media (min-width: 64rem) {
+    .contact { grid-template-columns: 1fr 1.45fr; gap: 4rem; }
+    .contact__intro { position: sticky; top: calc(var(--header-h) + 2rem); }
+  }
 </style>

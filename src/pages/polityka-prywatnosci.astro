@@ -1,24 +1,23 @@
 ---
 /**
- * UWAGA: to szablon. Przed publikacją uzupełnij pola [DO UZUPEŁNIENIA]
- * i zweryfikuj całość (najlepiej z prawnikiem). Zobacz README.
+ * Polityka prywatności. Treść warto zweryfikować (najlepiej z prawnikiem). Zobacz README.
+ * Przy każdej zmianie zaktualizuj datę `updated`.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import EmailLink from '../components/EmailLink.astro';
 import { site } from '../config';
-const updated = '[DO UZUPEŁNIENIA: data]';
+const updated = '25 listopada 2026 r.';
 ---
 <BaseLayout title="Polityka prywatności | Gerdzio Koduje" description="Jakie dane zbieram przez formularze na gerdziokoduje.pl, w jakim celu i jakie masz prawa.">
   <section class="section">
     <div class="container prose">
-      <span class="eyebrow">dokument</span>
       <h1>Polityka prywatności</h1>
-      <p class="muted">Ostatnia aktualizacja: <span class="todo">{updated}</span></p>
+      <p class="muted">Ostatnia aktualizacja: {updated}</p>
 
       <h2>1. Kto jest administratorem danych</h2>
       <p>
-        Administratorem Twoich danych osobowych jest osoba fizyczna: Jakub <span class="todo">[DO UZUPEŁNIENIA: nazwisko]</span>,
-        <span class="todo">[DO UZUPEŁNIENIA: miasto]</span>, prowadzący serwis {site.domain} pod marką {site.brand}.
+        Administratorem Twoich danych osobowych jest osoba fizyczna: Jakub Gabriel, 14-260 Lubawa,
+        prowadzący serwis {site.domain} pod marką {site.brand}.
         Kontakt w sprawach danych osobowych: <EmailLink subject="Dane osobowe" />.
       </p>
 
@@ -52,8 +51,8 @@ const updated = '[DO UZUPEŁNIENIA: data]';
 
       <h2>4. Jak długo przechowuję dane</h2>
       <ul>
-        <li>Zapytania o stronę — do czasu zakończenia rozmów, a jeśli dojdzie do współpracy — przez czas jej trwania i okres przedawnienia roszczeń. Gdy do współpracy nie dojdzie, usuwam je najpóźniej po <span class="todo">[DO UZUPEŁNIENIA: np. 12 miesiącach]</span>.</li>
-        <li>Lista oczekujących — do startu kursu i wysłania powiadomienia, nie dłużej niż <span class="todo">[DO UZUPEŁNIENIA: np. 24 miesiące]</span>, albo do cofnięcia zgody.</li>
+        <li>Zapytania o stronę — do czasu zakończenia rozmów, a jeśli dojdzie do współpracy — przez czas jej trwania i okres przedawnienia roszczeń. Gdy do współpracy nie dojdzie, usuwam je najpóźniej po 12 miesiącach.</li>
+        <li>Lista oczekujących — do startu kursu i wysłania powiadomienia, nie dłużej niż 12 miesięcy, albo do cofnięcia zgody.</li>
         <li>Dane techniczne po stronie Cloudflare — zgodnie z zasadami Cloudflare, zwykle przez krótki czas.</li>
       </ul>
 

@@ -27,7 +27,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
           </li>
         ))}
       </ul>
-      <a href="/#kontakt" class="btn site-nav__cta">Wyceń stronę</a>
+      <a href="/#kontakt" class="btn btn--sm site-nav__cta">Wyceń stronę</a>
     </nav>
   </div>
 </header>
@@ -61,10 +61,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     text-decoration: none;
     border-bottom: 1px solid var(--border);
   }
-  .site-nav__list a::before { content: '> '; color: var(--accent); opacity: 0; transition: opacity 0.15s; }
-  .site-nav__list a:hover::before,
-  .site-nav__list a[aria-current='page']::before { opacity: 1; }
+  .site-nav__list a { transition: color 0.15s; }
   .site-nav__list a:hover { color: var(--accent); }
+  .site-nav__list a[aria-current='page'] { color: var(--accent); }
 
   /* Z JS: menu chowane za przyciskiem na mobile */
   .menu-toggle { display: none; }
@@ -106,7 +105,6 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     }
     .site-nav__list { flex-direction: row; gap: 1.5rem; }
     .site-nav__list a { border: 0; padding: 0.5rem 0; font-size: var(--step--1); }
-    .site-nav__cta { min-height: 2.5rem; padding: 0.5rem 1rem; font-size: var(--step--1); }
   }
 </style>
 

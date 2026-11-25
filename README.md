@@ -74,6 +74,12 @@ Prawie wszystko jest w **`src/config.ts`**:
 | opisy dem w portfolio | `demos` |
 | nawigacja | `nav` |
 
+### Jak dodać aplikację na /aplikacje
+
+1. Wrzuć ikonę (kwadratową, np. 192×192 PNG) do `public/img/apps/`.
+2. W `src/config.ts` znajdź listę `apps`, skopiuj zakomentowany przykład, usuń `//` i uzupełnij: nazwę, opis, adres aplikacji (`url`), ikonę i `status` (`'dostępna'` albo `'wkrótce'`).
+3. Commit + push — aplikacja pojawi się na stronie. Dopóki lista jest pusta, strona pokazuje komunikat „wkrótce”.
+
 Teksty sekcji (np. „O mnie”, hero) są w `src/components/home/*.astro`, a strona Nauka w `src/pages/nauka.astro`.
 Kolory marki: `src/styles/tokens.css`.
 

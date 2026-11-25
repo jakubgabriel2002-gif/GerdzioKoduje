@@ -9,15 +9,21 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       <Lockup size="sm" /><span class="visually-hidden"> — strona główna</span>
     </a>
 
-    <button
-      class="menu-toggle"
-      type="button"
-      aria-expanded="false"
-      aria-controls="site-nav"
-    >
-      <span class="menu-toggle__icon" aria-hidden="true"><span></span></span>
-      <span class="menu-toggle__label">menu</span>
-    </button>
+    <div class="site-header__actions">
+      <a href="/aplikacje" class="apps-link" aria-current={path === '/aplikacje' ? 'page' : undefined}>
+        <span class="apps-link__icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        Aplikacje
+      </a>
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-nav"
+      >
+        <span class="menu-toggle__icon" aria-hidden="true"><span></span></span>
+        <span class="menu-toggle__label">menu</span>
+      </button>
+    </div>
 
     <nav id="site-nav" class="site-nav" aria-label="Główna nawigacja">
       <ul class="site-nav__list">
@@ -43,14 +49,45 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   }
   .site-header__inner {
     min-height: var(--header-h);
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.5rem;
+    gap: 0.5rem 0.75rem;
     padding-block: 0.6rem;
   }
+  .site-nav { grid-column: 1 / -1; }
   .site-header__brand { text-decoration: none; display: inline-flex; padding-block: 0.25rem; }
+  .site-header__actions { display: flex; align-items: center; gap: 0.5rem; }
+
+  /* Przycisk „Aplikacje” — widoczny obok menu na telefonie */
+  .apps-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius-btn);
+    background: var(--accent-tint);
+    border: 1px solid var(--accent-line);
+    color: var(--text);
+    font-size: var(--step--1);
+    font-weight: 800;
+    text-decoration: none;
+    transition: border-color 0.15s;
+  }
+  .apps-link:hover, .apps-link[aria-current='page'] { border-color: var(--accent); }
+  .apps-link__icon { display: grid; grid-template-columns: 5px 5px; gap: 2px; }
+  .apps-link__icon i { width: 5px; height: 5px; border-radius: 1.5px; background: var(--accent); }
+  /* Na wąskich ekranach: hamburger bez napisu, mniejsze odstępy */
+  @media (max-width: 30rem) {
+    .menu-toggle__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .menu-toggle { padding: 0.4rem 0.7rem; }
+    .apps-link { padding: 0.4rem 0.7rem; }
+  }
+  @media (max-width: 22.5rem) {
+    .site-header__brand :global(.lockup) { --lk: 1rem; }
+    .apps-link__icon { display: none; }
+  }
 
   .site-nav { display: flex; flex-direction: column; gap: 1rem; width: 100%; padding-block: 0.5rem 1rem; }
   .site-nav__list { list-style: none; padding: 0; display: flex; flex-direction: column; }
@@ -93,8 +130,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   .menu-toggle[aria-expanded='true'] .menu-toggle__icon::after { transform: translateY(-6px) rotate(-45deg); }
 
   @media (min-width: 60rem) {
-    .site-header__inner { flex-wrap: nowrap; }
+    .site-header__inner { display: flex; justify-content: space-between; gap: 1.5rem; }
     .menu-toggle, :global(.js) .menu-toggle { display: none; }
+    .site-header__actions { display: none; }
     .site-nav, :global(.js) .site-nav {
       display: flex;
       flex-direction: row;

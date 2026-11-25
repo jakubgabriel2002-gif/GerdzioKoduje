@@ -36,11 +36,11 @@ export const socialList = [
 ];
 
 export const nav = [
-  { label: 'Dla firm', href: '/#oferta' },
-  { label: 'Portfolio', href: '/#portfolio' },
+  { label: 'Dla firm', href: '/dla-firm' },
+  { label: 'Portfolio', href: '/dla-firm#portfolio' },
   { label: 'Aplikacje', href: '/aplikacje' },
   { label: 'Nauka', href: '/nauka' },
-  { label: 'Kontakt', href: '/#kontakt' },
+  { label: 'Kontakt', href: '/dla-firm#kontakt' },
 ];
 
 /** Pakiety. Cena to liczba w zł (grosze po kropce, np. 499.99) — na stronie wyświetlana jako „od …”. */

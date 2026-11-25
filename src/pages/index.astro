@@ -1,25 +1,263 @@
 ---
+/**
+ * Strona startowa — wybór ścieżki: firma / nauka (+ kafelek aplikacji).
+ * Treść dla firm jest pod /dla-firm, nauka pod /nauka, aplikacje pod /aplikacje.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/home/Hero.astro';
-import Offer from '../components/home/Offer.astro';
-import Portfolio from '../components/home/Portfolio.astro';
-import Process from '../components/home/Process.astro';
-import About from '../components/home/About.astro';
-import Faq from '../components/home/Faq.astro';
-import Contact from '../components/home/Contact.astro';
-import { packages, formatPrice } from '../config';
+import { packages, formatPrice, apps } from '../config';
 
-const prices = packages.map((p) => `${p.name} od ${formatPrice(p.price)}${p.period ?? ''}`).join(', ').replace(/\.$/, '');
+const minPrice = Math.min(...packages.filter((p) => p.inForm).map((p) => p.price));
+const appsAvailable = apps.filter((a) => a.status === 'dostępna').length;
 ---
 <BaseLayout
-  title="Gerdzio Koduje — strony dla firm, które same obsługują klientów"
-  description={`Strony internetowe dla lokalnych firm z automatyczną obsługą zapytań. ${prices}. Makieta w 1–2 dni.`}
+  title="Gerdzio Koduje — strony dla firm i nauka budowania aplikacji z AI"
+  description={`Buduję strony internetowe dla firm, które same obsługują klientów (od ${formatPrice(minPrice)}), i uczę budować aplikacje z AI. Wybierz, co Cię interesuje.`}
 >
-  <Hero />
-  <Offer />
-  <Portfolio />
-  <Process />
-  <About />
-  <Faq />
-  <Contact />
+  <script is:inline slot="head">
+    // Stare linki typu /#kontakt prowadzą teraz do /dla-firm#kontakt
+    (function () {
+      var h = location.hash;
+      if (/^#(oferta|portfolio|proces|o-mnie|faq|kontakt)$/.test(h)) location.replace('/dla-firm' + h);
+    })();
+  </script>
+
+  <section class="start" aria-labelledby="start-title">
+    <div class="container start__inner">
+      <div class="start__head">
+        <h1 id="start-title">Strony dla firm i&nbsp;nauka budowania aplikacji&nbsp;z&nbsp;AI.</h1>
+        <p class="start__lead">Od czego zaczynamy? Wybierz — pokażę Ci tylko to, co dla Ciebie ważne.</p>
+      </div>
+
+      <div class="choices">
+        <a class="choice choice--firm" href="/dla-firm">
+          <span class="choice__art" aria-hidden="true">
+            <span class="mini-browser">
+              <span class="mini-browser__bar"><i></i><i></i><i></i></span>
+              <span class="mini-line mini-line--title"></span>
+              <span class="mini-line"></span>
+              <span class="mini-line mini-line--short"></span>
+              <span class="mini-btn"></span>
+            </span>
+            <span class="mini-notify"><span class="mini-notify__dot"></span>Nowe zapytanie</span>
+          </span>
+          <span class="choice__body">
+            <span class="choice__kicker">Dla firm</span>
+            <span class="choice__title">Mam firmę</span>
+            <span class="choice__text">Strona, która sama przyjmuje zapytania i odpisuje klientom. Pakiety od&nbsp;{formatPrice(minPrice)}.</span>
+          </span>
+          <span class="choice__go" aria-hidden="true">→</span>
+        </a>
+
+        <a class="choice choice--learn" href="/nauka">
+          <span class="choice__art" aria-hidden="true">
+            <span class="mini-code">
+              <span><b>const</b> app = <em>pomysł</em></span>
+              <span>&nbsp;&nbsp;.zbuduj(<em>AI</em>)</span>
+              <span>&nbsp;&nbsp;.opublikuj()<span class="mini-caret"></span></span>
+            </span>
+          </span>
+          <span class="choice__body">
+            <span class="choice__kicker">Dla osób prywatnych</span>
+            <span class="choice__title">Chcę się nauczyć</span>
+            <span class="choice__text">Zbuduj własną aplikację z AI. Materiały, kurs i mentoring — startujemy wkrótce.</span>
+          </span>
+          <span class="choice__go" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <a class="apps-tile" href="/aplikacje">
+        <span class="apps-tile__icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="apps-tile__body">
+          <span class="apps-tile__title">Moje aplikacje</span>
+          <span class="apps-tile__text">Aplikacje PWA — instalujesz prosto z przeglądarki, bez sklepu.</span>
+        </span>
+        <span class="apps-tile__badge">{appsAvailable > 0 ? `${appsAvailable} do pobrania` : 'wkrótce'}</span>
+        <span class="apps-tile__go" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .start {
+    position: relative;
+    min-height: calc(100svh - var(--header-h));
+    display: flex;
+    align-items: center;
+    padding-block: clamp(1.75rem, 1rem + 3vw, 3.5rem);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 56px 56px;
+    background-position: center top;
+    overflow: hidden;
+  }
+  .start::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 30%;
+    background: var(--bg);
+    mask-image: linear-gradient(to bottom, transparent, #000);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000);
+    pointer-events: none;
+  }
+  .start__inner { position: relative; z-index: 1; display: grid; gap: clamp(1.5rem, 1rem + 1.6vw, 2.5rem); }
+  .start__head { max-width: 50rem; }
+  .start h1 { font-size: clamp(1.75rem, 1.25rem + 2.4vw, 3.25rem); line-height: 1.07; letter-spacing: -0.035em; }
+  .start__lead { margin-top: 1rem; color: var(--text-muted); font-size: var(--step-1); line-height: 1.55; max-width: 38rem; }
+
+  /* ===== Karty wyboru ===== */
+  .choices { display: grid; gap: 0.85rem; }
+  .choices + .apps-tile { margin-top: calc(-1 * clamp(0.5rem, 0.2rem + 0.8vw, 1.25rem)); }
+  .choice {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 'art art' 'body go';
+    align-items: end;
+    gap: 1.25rem 1rem;
+    padding: clamp(1.25rem, 1rem + 1.2vw, 2rem);
+    border-radius: 22px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), background-color 0.25s;
+  }
+  .choice--firm { view-transition-name: vt-firm; background: var(--accent-tint); border-color: var(--accent-line); }
+  .choice--learn { view-transition-name: vt-learn; }
+  .choice:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .choice__art { grid-area: art; position: relative; display: block; height: 6.25rem; }
+  .choice__body { grid-area: body; display: grid; gap: 0.45rem; }
+  .choice__kicker { color: var(--text-dim); font-size: var(--step--1); }
+  .choice--firm .choice__kicker { color: var(--accent); }
+  .choice__title { font-weight: 800; font-size: clamp(1.6rem, 1.3rem + 1.4vw, 2.4rem); letter-spacing: -0.035em; line-height: 1.05; }
+  .choice__text { color: var(--text-muted); max-width: 30rem; }
+  .choice__go {
+    grid-area: go;
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    font-size: 1.2rem;
+    transition: transform 0.25s, background-color 0.25s, color 0.25s, border-color 0.25s;
+  }
+  .choice--firm .choice__go { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .choice:hover .choice__go { transform: translateX(4px); }
+  .choice--learn:hover .choice__go { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  /* mini przeglądarka (firma) */
+  .mini-browser {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: min(15rem, 70%);
+    height: 6rem;
+    padding: 0.65rem;
+    display: grid;
+    align-content: start;
+    gap: 0.45rem;
+    border-radius: 12px;
+    background: #121815;
+    border: 1px solid var(--accent-line);
+    transform: rotate(-2deg);
+    transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .mini-browser__bar { display: flex; gap: 4px; margin-bottom: 0.2rem; }
+  .mini-browser__bar i { width: 6px; height: 6px; border-radius: 50%; background: #2f3a33; }
+  .mini-line { display: block; height: 6px; border-radius: 3px; background: #26302a; width: 85%; }
+  .mini-line--title { height: 10px; width: 60%; background: #3b4a40; }
+  .mini-line--short { width: 50%; }
+  .mini-btn { display: block; width: 4rem; height: 14px; border-radius: 5px; background: var(--accent); margin-top: 0.2rem; }
+  .mini-notify {
+    position: absolute;
+    left: min(9rem, 42%);
+    top: 3.1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.8rem;
+    border-radius: 12px;
+    background: #161618;
+    border: 1px solid var(--border-strong);
+    font-size: 0.78rem;
+    font-weight: 800;
+    white-space: nowrap;
+    box-shadow: 0 14px 30px -12px #000;
+    transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .mini-notify__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(34, 224, 122, 0.18); }
+  .choice--firm:hover .mini-browser { transform: rotate(0deg) translateY(-3px); }
+  .choice--firm:hover .mini-notify { transform: translate(6px, -6px); }
+
+  /* mini kod (nauka) */
+  .mini-code {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    background: #111113;
+    border: 1px solid var(--border-strong);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    transform: rotate(1.5deg);
+    transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .mini-code b { color: var(--accent); font-weight: 800; }
+  .mini-code em { font-style: normal; color: #e8c37a; }
+  .mini-caret { display: inline-block; width: 7px; height: 0.95em; margin-left: 2px; vertical-align: -2px; background: var(--accent); animation: blink 1.1s steps(1, end) infinite; }
+  .choice--learn:hover .mini-code { transform: rotate(0deg) translateY(-3px); }
+
+  /* ===== Kafelek aplikacji ===== */
+  .apps-tile {
+    view-transition-name: vt-apps;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: 'icon body go' 'icon badge go';
+    align-items: center;
+    gap: 0.25rem 1rem;
+    padding: 1rem 1.25rem;
+    border-radius: 18px;
+    background: var(--bg);
+    border: 1px dashed var(--border-strong);
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.25s, background-color 0.25s;
+  }
+  .apps-tile:hover { border-style: solid; border-color: var(--accent); background: var(--bg-raised); }
+  .apps-tile__icon { grid-area: icon; display: grid; grid-template-columns: repeat(2, 14px); gap: 4px; padding: 10px; border-radius: 14px; background: var(--bg-raised-2); }
+  .apps-tile__icon i { width: 14px; height: 14px; border-radius: 4px; border: 1px solid var(--border-strong); }
+  .apps-tile__icon i:first-child { background: var(--accent); border-color: var(--accent); }
+  .apps-tile__body { grid-area: body; display: grid; gap: 0.1rem; }
+  .apps-tile__title { font-weight: 800; }
+  .apps-tile__text { color: var(--text-muted); font-size: var(--step--1); }
+  .apps-tile__badge { grid-area: badge; justify-self: start; padding: 0.15rem 0.6rem; border-radius: 999px; background: rgba(34, 224, 122, 0.12); color: var(--accent); font-size: 0.72rem; font-weight: 800; }
+  .apps-tile__go { grid-area: go; color: var(--text-dim); font-size: 1.2rem; transition: transform 0.25s, color 0.25s; }
+  .apps-tile:hover .apps-tile__go { color: var(--accent); transform: translateX(4px); }
+
+  @media (min-width: 48rem) {
+    .choices { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .choice__art { height: 7rem; }
+    .mini-browser { height: 6.75rem; }
+    .apps-tile { grid-template-areas: 'icon body badge go'; grid-template-columns: auto 1fr auto auto; }
+  }
+
+  /* ===== Wejście (animacja) ===== */
+  @media (prefers-reduced-motion: no-preference) {
+    .start__head, .choice, .apps-tile { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+    .choice--firm { animation-delay: 0.12s; }
+    .choice--learn { animation-delay: 0.22s; }
+    .apps-tile { animation-delay: 0.34s; }
+    .mini-notify { animation: pop 0.6s 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.3) backwards; }
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(0.9); } to { opacity: 1; transform: none; } }
+</style>

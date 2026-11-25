@@ -59,5 +59,6 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     const code = String(res.error ?? '');
     return json({ ok: false, error: code, status: res.status ?? null, message: ERRORS[code] ?? 'Coś poszło nie tak. Spróbuj za chwilę.' }, 400);
   }
-  return json(res);
+  // Strona /wycena: czy pokazać przycisk płatności online
+  return json({ ...res, payments: Boolean(env.STRIPE_SECRET_KEY) });
 };

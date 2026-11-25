@@ -92,6 +92,12 @@ npm run build && npm run images
 
 ---
 
+## Płatności zaliczek (Stripe)
+
+Po akceptacji indywidualnej wyceny klient od razu płaci zaliczkę 50% przez Stripe (karta, BLIK, Przelewy24).
+Wpłata sama zapisuje się w arkuszu („zaliczka opłacona”), a obie strony dostają maile.
+Szczegóły i konfiguracja krok po kroku: **[automation/README.md → Płatności zaliczek przez Stripe](automation/README.md#płatności-zaliczek-przez-stripe)**.
+
 ## Statystyki odwiedzin (Cloudflare Web Analytics)
 
 Darmowe, bez ciasteczek — nie wymagają banera cookies. Włączasz je w panelu, bez zmian w kodzie:

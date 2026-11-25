@@ -45,12 +45,13 @@ const HEADERS = {
     'rodzaj projektu', 'budżet', 'termin startu', 'obecna strona', 'opis',
     'status', 'kwota (zł)', 'zakres wyceny', 'czas realizacji', 'wyślij wycenę', 'wysłano', 'ważna do',
     'odpowiedź klienta', 'komentarz klienta', 'data odpowiedzi',
+    'zaliczka (zł)', 'data wpłaty', 'ID płatności',
   ],
 };
 /** Numer kolumny (od 1) w zakładce „Wyceny” po nazwie nagłówka. */
 const Q = {};
 HEADERS[SHEET_QUOTES].forEach(function (h, i) { Q[h] = i + 1; });
-const QUOTE_STATUSES = ['nowe', 'w kontakcie', 'wycena wysłana', 'negocjacja', 'zaakceptowana', 'odrzucona'];
+const QUOTE_STATUSES = ['nowe', 'w kontakcie', 'wycena wysłana', 'negocjacja', 'zaakceptowana', 'zaliczka opłacona', 'odrzucona'];
 
 // ===== WEJŚCIE =====
 function doPost(e) {
@@ -72,6 +73,8 @@ function doPost(e) {
   try {
     if (body.type === 'quote-get') {
       return json_(getQuote_(body));
+    } else if (body.type === 'quote-paid') {
+      return json_(paidQuote_(body));
     } else if (body.type === 'quote-response') {
       return json_(respondQuote_(body));
     } else if (body.type === 'lead' && body.package === QUOTE_PACKAGE) {
@@ -283,7 +286,7 @@ function sendQuote_(sh, row) {
     h2_('Zakres') +
     '<div style="margin:0 0 16px;padding:14px 16px;background:#f6f7f4;border-radius:8px;font-size:15px;line-height:1.6;color:#1b1b1b">' +
     esc_(scope).replace(/\n/g, '<br>') + '</div>' +
-    rows_([['Czas realizacji', time], ['Płatność', 'zaliczka 50% przed startem (link do płatności wyślę po akceptacji), reszta po publikacji'], ['Ważna do', fmtDate_(validUntil)]]) +
+    rows_([['Czas realizacji', time], ['Płatność', paymentsEnabled_() ? 'zaliczka 50% online po akceptacji (karta, BLIK, Przelewy24), reszta po publikacji' : 'zaliczka 50% przed startem (link do płatności wyślę po akceptacji), reszta po publikacji'], ['Ważna do', fmtDate_(validUntil)]]) +
     '<div style="margin:18px 0;padding:18px 16px;border:2px solid #15803d;border-radius:10px;text-align:center">' +
     '<div style="font-size:13px;color:#555;text-transform:uppercase;letter-spacing:1px">Kwota</div>' +
     '<div style="font-size:30px;font-weight:bold;color:#15803d;margin-top:4px">' + price + '</div></div>' +
@@ -349,7 +352,9 @@ function quoteState_(q) {
   return {
     sent: !!sent,
     expired: !!valid && new Date(valid).getTime() < Date.now() - 24 * 60 * 60 * 1000,
-    closed: status === 'zaakceptowana' || status === 'odrzucona',
+    closed: status === 'zaakceptowana' || status === 'odrzucona' || status === 'zaliczka opłacona',
+    accepted: status === 'zaakceptowana',
+    paid: status === 'zaliczka opłacona' || !!q.get('data wpłaty'),
     status: status,
   };
 }
@@ -373,8 +378,84 @@ function getQuote_(d) {
       status: st.status,
       expired: st.expired,
       closed: st.closed,
+      accepted: st.accepted,
+      paid: st.paid,
+      deposit: fmtMoney_(depositOf_(q)),
+      depositGrosze: Math.round(depositOf_(q) * 100),
+      email: String(q.get('e-mail') || ''),
     },
   };
+}
+
+/** Zaliczka = 50% kwoty wyceny (zaokrąglona do grosza). */
+function depositOf_(q) {
+  return Math.round(parseAmount_(q.get('kwota (zł)')) * 50) / 100;
+}
+
+/** Czy płatności online (Stripe) są włączone — właściwość skryptu STRIPE_ENABLED = tak. */
+function paymentsEnabled_() {
+  return String(PropertiesService.getScriptProperties().getProperty('STRIPE_ENABLED') || '').toLowerCase() === 'tak';
+}
+
+function payLink_(ref) {
+  return siteUrl_() + '/wycena/?ref=' + encodeURIComponent(ref) + '&t=' + quoteToken_(ref) + '&a=pay';
+}
+
+/**
+ * Wpłata zaliczki potwierdzona przez Stripe (wywołuje to funkcja /api/stripe-webhook,
+ * po sprawdzeniu podpisu Stripe). Zapis jest idempotentny — powtórka nic nie zmienia.
+ */
+function paidQuote_(d) {
+  const sh = sheet_(SHEET_QUOTES);
+  const last = sh.getLastRow();
+  if (last < 2) return { ok: false, error: 'not_found' };
+  const refs = sh.getRange(2, Q['numer'], last - 1, 1).getValues();
+  let row = 0;
+  for (let i = 0; i < refs.length; i++) if (String(refs[i][0]) === String(d.ref)) { row = i + 2; break; }
+  if (!row) return { ok: false, error: 'not_found' };
+  const values = sh.getRange(row, 1, 1, HEADERS[SHEET_QUOTES].length).getValues()[0];
+  const get = function (h) { return values[Q[h] - 1]; };
+  if (get('data wpłaty')) return { ok: true, already: true };
+
+  const paid = Number(d.amount) || 0;
+  sh.getRange(row, Q['status']).setValue('zaliczka opłacona');
+  sh.getRange(row, Q['zaliczka (zł)']).setValue(paid).setNumberFormat('#,##0.00 "zł"');
+  sh.getRange(row, Q['data wpłaty']).setValue(new Date()).setNumberFormat('dd.MM.yyyy HH:mm');
+  sh.getRange(row, Q['ID płatności']).setValue(safe_(d.paymentId || d.sessionId || ''));
+
+  const ref = String(get('numer'));
+  const name = String(get('imię') || '');
+  const company = String(get('firma') || '');
+  const email = String(get('e-mail') || '');
+  const total = parseAmount_(get('kwota (zł)'));
+
+  sendSafe_({
+    to: email, replyTo: OWNER_EMAIL, name: SIGNATURE,
+    subject: 'Zaliczka otrzymana — ' + ref + ' — ' + SIGNATURE,
+    body: 'Cześć ' + name + ',\n\ndziękuję — zaliczka ' + fmtMoney_(paid) + ' za wycenę ' + ref + ' dotarła.\n\n' +
+      'Co dalej:\n1. W ciągu 24 h odezwę się, żeby ustalić termin startu.\n2. Pierwszą makietę zobaczysz w 1–2 dni od startu.\n' +
+      '3. Pozostałą kwotę (' + fmtMoney_(Math.max(0, total - paid)) + ') zapłacisz po publikacji strony.\n\n' + signatureText_(),
+    htmlBody: emailHtml_('Zaliczka otrzymana — startujemy!',
+      p_('Cześć ' + esc_(name) + ',') +
+      p_('dziękuję — zaliczka <b>' + esc_(fmtMoney_(paid)) + '</b> za wycenę <b>' + esc_(ref) + '</b> dotarła. Potwierdzenie płatności wysłał Ci też Stripe.') +
+      h2_('Co dalej?') +
+      steps_([
+        'W ciągu <b>24 h</b> odezwę się, żeby ustalić termin startu.',
+        'Pierwszą makietę zobaczysz w <b>1–2 dni</b> od startu.',
+        'Pozostałą kwotę (<b>' + esc_(fmtMoney_(Math.max(0, total - paid))) + '</b>) zapłacisz po publikacji strony.',
+      ])),
+  });
+  sendSafe_({
+    to: OWNER_EMAIL, replyTo: email, name: 'Formularz ' + SIGNATURE,
+    subject: 'Wpłata zaliczki ' + fmtMoney_(paid) + ' — ' + ref + ' (' + company + ')',
+    body: plainRows_([['Wycena', ref], ['Firma', company], ['Wpłata', fmtMoney_(paid)], ['ID płatności', d.paymentId || d.sessionId || '']]) +
+      '\n\nArkusz: ' + spreadsheet_().getUrl(),
+    htmlBody: emailHtml_('Wpłata zaliczki: ' + esc_(fmtMoney_(paid)),
+      rows_([['Wycena', ref], ['Firma', company], ['Wpłata', fmtMoney_(paid)], ['ID płatności', d.paymentId || d.sessionId || '']]) +
+      p_('<b>Do zrobienia:</b> w ciągu 24 h odezwij się do klienta i ustalcie termin startu.') +
+      button_('Otwórz arkusz', spreadsheet_().getUrl())),
+  });
+  return { ok: true };
 }
 
 /** Zapis decyzji klienta: accept | negotiate | reject. */
@@ -407,6 +488,8 @@ function respondQuote_(d) {
   const company = String(q.get('firma') || '');
   const email = String(q.get('e-mail') || '');
   const amount = fmtMoney_(parseAmount_(q.get('kwota (zł)')));
+  const pay = paymentsEnabled_();
+  const deposit = fmtMoney_(depositOf_(q));
 
   // Mail do klienta
   const client = {
@@ -416,12 +499,21 @@ function respondQuote_(d) {
       html: p_('Cześć ' + esc_(name) + ',') +
         p_('dziękuję za zaufanie — wycena <b>' + esc_(ref) + '</b> (' + esc_(amount) + ') została zaakceptowana.') +
         h2_('Co dalej?') +
-        steps_([
-          'W ciągu <b>24 h</b> wyślę Ci <b>osobnego maila z linkiem do płatności zaliczki (50%)</b>.',
-          'Po wpłacie ustalimy termin startu.',
-          'Pierwszą makietę zobaczysz w <b>1–2 dni</b> od startu.',
-        ]),
-      text: 'Dziękuję za akceptację wyceny ' + ref + ' (' + amount + ').\n\nCo dalej:\n1. W ciągu 24 h wyślę Ci osobnego maila z linkiem do płatności zaliczki (50%).\n2. Po wpłacie ustalimy termin startu.\n3. Pierwszą makietę zobaczysz w 1–2 dni od startu.',
+        (pay
+          ? steps_([
+              'Zapłać zaliczkę <b>' + esc_(deposit) + '</b> (50%) online — kartą, BLIK-iem albo Przelewy24.',
+              'Po wpłacie odezwę się w ciągu <b>24 h</b>, żeby ustalić termin startu.',
+              'Pierwszą makietę zobaczysz w <b>1–2 dni</b> od startu.',
+            ]) + button_('Zapłać zaliczkę ' + deposit, payLink_(ref))
+          : steps_([
+              'W ciągu <b>24 h</b> wyślę Ci <b>osobnego maila z linkiem do płatności zaliczki (50%)</b>.',
+              'Po wpłacie ustalimy termin startu.',
+              'Pierwszą makietę zobaczysz w <b>1–2 dni</b> od startu.',
+            ])),
+      text: 'Dziękuję za akceptację wyceny ' + ref + ' (' + amount + ').\n\nCo dalej:\n' +
+        (pay
+          ? '1. Zapłać zaliczkę ' + deposit + ' (50%) online: ' + payLink_(ref) + '\n2. Po wpłacie odezwę się w ciągu 24 h, żeby ustalić termin startu.\n3. Pierwszą makietę zobaczysz w 1–2 dni od startu.'
+          : '1. W ciągu 24 h wyślę Ci osobnego maila z linkiem do płatności zaliczki (50%).\n2. Po wpłacie ustalimy termin startu.\n3. Pierwszą makietę zobaczysz w 1–2 dni od startu.'),
     },
     negotiate: {
       subject: 'Wycena ' + ref + ' — otrzymałem Twoją propozycję',
@@ -459,7 +551,9 @@ function respondQuote_(d) {
         ? p_('Żeby wysłać poprawioną wycenę: zmień kwotę/zakres, wyczyść kolumnę <b>„wysłano”</b> i ponownie zaznacz <b>„wyślij wycenę”</b>.')
         : '') +
       (action === 'accept'
-        ? p_('<b>Do zrobienia:</b> w ciągu 24 h wyślij klientowi maila z linkiem do płatności zaliczki 50% (' + esc_(fmtMoney_(parseAmount_(q.get('kwota (zł)')) / 2)) + ').')
+        ? (pay
+          ? p_('Klient dostał przycisk do zapłaty zaliczki (' + esc_(deposit) + '). O wpłacie dostaniesz osobne powiadomienie.')
+          : p_('<b>Do zrobienia:</b> w ciągu 24 h wyślij klientowi maila z linkiem do płatności zaliczki 50% (' + esc_(deposit) + ').'))
         : '') +
       button_('Otwórz arkusz', spreadsheet_().getUrl())),
   });

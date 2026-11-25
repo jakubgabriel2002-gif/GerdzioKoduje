@@ -31,7 +31,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
           <dl class="q-meta">
             <div><dt>Czas realizacji</dt><dd id="q-time"></dd></div>
-            <div><dt>Płatność</dt><dd>zaliczka 50% przed startem (link do płatności po akceptacji), reszta po publikacji</dd></div>
+            <div><dt>Płatność</dt><dd id="q-terms">zaliczka 50% przed startem (link do płatności po akceptacji), reszta po publikacji</dd></div>
             <div><dt>Ważna do</dt><dd id="q-valid"></dd></div>
           </dl>
           <h2 class="q-h2">Zakres</h2>
@@ -50,7 +50,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <label class="q-option q-option--accept">
               <input type="radio" name="action" value="accept" />
               <span class="q-option__mark" aria-hidden="true"></span>
-              <span class="q-option__body"><b>Akceptuję wycenę</b><small>W ciągu 24 h dostaniesz osobnego maila z linkiem do płatności zaliczki.</small></span>
+              <span class="q-option__body"><b>Akceptuję wycenę</b><small id="q-accept-hint">W ciągu 24 h dostaniesz osobnego maila z linkiem do płatności zaliczki.</small></span>
             </label>
             <label class="q-option">
               <input type="radio" name="action" value="negotiate" />
@@ -89,6 +89,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <h2 id="q-done-title"></h2>
           <p id="q-done-text" class="muted"></p>
         </div>
+
+        <div id="q-pay" class="q-pay" hidden>
+          <h2 class="q-h2">Zaliczka</h2>
+          <p>Do zapłaty teraz: <strong id="q-deposit" class="q-pay__amount"></strong> <span class="muted">(50% wyceny)</span>. Resztę zapłacisz po publikacji strony.</p>
+          <button type="button" class="btn" id="q-pay-btn">Zapłać zaliczkę <span class="btn__arrow" aria-hidden="true">→</span></button>
+          <p class="q-methods">karta · BLIK · Przelewy24 — bezpieczna płatność przez Stripe</p>
+          <div class="form__status" id="q-pay-status" role="status" aria-live="polite"></div>
+        </div>
+
+        <div id="q-paid" class="q-done" hidden>
+          <span class="q-done__icon" aria-hidden="true"></span>
+          <h2 id="q-paid-title">Zaliczka opłacona</h2>
+          <p id="q-paid-text" class="muted">Dziękuję! W ciągu 24 h odezwę się, żeby ustalić termin startu.</p>
+        </div>
       </div>
 
       <noscript>
@@ -102,6 +116,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   type Quote = {
     ref: string; company: string; amount: string; scope: string; time: string;
     validUntil: string; status: string; expired: boolean; closed: boolean;
+    accepted: boolean; paid: boolean; deposit: string;
   };
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
   const params = new URLSearchParams(location.search);
@@ -124,9 +139,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       body: JSON.stringify({ ref, t, ...payload }),
     });
     return (await res.json().catch(() => ({ ok: false, message: 'Nie udało się połączyć. Spróbuj za chwilę.' }))) as {
-      ok: boolean; message?: string; quote?: Quote; status?: string;
+      ok: boolean; message?: string; quote?: Quote; status?: string; payments?: boolean;
     };
   };
+
+  /** Panel płatności zaliczki (Stripe). */
+  function showPay(deposit: string) {
+    $('q-deposit').textContent = deposit;
+    show('q-pay');
+    const btn = $<HTMLButtonElement>('q-pay-btn');
+    const status = $('q-pay-status');
+    btn.onclick = async () => {
+      btn.disabled = true;
+      btn.textContent = 'Otwieram płatność…';
+      status.dataset.state = 'loading';
+      status.textContent = 'Za chwilę przekieruję Cię do bezpiecznej płatności Stripe…';
+      try {
+        const res = await fetch('/api/pay', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ ref, t }),
+        });
+        const data = (await res.json()) as { ok: boolean; url?: string; message?: string; paid?: boolean };
+        if (data.ok && data.url) { location.href = data.url; return; }
+        if (data.paid) { hide('q-pay'); show('q-paid'); return; }
+        throw new Error(data.message);
+      } catch (err) {
+        status.dataset.state = 'error';
+        status.textContent = (err as Error).message || 'Nie udało się otworzyć płatności. Spróbuj za chwilę.';
+        btn.disabled = false;
+        btn.textContent = 'Zapłać zaliczkę';
+      }
+    };
+  }
 
   const LABELS: Record<string, string> = {
     accept: 'Akceptuję wycenę',
@@ -147,6 +192,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     $('q-valid').textContent = q.validUntil + (q.expired ? ' (wygasła)' : '');
     $('q-scope').textContent = q.scope;
     hide('q-loading'); show('q-main');
+    const payments = Boolean(data.payments);
+    if (payments) {
+      $('q-terms').textContent = 'zaliczka 50% online po akceptacji (karta, BLIK, Przelewy24), reszta po publikacji';
+      $('q-accept-hint').textContent = 'Od razu po akceptacji zapłacisz zaliczkę online: kartą, BLIK-iem albo Przelewy24.';
+    }
+
+    // Powrót ze Stripe po płatności
+    if (params.get('paid') === '1' || q.paid) {
+      hide('q-form');
+      if (!q.paid) {
+        $('q-paid-title').textContent = 'Dziękuję za płatność!';
+        $('q-paid-text').textContent = 'Płatność została przyjęta. Potwierdzenie przyjdzie na Twojego maila, a ja odezwę się w ciągu 24 h, żeby ustalić termin startu.';
+      }
+      show('q-paid');
+      return;
+    }
+    // Zaakceptowana, czeka na zaliczkę
+    if (q.accepted && payments) {
+      hide('q-form');
+      showPay(q.deposit);
+      return;
+    }
 
     if (q.closed) {
       $('q-status').textContent = q.status;
@@ -213,6 +280,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       $('q-done-title').textContent = done[0];
       $('q-done-text').textContent = done[1];
       $('q-done').classList.toggle('q-done--neutral', action === 'reject');
+      if (action === 'accept' && payments) {
+        $('q-done-text').textContent = 'Potwierdzenie jest już na Twoim mailu. Możesz od razu zapłacić zaliczkę poniżej — albo później, przyciskiem z maila.';
+        showPay(q.deposit);
+      }
       hide('q-form'); show('q-done');
       $('q-done').scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
@@ -272,6 +343,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .q-closed { margin-top: 2rem; padding: 1.25rem; border-radius: var(--radius-btn); border: 1px solid var(--border-strong); background: var(--bg-raised); display: grid; gap: 0.5rem; }
 
+  .q-pay { margin-top: 1.25rem; padding: clamp(1.25rem, 1rem + 1.5vw, 2rem); border-radius: var(--radius-lg); background: var(--bg-raised); border: 1px solid var(--accent-line); display: grid; gap: 0.9rem; justify-items: start; }
+  .q-pay .q-h2 { margin: 0; }
+  .q-pay__amount { color: var(--accent); font-size: var(--step-1); }
+  .q-methods { font-size: var(--step--1); color: var(--text-muted); }
   .q-done { margin-top: 2rem; padding: 2rem 1.5rem; border-radius: var(--radius-lg); background: var(--accent-tint); border: 1px solid var(--accent-line); display: grid; justify-items: center; text-align: center; gap: 0.75rem; }
   .q-done--neutral { background: var(--bg-raised); border-color: var(--border-strong); }
   .q-done__icon { position: relative; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--accent); }

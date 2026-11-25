@@ -143,6 +143,38 @@ Po podpięciu domeny zmień ją na `https://gerdziokoduje.pl` (albo usuń — to
 Jeśli zaznaczysz pole bez kwoty lub zakresu — nic nie zostanie wysłane, pole się odznaczy, a w komórce pojawi się notatka, czego brakuje.
 Statusy dalej zmieniasz ręcznie z listy: `nowe`, `w kontakcie`, `wycena wysłana`, `zaakceptowana`, `odrzucona`.
 
+## Płatności zaliczek przez Stripe
+
+Jak to działa: klient akceptuje wycenę → od razu widzi przycisk **„Zapłać zaliczkę”** (dostaje go też w mailu) →
+płaci na stronie Stripe (karta, BLIK, Przelewy24) → Stripe powiadamia stronę (webhook) → arkusz sam zmienia status na
+**„zaliczka opłacona”** i uzupełnia kolumny „zaliczka (zł)”, „data wpłaty”, „ID płatności” → klient dostaje „Zaliczka otrzymana”, Ty — powiadomienie o wpłacie.
+Kwota zaliczki (50%) liczy się z arkusza — klient nie może jej zmienić.
+
+Dopóki tego nie skonfigurujesz, wszystko działa jak wcześniej (w mailu: „link do płatności wyślę w ciągu 24 h”).
+
+### Konfiguracja (najpierw w trybie TESTOWYM)
+
+1. **Konto:** załóż konto na <https://dashboard.stripe.com/register>. Przy rejestracji działalności wybierz typ odpowiadający
+   osobie fizycznej. Jeśli Stripe poprosi o dane, których nie masz (np. NIP przy działalności nierejestrowanej) — przerwij i daj znać.
+2. **Metody płatności:** Ustawienia → **Metody płatności** → włącz **Karty**, **BLIK** i **Przelewy24**.
+3. **Klucz API:** Programiści → **Klucze API** → *Utwórz klucz ograniczony* → nazwa `gerdziokoduje` →
+   uprawnienie **Checkout Sessions: Zapis** (reszta „Brak”) → skopiuj klucz `rk_test_…`.
+   (Możesz też użyć „Tajnego klucza” `sk_test_…`, ale ograniczony jest bezpieczniejszy.)
+4. **Webhook:** Programiści → **Webhooki** → *Dodaj endpoint*:
+   - URL: `https://TWOJA-STRONA/api/stripe-webhook` (np. `https://gerdziokoduje.pages.dev/api/stripe-webhook`),
+   - zdarzenia: `checkout.session.completed` i `checkout.session.async_payment_succeeded`,
+   - po zapisaniu skopiuj **Sekret podpisu** `whsec_…`.
+5. **Cloudflare:** projekt → Settings → Variables and Secrets → dodaj jako **Secret**:
+   `STRIPE_SECRET_KEY` (klucz z kroku 3) i `STRIPE_WEBHOOK_SECRET` (z kroku 4) → **Retry deployment**.
+6. **Apps Script:** Właściwości skryptu → dodaj `STRIPE_ENABLED` = `tak` (włącza przycisk płatności w mailach).
+7. **Test:** wyślij sobie wycenę, zaakceptuj ją i zapłać testową kartą `4242 4242 4242 4242` (dowolna przyszła data, dowolny CVC).
+   W arkuszu status powinien zmienić się na „zaliczka opłacona”, a na maila przyjść 2 wiadomości.
+8. **Na produkcję:** w Stripe przełącz się na tryb **Live**, powtórz kroki 3–4 (klucze `rk_live_…` i nowy `whsec_…`)
+   i podmień oba sekrety w Cloudflare.
+
+Prowizje sprawdzisz na <https://stripe.com/pl/pricing> — Stripe pobiera je od każdej wpłaty, bez opłat miesięcznych.
+Wpływy ze Stripe liczą się do limitu przychodu działalności nierejestrowanej i trzeba je wpisać do ewidencji sprzedaży.
+
 ## Zmiana skryptu później
 
 Po każdej zmianie kodu w Apps Script: **Wdróż → Zarządzaj wdrożeniami → ołówek (Edytuj) → Wersja: Nowa wersja → Wdróż**.

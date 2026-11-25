@@ -1,0 +1,27 @@
+---
+/** Logo „</G>” — `</` i `>` zielone, „G” jasne, waga 800. */
+interface Props { size?: string; label?: boolean; class?: string }
+const { size = '1.5rem', label = true, class: cls = '' } = Astro.props;
+---
+<span
+  class:list={['logo', cls]}
+  style={`--logo-size:${size}`}
+  role={label ? 'img' : undefined}
+  aria-label={label ? 'Gerdzio Koduje' : undefined}
+  aria-hidden={label ? undefined : 'true'}
+><span class="logo__a">&lt;/</span><span class="logo__g">G</span><span class="logo__a">&gt;</span></span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-weight: 800;
+    font-size: var(--logo-size);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+  }
+  .logo__a { color: var(--accent); }
+  .logo__g { color: var(--text); }
+</style>

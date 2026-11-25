@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="404 — nie znaleziono | Gerdzio Koduje" description="Ta strona nie istnieje." noindex>
+  <section class="section">
+    <div class="container term">
+      <p class="dim">gerdzio@koduje:~$ cd {'<'}ta-strona{'>'}</p>
+      <h1><span class="accent">&gt;</span> 404: nie znaleziono<span class="cursor" aria-hidden="true">_</span></h1>
+      <p class="muted">Pod tym adresem nic nie ma. Może link jest stary albo literówka wkradła się do adresu.</p>
+      <ul class="prompt-list">
+        <li><a href="/">wróć na stronę główną</a></li>
+        <li><a href="/#oferta">zobacz ofertę dla firm</a></li>
+        <li><a href="/#kontakt">napisz do mnie</a></li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .term { display: grid; gap: var(--space-m); max-width: 46rem; }
+  .term h1 { font-size: var(--step-3); }
+</style>

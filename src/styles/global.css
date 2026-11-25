@@ -1,0 +1,154 @@
+@import '@fontsource/jetbrains-mono/latin-500.css';
+@import '@fontsource/jetbrains-mono/latin-ext-500.css';
+@import '@fontsource/jetbrains-mono/latin-800.css';
+@import '@fontsource/jetbrains-mono/latin-ext-800.css';
+@import './tokens.css';
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+
+html {
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--step-0);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+h1 { font-size: var(--step-4); }
+h2 { font-size: var(--step-3); }
+h3 { font-size: var(--step-1); }
+p { text-wrap: pretty; }
+
+img, svg { display: block; max-width: 100%; height: auto; }
+input, button, textarea, select { font: inherit; color: inherit; }
+
+a { color: var(--accent); text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection { background: var(--accent); color: var(--accent-ink); }
+
+.container {
+  width: min(100% - 2 * var(--gutter), var(--container));
+  margin-inline: auto;
+}
+
+.section { padding-block: var(--space-xl); }
+.section + .section { border-top: 1px solid var(--border); }
+
+.section-head { max-width: 46rem; margin-bottom: var(--space-l); }
+.section-head p { color: var(--text-muted); margin-top: var(--space-s); }
+
+/* Etykieta sekcji w stylu komentarza terminala */
+.eyebrow {
+  display: inline-block;
+  color: var(--accent);
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-s);
+}
+.eyebrow::before { content: '// '; color: var(--text-dim); }
+
+.muted { color: var(--text-muted); }
+.dim { color: var(--text-dim); }
+.accent { color: var(--accent); }
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space-s);
+  top: -100px;
+  z-index: 100;
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 0.6rem 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: var(--radius);
+}
+.skip-link:focus { top: var(--space-s); }
+
+/* Przyciski */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  min-height: 2.9rem;
+  padding: 0.7rem 1.25rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, transform 0.15s;
+}
+.btn:hover { background: transparent; color: var(--accent); }
+.btn:active { transform: translateY(1px); }
+.btn--ghost { background: transparent; color: var(--accent); }
+.btn--ghost:hover { background: var(--accent); color: var(--accent-ink); }
+.btn[disabled] { opacity: 0.6; cursor: progress; }
+
+/* Karty */
+.card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-m);
+}
+
+/* Listy z „>” */
+.prompt-list { list-style: none; padding: 0; display: grid; gap: 0.4rem; }
+.prompt-list li { padding-left: 1.4em; position: relative; }
+.prompt-list li::before { content: '>'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+
+/* Mrugający kursor */
+.cursor { color: var(--accent); animation: blink 1.1s steps(1, end) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .cursor { animation: none; }
+  *, *::before, *::after { transition: none !important; }
+}
+
+/* Prosta treść (polityka itp.) */
+.prose { max-width: 46rem; }
+.prose > * + * { margin-top: 1em; }
+.prose h2 { font-size: var(--step-2); margin-top: 2.2em; }
+.prose h3 { margin-top: 1.6em; }
+.prose ul { padding-left: 1.2em; }
+.prose li + li { margin-top: 0.35em; }
+.todo { background: rgba(255, 200, 60, 0.12); color: #ffd56b; padding: 0 0.25em; border-radius: 3px; }

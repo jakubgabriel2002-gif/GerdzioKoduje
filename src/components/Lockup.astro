@@ -1,0 +1,22 @@
+---
+/** Lockup: „gerdzio” + „koduje”, pod spodem „> buduję aplikacje z AI_”. */
+interface Props { size?: 'sm' | 'md' | 'lg'; tagline?: boolean }
+const { size = 'md', tagline = true } = Astro.props;
+---
+<span class:list={['lockup', `lockup--${size}`]}>
+  <span class="lockup__name"><span class="lockup__w">gerdzio</span><span class="lockup__g">koduje</span></span>
+  {tagline && (
+    <span class="lockup__tag"><span class="lockup__g">&gt;</span> buduję aplikacje z AI<span class="lockup__g cursor" aria-hidden="true">_</span></span>
+  )}
+</span>
+
+<style>
+  .lockup { display: inline-flex; flex-direction: column; gap: 0.15em; line-height: 1.1; }
+  .lockup__name { font-weight: 800; letter-spacing: -0.03em; font-size: var(--lk, 1.25rem); }
+  .lockup__w { color: var(--text); }
+  .lockup__g { color: var(--accent); }
+  .lockup__tag { font-weight: 500; font-size: calc(var(--lk, 1.25rem) * 0.5); color: var(--text-muted); white-space: nowrap; }
+  .lockup--sm { --lk: 1.15rem; }
+  .lockup--md { --lk: 1.5rem; }
+  .lockup--lg { --lk: clamp(2rem, 1.5rem + 3vw, 3.5rem); }
+</style>

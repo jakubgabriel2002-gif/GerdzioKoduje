@@ -1,0 +1,48 @@
+---
+import Logo from './Logo.astro';
+import SocialLinks from './SocialLinks.astro';
+import EmailLink from './EmailLink.astro';
+import { site } from '../config';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__brand">
+      <Logo size="2.25rem" />
+      <p class="muted">Strony dla firm, które same obsługują klientów.</p>
+      <p><EmailLink /></p>
+    </div>
+    <div>
+      <p class="site-footer__label">social</p>
+      <SocialLinks />
+    </div>
+  </div>
+  <div class="container site-footer__bottom">
+    <p>© {year} {site.brand}</p>
+    <a href="/polityka-prywatnosci">Polityka prywatności</a>
+  </div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--border); padding-top: var(--space-l); margin-top: auto; }
+  .site-footer__inner { display: grid; gap: var(--space-l); }
+  .site-footer__brand { display: grid; gap: var(--space-s); justify-items: start; }
+  .site-footer__label { color: var(--text-dim); font-size: var(--step--1); margin-bottom: 0.4rem; }
+  .site-footer__label::before { content: '// '; }
+  .site-footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    margin-top: var(--space-l);
+    padding-block: var(--space-m);
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+  .site-footer__bottom a { color: var(--text-muted); padding-block: 0.3rem; }
+  .site-footer__bottom a:hover { color: var(--accent); }
+  @media (min-width: 48rem) {
+    .site-footer__inner { grid-template-columns: 1.4fr 1fr; align-items: start; }
+  }
+</style>

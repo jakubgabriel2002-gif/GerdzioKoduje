@@ -1,0 +1,26 @@
+---
+/**
+ * Link mailto składany w przeglądarce. W HTML nie ma pełnego adresu —
+ * części są zapisane od tyłu w atrybutach data-*, JS je odwraca i łączy.
+ */
+import { site } from '../config';
+interface Props { class?: string; subject?: string }
+const { class: cls, subject } = Astro.props;
+const rev = (s: string) => s.split('').reverse().join('');
+---
+<a
+  class:list={['email-link', cls]}
+  href="/#kontakt"
+  data-u={rev(site.email.user)}
+  data-d={rev(site.email.domain)}
+  data-s={subject}
+>napisz przez formularz</a>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>('a.email-link[data-u]').forEach((a) => {
+    const r = (s = '') => s.split('').reverse().join('');
+    const addr = `${r(a.dataset.u)}@${r(a.dataset.d)}`;
+    a.href = `mailto:${addr}${a.dataset.s ? `?subject=${encodeURIComponent(a.dataset.s)}` : ''}`;
+    a.textContent = addr;
+  });
+</script>

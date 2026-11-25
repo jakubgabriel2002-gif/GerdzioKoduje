@@ -1,0 +1,78 @@
+---
+---
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero__inner">
+    <p class="hero__prompt"><span class="accent">gerdzio@koduje</span>:<span class="dim">~</span>$ ./start</p>
+    <h1 id="hero-title">Strony dla firm, które same obsługują klientów.</h1>
+    <p class="hero__lead">
+      Robię strony dla lokalnych firm, które przyjmują zapytania za Ciebie: formularz od razu odpisuje klientowi, a zgłoszenie ląduje w arkuszu.
+    </p>
+
+    <div class="tiles">
+      <a class="tile tile--primary" href="#oferta">
+        <span class="tile__kicker">01 / dla firm</span>
+        <span class="tile__title">Dla firm</span>
+        <span class="tile__text">Strona + automatyczna obsługa zapytań. Ty pracujesz, strona łapie klientów.</span>
+        <span class="tile__cta">zobacz ofertę <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="tile" href="/nauka">
+        <span class="tile__kicker">02 / nauka</span>
+        <span class="tile__title">Chcę się nauczyć</span>
+        <span class="tile__text">Zbuduj własną aplikację z AI. Materiały, kurs i mentoring — startujemy wkrótce.</span>
+        <span class="tile__cta">zapisz się na listę <span aria-hidden="true">→</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-block: clamp(3rem, 2rem + 5vw, 6.5rem) var(--space-xl);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 44px 44px;
+    background-position: center top;
+    border-bottom: 1px solid var(--border);
+  }
+  /* wygaszenie siatki ku dołowi bez gradientu kolorów — maska */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 35%;
+    background: var(--bg);
+    mask-image: linear-gradient(to bottom, transparent, #000);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000);
+    pointer-events: none;
+  }
+  .hero__inner { position: relative; z-index: 1; display: grid; gap: var(--space-m); }
+  .hero__prompt { font-size: var(--step--1); color: var(--text-muted); }
+  .hero h1 { max-width: 20ch; }
+  .hero__lead { max-width: 44rem; color: var(--text-muted); font-size: var(--step-1); }
+
+  .tiles { display: grid; gap: var(--space-s); margin-top: var(--space-m); }
+  .tile {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+    padding: clamp(1.25rem, 1rem + 1.5vw, 2.25rem);
+    min-height: 15rem;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .tile:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .tile--primary { border-color: var(--accent); }
+  .tile__kicker { color: var(--text-dim); font-size: var(--step--1); }
+  .tile__title { font-weight: 800; font-size: var(--step-3); letter-spacing: -0.02em; line-height: 1.1; }
+  .tile__text { color: var(--text-muted); max-width: 32rem; }
+  .tile__cta { margin-top: auto; padding-top: 0.75rem; color: var(--accent); font-weight: 800; }
+  @media (min-width: 48rem) {
+    .tiles { grid-template-columns: 1fr 1fr; gap: var(--space-m); }
+  }
+</style>

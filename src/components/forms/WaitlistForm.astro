@@ -1,0 +1,30 @@
+---
+import Turnstile from './Turnstile.astro';
+---
+<form class="form" action="/api/waitlist" method="post" data-enhance data-success="Jesteś na liście! Sprawdź skrzynkę — wysłałem potwierdzenie.">
+  <div class="field">
+    <label for="wl-email">E-mail <span class="req" aria-hidden="true">*</span></label>
+    <input id="wl-email" name="email" type="email" autocomplete="email" required maxlength="254" />
+  </div>
+  <div class="field">
+    <label for="wl-goal">Co chcesz zbudować? <span class="dim">(opcjonalnie)</span></label>
+    <textarea id="wl-goal" name="goal" maxlength="1000" rows="3" placeholder="np. aplikację do zapisów dla mojego klubu"></textarea>
+  </div>
+  <div class="hp" aria-hidden="true">
+    <label for="wl-website">Nie wypełniaj tego pola</label>
+    <input id="wl-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+  <label class="consent">
+    <input type="checkbox" name="consent" value="tak" required />
+    <span>Zgadzam się na przetwarzanie mojego e-maila w celu powiadomienia o starcie, zgodnie z <a href="/polityka-prywatnosci">polityką prywatności</a>. <span class="req" aria-hidden="true">*</span></span>
+  </label>
+  <Turnstile />
+  <div class="form__actions">
+    <button class="btn" type="submit">Zapisz mnie</button>
+  </div>
+  <div class="form__status" role="status" aria-live="polite"></div>
+</form>
+
+<script>
+  import '../../scripts/form';
+</script>

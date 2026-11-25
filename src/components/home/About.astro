@@ -1,0 +1,40 @@
+---
+import SocialLinks from '../SocialLinks.astro';
+import Logo from '../Logo.astro';
+---
+<section id="o-mnie" class="section" aria-labelledby="o-mnie-title">
+  <div class="container about">
+    <div class="about__visual" aria-hidden="true">
+      <Logo size="clamp(4rem, 3rem + 6vw, 8rem)" label={false} />
+    </div>
+    <div class="about__text">
+      <span class="eyebrow">o mnie</span>
+      <h2 id="o-mnie-title">Cześć, jestem Jakub</h2>
+      <p>Programuję od dzieciaka. Dziś buduję strony i aplikacje z pomocą AI.</p>
+      <p>W sieci jako <strong class="accent">Gerdzio Koduje</strong> pokazuję cały proces bez ściemy: co działa, co nie, ile to trwa i ile kosztuje. Tak samo pracuję z klientami.</p>
+      <SocialLinks class="about__social" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .about { display: grid; gap: var(--space-l); align-items: center; }
+  .about__visual {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    max-width: 28rem;
+    width: 100%;
+    background-color: var(--bg-raised);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 28px 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .about__text { display: grid; gap: var(--space-s); max-width: 40rem; }
+  .about__text p { color: var(--text-muted); }
+  .about__text :global(.about__social) { margin-top: var(--space-s); }
+  @media (min-width: 60rem) { .about { grid-template-columns: 1fr 1.3fr; } }
+</style>

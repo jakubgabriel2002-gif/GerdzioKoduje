@@ -1,0 +1,14 @@
+---
+/**
+ * Widget Cloudflare Turnstile. Renderuje się tylko, gdy ustawiono
+ * PUBLIC_TURNSTILE_SITE_KEY. Bez klucza (np. lokalnie) — nic się nie wyświetla,
+ * a funkcja po stronie serwera pomija weryfikację, jeśli nie ma TURNSTILE_SECRET.
+ */
+import { turnstileSiteKey } from '../../config';
+---
+{turnstileSiteKey && (
+  <>
+    <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="dark" data-language="pl" data-size="flexible"></div>
+    <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  </>
+)}

@@ -1,0 +1,31 @@
+---
+import LeadForm from '../forms/LeadForm.astro';
+import EmailLink from '../EmailLink.astro';
+---
+<section id="kontakt" class="section" aria-labelledby="kontakt-title">
+  <div class="container contact">
+    <div class="contact__intro">
+      <span class="eyebrow">kontakt</span>
+      <h2 id="kontakt-title">Wyceń stronę</h2>
+      <p>Opisz krótko firmę i czego potrzebujesz. Odpowiadam w ciągu 24 h — z konkretną propozycją, nie z ogólnikami.</p>
+      <ul class="prompt-list contact__list">
+        <li>odpowiedź w ciągu 24 h</li>
+        <li>makieta w 1–2 dni od briefu</li>
+        <li>domena zawsze rejestrowana na Ciebie</li>
+      </ul>
+      <p class="contact__mail">Wolisz maila? <EmailLink subject="Zapytanie o stronę" /></p>
+    </div>
+    <div class="form-card">
+      <LeadForm />
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact { display: grid; gap: var(--space-l); }
+  .contact__intro { display: grid; gap: var(--space-s); align-content: start; }
+  .contact__intro > p { color: var(--text-muted); }
+  .contact__list { color: var(--text-muted); }
+  .contact__mail { font-size: var(--step--1); }
+  @media (min-width: 64rem) { .contact { grid-template-columns: 1fr 1.5fr; } .contact__intro { position: sticky; top: calc(var(--header-h) + 2rem); } }
+</style>

@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WaitlistForm from '../components/forms/WaitlistForm.astro';
+
+const plans = [
+  { no: '01', title: 'Materiały', text: 'Poradniki i nagrania: od pomysłu do działającej aplikacji, krok po kroku, z AI jako pomocnikiem.' },
+  { no: '02', title: 'Kurs', text: 'Uporządkowana ścieżka, w której budujesz własny projekt — nie kolejną listę zadań z tutoriala.' },
+  { no: '03', title: 'Mentoring 1:1', text: 'Spotkania, na których razem przechodzimy przez Twój projekt: kod, decyzje i blokady.' },
+];
+---
+<BaseLayout
+  title="Nauka — buduj aplikacje z AI | Gerdzio Koduje"
+  description="Uczę budować aplikacje z AI. Materiały, kurs i mentoring 1:1 — startujemy wkrótce. Zapisz się na listę oczekujących."
+>
+  <section class="section nauka-hero">
+    <div class="container">
+      <span class="eyebrow">nauka</span>
+      <h1>Uczę budować aplikacje z AI. <span class="accent">Startujemy wkrótce.</span></h1>
+      <p class="lead">Pokazuję, jak z pomysłu zrobić działającą aplikację — z AI jako pomocnikiem, bez magii i bez ściemy.</p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="co-bedzie">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">co będzie</span>
+        <h2 id="co-bedzie">Trzy sposoby nauki</h2>
+      </div>
+      <ul class="plans">
+        {plans.map((p) => (
+          <li class="card plan">
+            <span class="plan__no" aria-hidden="true">{p.no}</span>
+            <h3>{p.title}</h3>
+            <p class="muted">{p.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="zapisy" aria-labelledby="zapisy-title">
+    <div class="container waitlist">
+      <div>
+        <span class="eyebrow">lista oczekujących</span>
+        <h2 id="zapisy-title">Zapisz się</h2>
+        <p class="muted">Zostaw maila — dam znać jako pierwszy, gdy ruszymy.</p>
+        <p class="dim small">Żadnego spamu. Jedna wiadomość, gdy startujemy. Wypisać się możesz w każdej chwili.</p>
+      </div>
+      <div class="form-card">
+        <WaitlistForm />
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="muted">Szukasz strony dla swojej firmy? <a href="/#oferta">Zobacz ofertę dla firm →</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nauka-hero {
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+  .nauka-hero h1 { max-width: 22ch; }
+  .lead { margin-top: var(--space-m); max-width: 42rem; color: var(--text-muted); font-size: var(--step-1); }
+  .plans { list-style: none; padding: 0; display: grid; gap: var(--space-m); }
+  .plan { display: grid; gap: 0.5rem; }
+  .plan__no { color: var(--accent); font-weight: 800; }
+  .waitlist { display: grid; gap: var(--space-l); }
+  .waitlist > div:first-child { display: grid; gap: var(--space-s); align-content: start; }
+  .small { font-size: var(--step--1); }
+  @media (min-width: 48rem) { .plans { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 64rem) { .waitlist { grid-template-columns: 1fr 1.2fr; } }
+</style>

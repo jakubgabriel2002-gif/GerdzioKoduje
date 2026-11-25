@@ -1,0 +1,38 @@
+---
+import { faq } from '../../config';
+---
+<section id="faq" class="section" aria-labelledby="faq-title">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">faq</span>
+      <h2 id="faq-title">Częste pytania</h2>
+    </div>
+    <div class="faq">
+      {faq.map((item) => (
+        <details class="faq__item">
+          <summary><h3>{item.q}</h3></summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq { max-width: 50rem; border-top: 1px solid var(--border); }
+  .faq__item { border-bottom: 1px solid var(--border); }
+  .faq__item summary {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 1.1rem 0;
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq__item summary::-webkit-details-marker { display: none; }
+  .faq__item summary::before { content: '+'; color: var(--accent); font-weight: 800; width: 1ch; flex: none; }
+  .faq__item[open] summary::before { content: '−'; }
+  .faq__item summary:hover h3 { color: var(--accent); }
+  .faq__item h3 { font-size: var(--step-1); font-weight: 800; }
+  .faq__item p { color: var(--text-muted); padding: 0 0 1.25rem calc(1ch + 1rem); max-width: 44rem; }
+</style>

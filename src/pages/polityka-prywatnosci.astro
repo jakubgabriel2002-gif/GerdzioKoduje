@@ -1,0 +1,93 @@
+---
+/**
+ * UWAGA: to szablon. Przed publikacją uzupełnij pola [DO UZUPEŁNIENIA]
+ * i zweryfikuj całość (najlepiej z prawnikiem). Zobacz README.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EmailLink from '../components/EmailLink.astro';
+import { site } from '../config';
+const updated = '[DO UZUPEŁNIENIA: data]';
+---
+<BaseLayout title="Polityka prywatności | Gerdzio Koduje" description="Jakie dane zbieram przez formularze na gerdziokoduje.pl, w jakim celu i jakie masz prawa.">
+  <section class="section">
+    <div class="container prose">
+      <span class="eyebrow">dokument</span>
+      <h1>Polityka prywatności</h1>
+      <p class="muted">Ostatnia aktualizacja: <span class="todo">{updated}</span></p>
+
+      <h2>1. Kto jest administratorem danych</h2>
+      <p>
+        Administratorem Twoich danych osobowych jest osoba fizyczna: Jakub <span class="todo">[DO UZUPEŁNIENIA: nazwisko]</span>,
+        <span class="todo">[DO UZUPEŁNIENIA: miasto]</span>, prowadzący serwis {site.domain} pod marką {site.brand}.
+        Kontakt w sprawach danych osobowych: <EmailLink subject="Dane osobowe" />.
+      </p>
+
+      <h2>2. Jakie dane zbieram</h2>
+      <h3>Formularz zapytania o stronę</h3>
+      <ul>
+        <li>imię, nazwa firmy, adres e-mail, branża, treść wiadomości (wymagane),</li>
+        <li>numer telefonu, wybrany pakiet, informacja o obecnej stronie i link do niej (opcjonalne).</li>
+      </ul>
+      <h3>Lista oczekujących (Nauka)</h3>
+      <ul>
+        <li>adres e-mail (wymagany),</li>
+        <li>odpowiedź na pytanie „Co chcesz zbudować?” (opcjonalna).</li>
+      </ul>
+      <h3>Dane techniczne</h3>
+      <p>
+        Przy korzystaniu ze strony serwer hostingowy (Cloudflare) przetwarza dane techniczne, takie jak adres IP, typ przeglądarki
+        i czas wizyty, w celu dostarczenia strony i ochrony przed nadużyciami. Formularze są chronione usługą Cloudflare Turnstile,
+        która sprawdza, czy formularz wysyła człowiek, a nie bot.
+      </p>
+      <p>Strona nie używa narzędzi analitycznych ani plików cookie do śledzenia czy reklam.</p>
+
+      <h2>3. W jakim celu i na jakiej podstawie</h2>
+      <ul>
+        <li><strong>Odpowiedź na zapytanie i przygotowanie wyceny</strong> — art. 6 ust. 1 lit. b RODO (działania na Twoje żądanie przed zawarciem umowy) oraz art. 6 ust. 1 lit. a RODO (Twoja zgoda wyrażona w formularzu).</li>
+        <li><strong>Powiadomienie o starcie kursu i materiałów (lista oczekujących)</strong> — art. 6 ust. 1 lit. a RODO (zgoda).</li>
+        <li><strong>Wysłanie automatycznego potwierdzenia e-mail</strong> — jak wyżej, jako część obsługi zgłoszenia.</li>
+        <li><strong>Ochrona przed spamem i nadużyciami, ewentualne dochodzenie roszczeń</strong> — art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes administratora).</li>
+      </ul>
+      <p>Podanie danych jest dobrowolne, ale bez danych oznaczonych jako wymagane nie mogę odpowiedzieć na zapytanie ani zapisać Cię na listę.</p>
+
+      <h2>4. Jak długo przechowuję dane</h2>
+      <ul>
+        <li>Zapytania o stronę — do czasu zakończenia rozmów, a jeśli dojdzie do współpracy — przez czas jej trwania i okres przedawnienia roszczeń. Gdy do współpracy nie dojdzie, usuwam je najpóźniej po <span class="todo">[DO UZUPEŁNIENIA: np. 12 miesiącach]</span>.</li>
+        <li>Lista oczekujących — do startu kursu i wysłania powiadomienia, nie dłużej niż <span class="todo">[DO UZUPEŁNIENIA: np. 24 miesiące]</span>, albo do cofnięcia zgody.</li>
+        <li>Dane techniczne po stronie Cloudflare — zgodnie z zasadami Cloudflare, zwykle przez krótki czas.</li>
+      </ul>
+
+      <h2>5. Komu powierzam dane</h2>
+      <p>Korzystam z usług zewnętrznych dostawców, którzy przetwarzają dane w moim imieniu:</p>
+      <ul>
+        <li><strong>Cloudflare, Inc.</strong> — hosting strony, obsługa formularzy (Cloudflare Pages Functions) i ochrona przed botami (Turnstile).</li>
+        <li><strong>Google (Google Ireland Ltd. / Google LLC)</strong> — przechowywanie zgłoszeń w Arkuszach Google, ich obsługa przez Google Apps Script oraz wysyłka wiadomości e-mail przez Gmail.</li>
+      </ul>
+      <p>
+        Dostawcy ci mogą przekazywać dane poza Europejski Obszar Gospodarczy, w tym do USA. Odbywa się to na podstawie
+        decyzji Komisji Europejskiej (EU-U.S. Data Privacy Framework) lub standardowych klauzul umownych.
+        Nie sprzedaję ani nie udostępniam Twoich danych w celach marketingowych.
+      </p>
+
+      <h2>6. Twoje prawa</h2>
+      <p>Masz prawo do:</p>
+      <ul>
+        <li>wglądu w swoje dane i otrzymania ich kopii,</li>
+        <li>sprostowania (poprawienia) danych,</li>
+        <li>usunięcia danych („prawo do bycia zapomnianym”),</li>
+        <li>ograniczenia przetwarzania,</li>
+        <li>przeniesienia danych,</li>
+        <li>wniesienia sprzeciwu wobec przetwarzania opartego na uzasadnionym interesie,</li>
+        <li>cofnięcia zgody w dowolnym momencie — bez wpływu na zgodność z prawem przetwarzania przed jej cofnięciem,</li>
+        <li>wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa).</li>
+      </ul>
+      <p>Aby skorzystać z praw, napisz na adres podany w punkcie 1. Odpowiem bez zbędnej zwłoki, nie później niż w ciągu miesiąca.</p>
+
+      <h2>7. Zautomatyzowane decyzje</h2>
+      <p>Nie podejmuję wobec Ciebie decyzji opartych wyłącznie na zautomatyzowanym przetwarzaniu, w tym profilowaniu. Automatyczne są jedynie e-maile potwierdzające otrzymanie zgłoszenia.</p>
+
+      <h2>8. Zmiany polityki</h2>
+      <p>Gdy zmieni się sposób przetwarzania danych, zaktualizuję ten dokument i datę na górze strony.</p>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,31 @@
+---
+import { processSteps, processNote } from '../../config';
+---
+<section id="proces" class="section" aria-labelledby="proces-title">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">proces</span>
+      <h2 id="proces-title">Jak pracujemy</h2>
+    </div>
+    <ol class="steps">
+      {processSteps.map((s, i) => (
+        <li class="step">
+          <span class="step__no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{s.title}</h3>
+          <p>{s.text}</p>
+        </li>
+      ))}
+    </ol>
+    <p class="process-note"><span class="accent" aria-hidden="true">&gt; </span>{processNote}</p>
+  </div>
+</section>
+
+<style>
+  .steps { list-style: none; padding: 0; display: grid; gap: var(--space-m); counter-reset: step; }
+  .step { display: grid; gap: 0.5rem; padding-top: var(--space-s); border-top: 1px solid var(--border-strong); }
+  .step__no { color: var(--accent); font-weight: 800; font-size: var(--step-2); }
+  .step p { color: var(--text-muted); }
+  .process-note { margin-top: var(--space-l); color: var(--text-muted); max-width: 46rem; }
+  @media (min-width: 48rem) { .steps { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .steps { grid-template-columns: repeat(4, 1fr); } }
+</style>

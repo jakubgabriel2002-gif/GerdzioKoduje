@@ -77,7 +77,6 @@ export const packages: Pkg[] = [
       'formularz z automatyczną odpowiedzią',
       'zapis zapytań w arkuszu',
       'wersja mobilna',
-      'podstawowe SEO',
     ],
     inForm: true,
   },
@@ -102,7 +101,7 @@ export const packageOptions = [
 ];
 
 export const processSteps = [
-  { title: 'Krótki brief', text: 'Kilka pytań o firmę, klientów i to, co strona ma załatwiać. 15 minut rozmowy albo formularz.' },
+  { title: 'Krótki brief', text: 'Kilka pytań o firmę, klientów i to, co strona ma załatwiać. Wystarczy formularz albo krótka rozmowa.' },
   { title: 'Makieta w 1–2 dni', text: 'Dostajesz działający podgląd strony, a nie obrazek. Klikasz i widzisz, jak to będzie wyglądać.' },
   { title: 'Poprawki', text: 'Dwie rundy poprawek w cenie. Zmieniamy teksty, kolejność, kolory — aż będzie dobrze.' },
   { title: 'Publikacja i opieka', text: 'Strona trafia pod Twoją domenę. Jeśli chcesz, dalej się nią opiekuję.' },
@@ -114,11 +113,11 @@ export const processNote =
 export const faq = [
   {
     q: 'Ile trwa realizacja?',
-    a: 'Makietę pokazuję w 1–2 dni od briefu. Cała Wizytówka zwykle zamyka się w tygodniu, Strona firmowa w 2–3 tygodnie — w praktyce najdłużej czeka się na teksty i zdjęcia.',
+    a: 'Makietę pokazuję w 1–2 dni od briefu. Dalej tempo zależy głównie od tego, jak szybko dostanę teksty i zdjęcia, oraz od rund poprawek (dwie są w cenie).',
   },
   {
     q: 'Co muszę przygotować?',
-    a: 'Logo (jeśli masz), listę usług z cenami, dane kontaktowe, godziny otwarcia i kilka zdjęć. Jeśli czegoś brakuje — pomogę napisać teksty i dobrać zdjęcia.',
+    a: 'Logo (jeśli masz), listę usług z cenami, dane kontaktowe, godziny otwarcia i kilka zdjęć. Jeśli czegoś brakuje, napisz — ustalimy, jak to uzupełnić.',
   },
   {
     q: 'Czy domena i strona są moje?',

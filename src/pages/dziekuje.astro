@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Dziękuję! | Gerdzio Koduje" description="Wiadomość została wysłana." noindex>
+  <section class="section">
+    <div class="container term">
+      <p class="dim">gerdzio@koduje:~$ send --form</p>
+      <h1><span class="accent">&gt;</span> wysłano. dzięki!<span class="cursor" aria-hidden="true">_</span></h1>
+      <p class="muted">Twoja wiadomość do mnie dotarła. Na podany e-mail przyszło automatyczne potwierdzenie — jeśli go nie widzisz, zajrzyj do spamu.</p>
+      <p class="muted">Na zapytania o strony odpowiadam w ciągu 24 h.</p>
+      <ul class="prompt-list">
+        <li><a href="/">wróć na stronę główną</a></li>
+        <li><a href="/#portfolio">obejrzyj portfolio</a></li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .term { display: grid; gap: var(--space-m); max-width: 46rem; }
+  .term h1 { font-size: var(--step-3); }
+</style>

@@ -1,0 +1,100 @@
+---
+import Turnstile from './Turnstile.astro';
+import { packageOptions } from '../../config';
+---
+<form class="form" action="/api/lead" method="post" data-enhance data-success="Dzięki! Zapytanie dotarło. Na maila przyszło potwierdzenie — odezwę się w ciągu 24 h.">
+  <div class="form__row form__row--2">
+    <div class="field">
+      <label for="lead-name">Imię <span class="req" aria-hidden="true">*</span></label>
+      <input id="lead-name" name="name" type="text" autocomplete="given-name" required maxlength="80" />
+    </div>
+    <div class="field">
+      <label for="lead-company">Nazwa firmy <span class="req" aria-hidden="true">*</span></label>
+      <input id="lead-company" name="company" type="text" autocomplete="organization" required maxlength="120" />
+    </div>
+  </div>
+  <div class="form__row form__row--2">
+    <div class="field">
+      <label for="lead-email">E-mail <span class="req" aria-hidden="true">*</span></label>
+      <input id="lead-email" name="email" type="email" autocomplete="email" required maxlength="254" />
+    </div>
+    <div class="field">
+      <label for="lead-phone">Telefon <span class="dim">(opcjonalnie)</span></label>
+      <input id="lead-phone" name="phone" type="tel" autocomplete="tel" maxlength="30" />
+    </div>
+  </div>
+  <div class="form__row form__row--2">
+    <div class="field">
+      <label for="lead-industry">Branża <span class="req" aria-hidden="true">*</span></label>
+      <input id="lead-industry" name="industry" type="text" required maxlength="80" placeholder="np. warsztat, gabinet" />
+    </div>
+    <div class="field">
+      <label for="lead-package">Pakiet</label>
+      <select id="lead-package" name="package">
+        {packageOptions.map((o) => <option value={o} selected={o === 'Nie wiem jeszcze'}>{o}</option>)}
+      </select>
+    </div>
+  </div>
+
+  <fieldset class="field">
+    <legend class="field__label">Czy masz już stronę?</legend>
+    <div class="choices">
+      <label class="choice"><input type="radio" name="hasSite" value="nie" checked /> nie</label>
+      <label class="choice"><input type="radio" name="hasSite" value="tak" /> tak</label>
+    </div>
+  </fieldset>
+  <div class="field" data-site-url>
+    <label for="lead-site">Link do obecnej strony <span class="dim">(jeśli masz)</span></label>
+    <input id="lead-site" name="siteUrl" type="url" inputmode="url" maxlength="300" placeholder="https://" />
+  </div>
+
+  <div class="field">
+    <label for="lead-message">Wiadomość <span class="req" aria-hidden="true">*</span></label>
+    <textarea id="lead-message" name="message" required minlength="10" maxlength="3000" aria-describedby="lead-message-hint"></textarea>
+    <p class="field__hint" id="lead-message-hint">Czym zajmuje się firma i czego oczekujesz od strony? Kilka zdań wystarczy.</p>
+  </div>
+
+  <div class="hp" aria-hidden="true">
+    <label for="lead-website">Nie wypełniaj tego pola</label>
+    <input id="lead-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <label class="consent">
+    <input type="checkbox" name="consent" value="tak" required />
+    <span>Zgadzam się na przetwarzanie moich danych w celu odpowiedzi na zapytanie, zgodnie z <a href="/polityka-prywatnosci">polityką prywatności</a>. <span class="req" aria-hidden="true">*</span></span>
+  </label>
+
+  <Turnstile />
+
+  <div class="form__actions">
+    <button class="btn" type="submit">Wyślij zapytanie</button>
+    <span class="field__hint"><span class="req" aria-hidden="true">*</span> pole wymagane</span>
+  </div>
+  <div class="form__status" role="status" aria-live="polite"></div>
+</form>
+
+<script>
+  import '../../scripts/form';
+  // Pole na link pokazujemy tylko przy „tak” (bez JS widoczne zawsze).
+  document.querySelectorAll<HTMLFormElement>('form[action="/api/lead"]').forEach((form) => {
+    const box = form.querySelector<HTMLElement>('[data-site-url]');
+    if (!box) return;
+    const sync = () => {
+      const yes = (form.querySelector<HTMLInputElement>('input[name="hasSite"]:checked')?.value ?? 'nie') === 'tak';
+      box.hidden = !yes;
+      if (!yes) box.querySelector('input')!.value = '';
+    };
+    form.addEventListener('change', (e) => {
+      if ((e.target as HTMLInputElement).name === 'hasSite') sync();
+    });
+    form.addEventListener('reset', () => setTimeout(sync));
+    sync();
+  });
+  // Klik w „Zapytaj o …” przy pakiecie ustawia go w formularzu.
+  document.querySelectorAll<HTMLAnchorElement>('a[data-package]').forEach((a) =>
+    a.addEventListener('click', () => {
+      const sel = document.querySelector<HTMLSelectElement>('#lead-package');
+      if (sel) sel.value = a.dataset.package!;
+    }),
+  );
+</script>

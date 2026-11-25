@@ -16,6 +16,10 @@
 const OWNER_EMAIL = 'jakub.gabriel2002@gmail.com';
 /** Podpis w mailach do klientów. */
 const SIGNATURE = 'Gerdzio Koduje';
+/**
+ * Adres strony (linki w mailach, w tym przyciski wyceny).
+ * Dopóki nie masz domeny, dodaj we Właściwościach skryptu: SITE_URL = https://twoj-projekt.pages.dev
+ */
 const SITE_URL = 'https://gerdziokoduje.pl';
 const TZ = 'Europe/Warsaw';
 /** Ile dni ważna jest wysłana wycena. */
@@ -40,12 +44,13 @@ const HEADERS = {
     'numer', 'data', 'imię', 'firma', 'e-mail', 'telefon', 'branża',
     'rodzaj projektu', 'budżet', 'termin startu', 'obecna strona', 'opis',
     'status', 'kwota (zł)', 'zakres wyceny', 'czas realizacji', 'wyślij wycenę', 'wysłano', 'ważna do',
+    'odpowiedź klienta', 'komentarz klienta', 'data odpowiedzi',
   ],
 };
 /** Numer kolumny (od 1) w zakładce „Wyceny” po nazwie nagłówka. */
 const Q = {};
 HEADERS[SHEET_QUOTES].forEach(function (h, i) { Q[h] = i + 1; });
-const QUOTE_STATUSES = ['nowe', 'w kontakcie', 'wycena wysłana', 'zaakceptowana', 'odrzucona'];
+const QUOTE_STATUSES = ['nowe', 'w kontakcie', 'wycena wysłana', 'negocjacja', 'zaakceptowana', 'odrzucona'];
 
 // ===== WEJŚCIE =====
 function doPost(e) {
@@ -65,7 +70,11 @@ function doPost(e) {
   lock.waitLock(20000);
   let ref = '';
   try {
-    if (body.type === 'lead' && body.package === QUOTE_PACKAGE) {
+    if (body.type === 'quote-get') {
+      return json_(getQuote_(body));
+    } else if (body.type === 'quote-response') {
+      return json_(respondQuote_(body));
+    } else if (body.type === 'lead' && body.package === QUOTE_PACKAGE) {
       ref = handleQuote_(body);
     } else if (body.type === 'lead') {
       handleLead_(body);
@@ -252,6 +261,9 @@ function sendQuote_(sh, row) {
   const price = fmtMoney_(amount);
   const name = String(get('imię') || '');
   const company = String(get('firma') || '');
+  const link = function (a) {
+    return siteUrl_() + '/wycena/?ref=' + encodeURIComponent(ref) + '&t=' + quoteToken_(ref) + '&a=' + a;
+  };
 
   const plain =
     'Cześć ' + name + ',\n\n' +
@@ -262,7 +274,8 @@ function sendQuote_(sh, row) {
     'Płatność: zaliczka 50% przed startem, reszta po publikacji.\n' +
     'Wycena ważna do: ' + fmtDate_(validUntil) + '\n\n' +
     'Domenę zawsze rejestruję na klienta — strona i adres są Twoje.\n\n' +
-    'Aby zaakceptować wycenę, po prostu odpowiedz na tego maila — ustalimy termin startu.\n\n' + signatureText_();
+    'Odpowiedz na wycenę (akceptacja, negocjacja lub odrzucenie):\n' + link('accept') + '\n\n' +
+    'Masz pytania? Po prostu odpowiedz na tego maila.\n\n' + signatureText_();
 
   const html = emailHtml_('Wycena ' + esc_(ref),
     p_('Cześć ' + esc_(name) + ',') +
@@ -275,7 +288,13 @@ function sendQuote_(sh, row) {
     '<div style="font-size:13px;color:#555;text-transform:uppercase;letter-spacing:1px">Kwota</div>' +
     '<div style="font-size:30px;font-weight:bold;color:#15803d;margin-top:4px">' + price + '</div></div>' +
     p_('Domenę zawsze rejestruję na klienta — strona i adres są Twoje.') +
-    p_('<b>Aby zaakceptować wycenę, po prostu odpowiedz na tego maila</b> — ustalimy termin startu.'));
+    h2_('Twoja decyzja') +
+    '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:4px 0 10px"><tr>' +
+    '<td style="padding:0 8px 8px 0"><a href="' + esc_(link('accept')) + '" style="display:inline-block;padding:13px 20px;background:#15803d;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;font-size:15px">Akceptuję wycenę</a></td>' +
+    '<td style="padding:0 8px 8px 0"><a href="' + esc_(link('negotiate')) + '" style="display:inline-block;padding:11px 18px;border:2px solid #15803d;color:#15803d;text-decoration:none;border-radius:8px;font-weight:bold;font-size:15px">Chcę negocjować</a></td>' +
+    '</tr></table>' +
+    p_('<a href="' + esc_(link('reject')) + '" style="color:#666;font-size:14px">Odrzucam wycenę</a>') +
+    p_('<span style="font-size:13px;color:#666">Przycisk otworzy stronę z podsumowaniem wyceny, gdzie potwierdzisz wybór. Masz pytania? Po prostu odpowiedz na tego maila.</span>'));
 
   try {
     MailApp.sendEmail({
@@ -296,6 +315,153 @@ function sendQuote_(sh, row) {
   sh.getRange(row, Q['wysłano']).setValue(now);
   sh.getRange(row, Q['ważna do']).setValue(validUntil);
   box.setNote('Wysłano ' + fmtDate_(now));
+}
+
+// ===== ODPOWIEDŹ KLIENTA NA WYCENĘ (strona /wycena) =====
+/** Podpis linku: HMAC-SHA256(numer wyceny, SECRET) — bez niego nie da się zmienić statusu. */
+function quoteToken_(ref) {
+  const secret = PropertiesService.getScriptProperties().getProperty('SECRET') || SECRET_FALLBACK;
+  const bytes = Utilities.computeHmacSha256Signature(String(ref), secret);
+  return bytes.map(function (b) { return ('0' + (b & 0xff).toString(16)).slice(-2); }).join('').slice(0, 32);
+}
+
+/** Znajduje wiersz wyceny po numerze i sprawdza podpis. */
+function findQuote_(ref, token) {
+  if (!ref || !token || token !== quoteToken_(ref)) return { error: 'bad_link' };
+  const sh = sheet_(SHEET_QUOTES);
+  const last = sh.getLastRow();
+  if (last < 2) return { error: 'not_found' };
+  const refs = sh.getRange(2, Q['numer'], last - 1, 1).getValues();
+  for (let i = 0; i < refs.length; i++) {
+    if (String(refs[i][0]) === String(ref)) {
+      const row = i + 2;
+      const values = sh.getRange(row, 1, 1, HEADERS[SHEET_QUOTES].length).getValues()[0];
+      return { sh: sh, row: row, get: function (h) { return values[Q[h] - 1]; } };
+    }
+  }
+  return { error: 'not_found' };
+}
+
+function quoteState_(q) {
+  const sent = q.get('wysłano');
+  const valid = q.get('ważna do');
+  const status = String(q.get('status') || '');
+  return {
+    sent: !!sent,
+    expired: !!valid && new Date(valid).getTime() < Date.now() - 24 * 60 * 60 * 1000,
+    closed: status === 'zaakceptowana' || status === 'odrzucona',
+    status: status,
+  };
+}
+
+/** Dane do wyświetlenia na stronie /wycena. */
+function getQuote_(d) {
+  const q = findQuote_(d.ref, d.token);
+  if (q.error) return { ok: false, error: q.error };
+  const st = quoteState_(q);
+  if (!st.sent) return { ok: false, error: 'not_sent' };
+  return {
+    ok: true,
+    quote: {
+      ref: String(q.get('numer')),
+      name: String(q.get('imię') || ''),
+      company: String(q.get('firma') || ''),
+      amount: fmtMoney_(parseAmount_(q.get('kwota (zł)'))),
+      scope: String(q.get('zakres wyceny') || ''),
+      time: String(q.get('czas realizacji') || '') || 'do ustalenia',
+      validUntil: q.get('ważna do') ? fmtDate_(q.get('ważna do')) : '',
+      status: st.status,
+      expired: st.expired,
+      closed: st.closed,
+    },
+  };
+}
+
+/** Zapis decyzji klienta: accept | negotiate | reject. */
+function respondQuote_(d) {
+  const q = findQuote_(d.ref, d.token);
+  if (q.error) return { ok: false, error: q.error };
+  const st = quoteState_(q);
+  if (!st.sent) return { ok: false, error: 'not_sent' };
+  if (st.closed) return { ok: false, error: 'closed', status: st.status };
+  const action = String(d.action || '');
+  if (['accept', 'negotiate', 'reject'].indexOf(action) < 0) return { ok: false, error: 'bad_action' };
+  if (action === 'accept' && st.expired) return { ok: false, error: 'expired' };
+
+  const comment = String(d.message || '').trim().slice(0, 2000);
+  const proposal = String(d.price || '').trim().slice(0, 40);
+  const labels = { accept: 'akceptacja', negotiate: 'negocjacja', reject: 'odrzucenie' };
+  const statuses = { accept: 'zaakceptowana', negotiate: 'negocjacja', reject: 'odrzucona' };
+  const fullComment = (proposal ? 'Propozycja kwoty: ' + proposal + (comment ? '\n' : '') : '') + comment;
+
+  const prev = String(q.get('komentarz klienta') || '');
+  const stamp = Utilities.formatDate(new Date(), TZ, 'dd.MM HH:mm');
+  q.sh.getRange(q.row, Q['status']).setValue(statuses[action]);
+  q.sh.getRange(q.row, Q['odpowiedź klienta']).setValue(labels[action]);
+  q.sh.getRange(q.row, Q['komentarz klienta']).setValue(
+    safe_((prev ? prev + '\n— ' : '') + (fullComment ? '[' + stamp + '] ' + fullComment : '[' + stamp + '] ' + labels[action])));
+  q.sh.getRange(q.row, Q['data odpowiedzi']).setValue(new Date());
+
+  const ref = String(q.get('numer'));
+  const name = String(q.get('imię') || '');
+  const company = String(q.get('firma') || '');
+  const email = String(q.get('e-mail') || '');
+  const amount = fmtMoney_(parseAmount_(q.get('kwota (zł)')));
+
+  // Mail do klienta
+  const client = {
+    accept: {
+      subject: 'Wycena ' + ref + ' zaakceptowana — ' + SIGNATURE,
+      title: 'Dziękuję za akceptację!',
+      html: p_('Cześć ' + esc_(name) + ',') +
+        p_('dziękuję za zaufanie — wycena <b>' + esc_(ref) + '</b> (' + esc_(amount) + ') została zaakceptowana.') +
+        h2_('Co dalej?') +
+        steps_([
+          'W ciągu <b>24 h</b> odezwę się, żeby ustalić termin startu.',
+          'Wyślę dane do wpłaty <b>zaliczki 50%</b>.',
+          'Po wpłacie zaczynam pracę — pierwszą makietę zobaczysz w <b>1–2 dni</b>.',
+        ]),
+      text: 'Dziękuję za akceptację wyceny ' + ref + ' (' + amount + ').\nW ciągu 24 h odezwę się, żeby ustalić termin startu i wysłać dane do wpłaty zaliczki 50%.',
+    },
+    negotiate: {
+      subject: 'Wycena ' + ref + ' — otrzymałem Twoją propozycję',
+      title: 'Dzięki za propozycję!',
+      html: p_('Cześć ' + esc_(name) + ',') +
+        p_('otrzymałem Twoją odpowiedź na wycenę <b>' + esc_(ref) + '</b>. Przeanalizuję ją i odezwę się w ciągu <b>24 h</b> — z poprawioną wyceną albo propozycją innego zakresu.') +
+        (fullComment ? rows_([['Twoja wiadomość', fullComment]]) : ''),
+      text: 'Otrzymałem Twoją propozycję do wyceny ' + ref + '. Odezwę się w ciągu 24 h.' + (fullComment ? '\n\nTwoja wiadomość:\n' + fullComment : ''),
+    },
+    reject: {
+      subject: 'Wycena ' + ref + ' — dziękuję za odpowiedź',
+      title: 'Dziękuję za informację',
+      html: p_('Cześć ' + esc_(name) + ',') +
+        p_('szkoda, ale rozumiem — dziękuję za informację w sprawie wyceny <b>' + esc_(ref) + '</b>.') +
+        p_('Gdyby pomysł wrócił, po prostu odpowiedz na tego maila — chętnie przygotuję nową wycenę.'),
+      text: 'Dziękuję za informację w sprawie wyceny ' + ref + '. Gdyby pomysł wrócił, po prostu odpowiedz na tego maila.',
+    },
+  }[action];
+  sendSafe_({
+    to: email, replyTo: OWNER_EMAIL, name: SIGNATURE, subject: client.subject,
+    body: 'Cześć ' + name + ',\n\n' + client.text + '\n\n' + signatureText_(),
+    htmlBody: emailHtml_(client.title, client.html),
+  });
+
+  // Powiadomienie dla mnie
+  const headline = { accept: 'zaakceptowana!', negotiate: '— klient chce negocjować', reject: 'odrzucona' }[action];
+  sendSafe_({
+    to: OWNER_EMAIL, replyTo: email, name: 'Formularz ' + SIGNATURE,
+    subject: 'Wycena ' + ref + ' ' + headline + ' (' + company + ')',
+    body: plainRows_([['Wycena', ref], ['Firma', company], ['Kwota', amount], ['Decyzja', labels[action]], ['Komentarz', fullComment || '-']]) +
+      '\n\nArkusz: ' + spreadsheet_().getUrl(),
+    htmlBody: emailHtml_('Wycena ' + esc_(ref) + ' ' + headline,
+      rows_([['Firma', company], ['Kwota', amount], ['Decyzja', labels[action]], ['Komentarz', fullComment || '—']]) +
+      (action === 'negotiate'
+        ? p_('Żeby wysłać poprawioną wycenę: zmień kwotę/zakres, wyczyść kolumnę <b>„wysłano”</b> i ponownie zaznacz <b>„wyślij wycenę”</b>.')
+        : '') +
+      button_('Otwórz arkusz', spreadsheet_().getUrl())),
+  });
+
+  return { ok: true, status: statuses[action] };
 }
 
 // ===== LISTA OCZEKUJĄCYCH =====
@@ -378,8 +544,18 @@ function sheet_(name) {
     sh.appendRow(HEADERS[name]);
     sh.setFrozenRows(1);
     sh.getRange(1, 1, 1, HEADERS[name].length).setFontWeight('bold');
+  } else if (sh.getLastColumn() < HEADERS[name].length) {
+    // nowa wersja skryptu dodała kolumny — dopisz brakujące nagłówki na końcu
+    const from = sh.getLastColumn() + 1;
+    const missing = HEADERS[name].slice(from - 1);
+    sh.getRange(1, from, 1, missing.length).setValues([missing]).setFontWeight('bold');
   }
   return sh;
+}
+
+function siteUrl_() {
+  const fromProps = PropertiesService.getScriptProperties().getProperty('SITE_URL');
+  return String(fromProps || SITE_URL).replace(/\/+$/, '');
 }
 
 function statusRule_() {
@@ -453,7 +629,7 @@ function plainRows_(pairs) {
 }
 
 function signatureText_() {
-  return 'Pozdrawiam,\nJakub\n' + SIGNATURE + '\n' + SITE_URL;
+  return 'Pozdrawiam,\nJakub\n' + SIGNATURE + '\n' + siteUrl_();
 }
 
 /** Szablon maila w stylu marki (jasne tło, zielony akcent #15803D). */
@@ -465,7 +641,7 @@ function emailHtml_(title, bodyHtml) {
     '<span style="color:#22e07a">&lt;/</span>G<span style="color:#22e07a">&gt;</span>&nbsp;&nbsp;gerdzio<span style="color:#22e07a">koduje</span></td></tr>' +
     '<tr><td style="padding:28px 24px 6px"><h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#0b0b0c">' + title + '</h1>' + bodyHtml + '</td></tr>' +
     '<tr><td style="padding:14px 24px 24px;border-top:1px solid #ececec;font-size:13px;line-height:1.6;color:#666">Jakub · ' + SIGNATURE +
-    '<br><a href="' + SITE_URL + '" style="color:#15803d">' + SITE_URL.replace('https://', '') + '</a></td></tr>' +
+    '<br><a href="' + siteUrl_() + '" style="color:#15803d">' + siteUrl_().replace(/^https?:\/\//, '') + '</a></td></tr>' +
     '</table></td></tr></table></body></html>';
 }
 

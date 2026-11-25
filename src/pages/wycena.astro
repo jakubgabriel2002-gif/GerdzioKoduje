@@ -1,0 +1,284 @@
+---
+/**
+ * Strona odpowiedzi na wycenę — otwierana z przycisków w mailu z wyceną.
+ * Link: /wycena/?ref=W-2026-001&t=<podpis>&a=accept|negotiate|reject
+ * Dane pobiera i zapisuje przez /api/quote (→ Google Apps Script).
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Twoja wycena | Gerdzio Koduje" description="Podsumowanie wyceny i odpowiedź na nią." noindex>
+  <section class="section q-page">
+    <div class="container q-wrap">
+      <div id="q-loading" class="q-state">
+        <span class="q-spinner" aria-hidden="true"></span>
+        <p>Wczytuję wycenę…</p>
+      </div>
+
+      <div id="q-error" class="q-state" hidden>
+        <h1>Nie mogę otworzyć tej wyceny</h1>
+        <p id="q-error-msg" class="muted"></p>
+        <a class="btn btn--secondary" href="/dla-firm#kontakt">Napisz do mnie</a>
+      </div>
+
+      <div id="q-main" hidden>
+        <p class="q-kicker">Wycena <span id="q-ref"></span></p>
+        <h1 class="q-title">Wycena dla <span id="q-company"></span></h1>
+
+        <div class="q-summary">
+          <div class="q-amount">
+            <span>Kwota</span>
+            <strong id="q-amount"></strong>
+          </div>
+          <dl class="q-meta">
+            <div><dt>Czas realizacji</dt><dd id="q-time"></dd></div>
+            <div><dt>Płatność</dt><dd>zaliczka 50% przed startem, reszta po publikacji</dd></div>
+            <div><dt>Ważna do</dt><dd id="q-valid"></dd></div>
+          </dl>
+          <h2 class="q-h2">Zakres</h2>
+          <p id="q-scope" class="q-scope"></p>
+          <p class="q-note">Domenę zawsze rejestruję na klienta — strona i adres są Twoje.</p>
+        </div>
+
+        <div id="q-closed" class="q-closed" hidden>
+          <p><strong>Odpowiedź została już zapisana.</strong> Status tej wyceny: <span id="q-status"></span>.</p>
+          <p class="muted">Chcesz coś zmienić? Odpowiedz na maila z wyceną.</p>
+        </div>
+
+        <form id="q-form" class="q-form" novalidate>
+          <fieldset class="q-options">
+            <legend class="q-h2">Twoja decyzja</legend>
+            <label class="q-option q-option--accept">
+              <input type="radio" name="action" value="accept" />
+              <span class="q-option__mark" aria-hidden="true"></span>
+              <span class="q-option__body"><b>Akceptuję wycenę</b><small>Ustalimy termin startu i dane do zaliczki.</small></span>
+            </label>
+            <label class="q-option">
+              <input type="radio" name="action" value="negotiate" />
+              <span class="q-option__mark" aria-hidden="true"></span>
+              <span class="q-option__body"><b>Chcę negocjować</b><small>Zaproponuj kwotę albo zmianę zakresu.</small></span>
+            </label>
+            <label class="q-option">
+              <input type="radio" name="action" value="reject" />
+              <span class="q-option__mark" aria-hidden="true"></span>
+              <span class="q-option__body"><b>Odrzucam wycenę</b><small>Możesz napisać, co zdecydowało — to mi pomoże.</small></span>
+            </label>
+          </fieldset>
+          <p id="q-expired" class="q-warn" hidden>Ta wycena wygasła — nie można jej już zaakceptować. Wybierz „Chcę negocjować”, a przygotuję aktualną.</p>
+
+          <div class="field" data-for="negotiate" hidden>
+            <label for="q-price">Proponowana kwota <span class="dim">(opcjonalnie)</span></label>
+            <input id="q-price" name="price" type="text" inputmode="decimal" maxlength="40" placeholder="np. 2800 zł" />
+          </div>
+          <div class="field" data-for="negotiate reject" hidden>
+            <label for="q-message" id="q-message-label">Komentarz <span class="dim">(opcjonalnie)</span></label>
+            <textarea id="q-message" name="message" rows="4" maxlength="2000"></textarea>
+          </div>
+          <div class="hp" aria-hidden="true">
+            <label for="q-website">Nie wypełniaj tego pola</label>
+            <input id="q-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div class="form__actions">
+            <button type="submit" class="btn" id="q-submit" disabled>Wybierz odpowiedź</button>
+          </div>
+          <div class="form__status" role="status" aria-live="polite"></div>
+        </form>
+
+        <div id="q-done" class="q-done" hidden>
+          <span class="q-done__icon" aria-hidden="true"></span>
+          <h2 id="q-done-title"></h2>
+          <p id="q-done-text" class="muted"></p>
+        </div>
+      </div>
+
+      <noscript>
+        <p class="q-state">Ta strona wymaga włączonego JavaScriptu. Możesz też po prostu odpowiedzieć na maila z wyceną.</p>
+      </noscript>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  type Quote = {
+    ref: string; company: string; amount: string; scope: string; time: string;
+    validUntil: string; status: string; expired: boolean; closed: boolean;
+  };
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const params = new URLSearchParams(location.search);
+  const ref = params.get('ref') ?? '';
+  const t = params.get('t') ?? '';
+  const preset = params.get('a') ?? '';
+
+  const show = (id: string) => { $(id).hidden = false; };
+  const hide = (id: string) => { $(id).hidden = true; };
+  const fail = (msg: string) => {
+    hide('q-loading'); hide('q-main');
+    $('q-error-msg').textContent = msg;
+    show('q-error');
+  };
+
+  const api = async (payload: Record<string, string>) => {
+    const res = await fetch('/api/quote', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ ref, t, ...payload }),
+    });
+    return (await res.json().catch(() => ({ ok: false, message: 'Nie udało się połączyć. Spróbuj za chwilę.' }))) as {
+      ok: boolean; message?: string; quote?: Quote; status?: string;
+    };
+  };
+
+  const LABELS: Record<string, string> = {
+    accept: 'Akceptuję wycenę',
+    negotiate: 'Wyślij propozycję',
+    reject: 'Odrzucam wycenę',
+  };
+
+  async function init() {
+    if (!ref || !t) return fail('Ten link jest niekompletny. Użyj przycisku z maila z wyceną.');
+    let data;
+    try { data = await api({ action: 'get' }); } catch { return fail('Nie udało się połączyć. Spróbuj za chwilę.'); }
+    if (!data.ok || !data.quote) return fail(data.message ?? 'Nie udało się wczytać wyceny.');
+    const q = data.quote;
+    $('q-ref').textContent = q.ref;
+    $('q-company').textContent = q.company || 'Twojej firmy';
+    $('q-amount').textContent = q.amount;
+    $('q-time').textContent = q.time;
+    $('q-valid').textContent = q.validUntil + (q.expired ? ' (wygasła)' : '');
+    $('q-scope').textContent = q.scope;
+    hide('q-loading'); show('q-main');
+
+    if (q.closed) {
+      $('q-status').textContent = q.status;
+      show('q-closed'); hide('q-form');
+      return;
+    }
+
+    const form = $<HTMLFormElement>('q-form');
+    const submit = $<HTMLButtonElement>('q-submit');
+    const status = form.querySelector<HTMLElement>('.form__status')!;
+    const accept = form.querySelector<HTMLInputElement>('input[value="accept"]')!;
+    if (q.expired) {
+      accept.disabled = true;
+      accept.closest('label')!.classList.add('is-disabled');
+      show('q-expired');
+    }
+
+    const sync = () => {
+      const action = (form.querySelector<HTMLInputElement>('input[name="action"]:checked')?.value) ?? '';
+      form.querySelectorAll<HTMLElement>('[data-for]').forEach((el) => {
+        el.hidden = !el.dataset.for!.split(' ').includes(action);
+      });
+      $('q-message-label').firstChild!.textContent = action === 'reject' ? 'Powód ' : 'Komentarz ';
+      submit.disabled = !action;
+      submit.textContent = LABELS[action] ?? 'Wybierz odpowiedź';
+    };
+    form.addEventListener('change', sync);
+    const pre = form.querySelector<HTMLInputElement>(`input[name="action"][value="${CSS.escape(preset)}"]`);
+    if (pre && !pre.disabled) pre.checked = true;
+    sync();
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const action = form.querySelector<HTMLInputElement>('input[name="action"]:checked')?.value;
+      if (!action) return;
+      submit.disabled = true;
+      submit.textContent = 'Wysyłanie…';
+      status.dataset.state = 'loading';
+      status.textContent = 'Zapisuję odpowiedź…';
+      const fd = new FormData(form);
+      let res;
+      try {
+        res = await api({
+          action,
+          message: String(fd.get('message') ?? ''),
+          price: String(fd.get('price') ?? ''),
+          website: String(fd.get('website') ?? ''),
+        });
+      } catch {
+        res = { ok: false, message: 'Nie udało się połączyć. Spróbuj za chwilę.' };
+      }
+      if (!res.ok) {
+        status.dataset.state = 'error';
+        status.textContent = res.message ?? 'Coś poszło nie tak.';
+        submit.disabled = false;
+        submit.textContent = LABELS[action];
+        return;
+      }
+      const done = {
+        accept: ['Dziękuję za akceptację!', 'W ciągu 24 h odezwę się, żeby ustalić termin startu i wysłać dane do zaliczki. Potwierdzenie jest już na Twoim mailu.'],
+        negotiate: ['Dzięki za propozycję!', 'Przeanalizuję ją i odezwę się w ciągu 24 h z poprawioną wyceną. Potwierdzenie jest już na Twoim mailu.'],
+        reject: ['Dziękuję za odpowiedź', 'Szkoda, ale rozumiem. Gdyby pomysł wrócił — odpowiedz na maila z wyceną.'],
+      }[action as 'accept' | 'negotiate' | 'reject'];
+      $('q-done-title').textContent = done[0];
+      $('q-done-text').textContent = done[1];
+      $('q-done').classList.toggle('q-done--neutral', action === 'reject');
+      hide('q-form'); show('q-done');
+      $('q-done').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+  init();
+</script>
+
+<style>
+  .q-page { min-height: calc(100svh - var(--header-h)); }
+  .q-wrap { max-width: 44rem; }
+  .q-state { display: grid; gap: 1rem; justify-items: start; padding-block: 3rem; }
+  .q-state h1 { font-size: var(--step-3); }
+  .q-spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--border-strong); border-top-color: var(--accent); animation: q-spin 0.8s linear infinite; }
+  @keyframes q-spin { to { transform: rotate(360deg); } }
+
+  .q-kicker { color: var(--accent); font-size: var(--step--1); font-weight: 800; letter-spacing: 0.04em; margin-bottom: 0.75rem; }
+  .q-title { font-size: clamp(1.8rem, 1.4rem + 1.8vw, 2.8rem); letter-spacing: -0.03em; }
+  .q-h2 { font-size: var(--step-1); font-weight: 800; margin: 1.75rem 0 0.75rem; padding: 0; }
+
+  .q-summary { margin-top: 2rem; padding: clamp(1.25rem, 1rem + 1.5vw, 2rem); border-radius: var(--radius-lg); background: var(--bg-raised); border: 1px solid var(--border); }
+  .q-amount { display: grid; gap: 0.25rem; padding: 1.25rem; border-radius: var(--radius-btn); background: var(--accent-tint); border: 1px solid var(--accent-line); text-align: center; }
+  .q-amount span { font-size: var(--step--1); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .q-amount strong { font-size: clamp(2rem, 1.6rem + 2vw, 3rem); color: var(--accent); letter-spacing: -0.03em; line-height: 1.1; }
+  .q-meta { display: grid; gap: 0; margin-top: 1.25rem; }
+  .q-meta > div { display: grid; grid-template-columns: 10rem 1fr; gap: 1rem; padding: 0.7rem 0; border-bottom: 1px solid var(--border); }
+  .q-meta dt { color: var(--text-muted); font-size: var(--step--1); }
+  .q-meta dd { margin: 0; }
+  @media (max-width: 30rem) { .q-meta > div { grid-template-columns: 1fr; gap: 0.15rem; } }
+  .q-scope { white-space: pre-line; padding: 1rem 1.1rem; border-radius: var(--radius-btn); background: var(--bg-input); border: 1px solid var(--border); }
+  .q-note { margin-top: 1rem; color: var(--text-muted); font-size: var(--step--1); }
+
+  .q-form { display: grid; gap: 1.1rem; margin-top: 0.5rem; }
+  .q-options { border: 0; padding: 0; margin: 0; display: grid; gap: 0.65rem; min-width: 0; }
+  .q-option {
+    position: relative;
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius-btn);
+    border: 1px solid var(--border-strong);
+    background: var(--bg-raised);
+    cursor: pointer;
+    transition: border-color 0.15s, background-color 0.15s;
+  }
+  .q-option:hover { border-color: var(--text-dim); }
+  .q-option input { position: absolute; opacity: 0; pointer-events: none; }
+  .q-option__mark { flex: none; width: 1.25rem; height: 1.25rem; margin-top: 0.15rem; border-radius: 50%; border: 2px solid var(--border-strong); transition: border-color 0.15s, box-shadow 0.15s; }
+  .q-option__body { display: grid; gap: 0.15rem; }
+  .q-option__body small { color: var(--text-muted); font-size: var(--step--1); }
+  .q-option:has(input:checked) { border-color: var(--accent); background: var(--accent-tint); }
+  .q-option:has(input:checked) .q-option__mark { border-color: var(--accent); box-shadow: inset 0 0 0 4px var(--bg), inset 0 0 0 10px var(--accent); }
+  .q-option:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .q-option.is-disabled { opacity: 0.45; cursor: not-allowed; }
+  .q-warn { color: #ffd56b; font-size: var(--step--1); }
+
+  .q-closed { margin-top: 2rem; padding: 1.25rem; border-radius: var(--radius-btn); border: 1px solid var(--border-strong); background: var(--bg-raised); display: grid; gap: 0.5rem; }
+
+  .q-done { margin-top: 2rem; padding: 2rem 1.5rem; border-radius: var(--radius-lg); background: var(--accent-tint); border: 1px solid var(--accent-line); display: grid; justify-items: center; text-align: center; gap: 0.75rem; }
+  .q-done--neutral { background: var(--bg-raised); border-color: var(--border-strong); }
+  .q-done__icon { position: relative; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--accent); }
+  .q-done__icon::after { content: ''; position: absolute; left: 50%; top: 45%; width: 0.75rem; height: 1.4rem; border: solid var(--accent-ink); border-width: 0 3px 3px 0; transform: translate(-50%, -50%) rotate(45deg); }
+  .q-done--neutral .q-done__icon { background: var(--border-strong); }
+  .q-done h2 { font-size: var(--step-2); }
+  @media (prefers-reduced-motion: no-preference) {
+    .q-done:not([hidden]) { animation: q-pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2); }
+  }
+  @keyframes q-pop { from { opacity: 0; transform: scale(0.96); } }
+</style>

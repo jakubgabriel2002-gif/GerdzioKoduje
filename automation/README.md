@@ -121,6 +121,25 @@ Klient od razu dostaje maila z numerem, podsumowaniem i informacją „co dalej�
 4. Klient dostaje maila „Wycena W-…” z zakresem, kwotą, warunkami płatności (50/50) i datą ważności (14 dni). Ty dostajesz kopię (UDW).
    Status zmienia się na **„wycena wysłana”**, a kolumny „wysłano” i „ważna do” uzupełniają się same.
 
+### Przyciski w mailu z wyceną: akceptuj / negocjuj / odrzuć
+
+Mail z wyceną ma przyciski **„Akceptuję wycenę”**, **„Chcę negocjować”** i link **„Odrzucam wycenę”**.
+Każdy otwiera stronę `/wycena` z podsumowaniem (kwota, zakres, termin, ważność), gdzie klient potwierdza wybór
+(przy negocjacji może podać swoją kwotę i komentarz, przy odrzuceniu — powód).
+Nic nie dzieje się „samo” po kliknięciu linku — to celowe, bo programy pocztowe potrafią same otwierać linki, sprawdzając je pod kątem bezpieczeństwa.
+
+Po potwierdzeniu:
+- status w arkuszu zmienia się na `zaakceptowana`, `negocjacja` albo `odrzucona`,
+- kolumny **„odpowiedź klienta”**, **„komentarz klienta”** i **„data odpowiedzi”** uzupełniają się same (komentarze z kolejnych rund dopisują się pod sobą),
+- klient dostaje potwierdzenie, a Ty — powiadomienie (np. „Wycena W-2026-001 zaakceptowana!”).
+
+Linki są podpisane (HMAC z Twoim `SECRET`), więc nikt nie zmieni statusu cudzej wyceny, nawet znając jej numer.
+Po negocjacji możesz wysłać poprawioną wycenę: zmień kwotę/zakres, wyczyść kolumnę „wysłano” i ponownie zaznacz „wyślij wycenę”.
+
+**Ważne — adres strony w przyciskach:** dopóki nie masz domeny gerdziokoduje.pl, dodaj we **Właściwościach skryptu**
+(zębatka → Właściwości skryptu → Dodaj) właściwość `SITE_URL` z adresem Twojej strony, np. `https://gerdziokoduje.pages.dev`.
+Po podpięciu domeny zmień ją na `https://gerdziokoduje.pl` (albo usuń — to wartość domyślna).
+
 Jeśli zaznaczysz pole bez kwoty lub zakresu — nic nie zostanie wysłane, pole się odznaczy, a w komórce pojawi się notatka, czego brakuje.
 Statusy dalej zmieniasz ręcznie z listy: `nowe`, `w kontakcie`, `wycena wysłana`, `zaakceptowana`, `odrzucona`.
 

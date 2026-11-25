@@ -1,8 +1,8 @@
 ---
 import Turnstile from './Turnstile.astro';
-import { packageOptions } from '../../config';
+import { packageOptions, quote } from '../../config';
 ---
-<form class="form" action="/api/lead" method="post" data-enhance data-success="Dzięki! Zapytanie dotarło. Na maila przyszło potwierdzenie — odezwę się w ciągu 24 h.">
+<form class="form" action="/api/lead" method="post" data-quote-package={quote.package} data-enhance data-success="Dzięki! Zapytanie dotarło. Na maila przyszło potwierdzenie — odezwę się w ciągu 24 h.">
   <div class="form__row form__row--2">
     <div class="field">
       <label for="lead-name">Imię <span class="req" aria-hidden="true">*</span></label>
@@ -35,6 +35,32 @@ import { packageOptions } from '../../config';
       </select>
     </div>
   </div>
+
+  <fieldset class="quote-box" data-quote-fields>
+    <legend class="quote-box__legend">Szczegóły indywidualnej wyceny <span class="dim">(opcjonalnie)</span></legend>
+    <div class="field">
+      <span class="field__label" id="lead-types-label">Czego potrzebujesz?</span>
+      <div class="choices choices--grid" role="group" aria-labelledby="lead-types-label">
+        {quote.projectTypes.map((t) => (
+          <label class="choice"><input type="checkbox" name="projectTypes" value={t} /> {t}</label>
+        ))}
+      </div>
+    </div>
+    <div class="form__row form__row--2">
+      <div class="field">
+        <label for="lead-budget">Orientacyjny budżet</label>
+        <select id="lead-budget" name="budget">
+          {quote.budgets.map((o) => <option value={o}>{o}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for="lead-deadline">Kiedy chcesz zacząć?</label>
+        <select id="lead-deadline" name="deadline">
+          {quote.deadlines.map((o) => <option value={o}>{o}</option>)}
+        </select>
+      </div>
+    </div>
+  </fieldset>
 
   <fieldset class="field">
     <legend class="field__label">Czy masz już stronę?</legend>
@@ -94,7 +120,30 @@ import { packageOptions } from '../../config';
   document.querySelectorAll<HTMLAnchorElement>('a[data-package]').forEach((a) =>
     a.addEventListener('click', () => {
       const sel = document.querySelector<HTMLSelectElement>('#lead-package');
-      if (sel) sel.value = a.dataset.package!;
+      if (!sel) return;
+      sel.value = a.dataset.package!;
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
     }),
   );
+  // Indywidualna wycena: dodatkowe pola tylko po wybraniu tego pakietu (bez JS widoczne zawsze).
+  document.querySelectorAll<HTMLFormElement>('form[data-quote-package]').forEach((form) => {
+    const box = form.querySelector<HTMLFieldSetElement>('[data-quote-fields]');
+    const sel = form.querySelector<HTMLSelectElement>('#lead-package');
+    const hint = form.querySelector<HTMLElement>('#lead-message-hint');
+    const label = form.querySelector<HTMLElement>('label[for="lead-message"]');
+    if (!box || !sel) return;
+    const defaultHint = hint?.textContent ?? '';
+    const sync = () => {
+      const isQuote = sel.value === form.dataset.quotePackage;
+      box.hidden = !isQuote;
+      box.disabled = !isQuote;
+      if (hint) hint.textContent = isQuote
+        ? 'Opisz pomysł: co ma robić strona lub aplikacja, dla kogo jest i co Ci się podoba u innych.'
+        : defaultHint;
+      if (label?.firstChild) label.firstChild.textContent = isQuote ? 'Opis pomysłu ' : 'Wiadomość ';
+    };
+    sel.addEventListener('change', sync);
+    form.addEventListener('reset', () => setTimeout(sync));
+    sync();
+  });
 </script>

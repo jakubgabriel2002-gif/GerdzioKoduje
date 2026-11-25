@@ -97,6 +97,33 @@ Jeśli coś nie działa — w Cloudflare: **Workers & Pages → projekt → Func
 
 ---
 
+## Indywidualne wyceny
+
+Gdy klient wybierze w formularzu pakiet **„Indywidualna wycena”**, zgłoszenie trafia do zakładki **„Wyceny”** (nie „Leady”) i dostaje numer, np. `W-2026-001`.
+Klient od razu dostaje maila z numerem, podsumowaniem i informacją „co dalej”, a Ty — powiadomienie ze wszystkimi szczegółami.
+
+### Jednorazowa konfiguracja (po wklejeniu nowej wersji skryptu)
+
+1. Wklej nową wersję `apps-script.gs` i zapisz (dyskietka).
+2. Z listy funkcji na górze wybierz **`setup`** → **Uruchom**. Google poprosi o nowe uprawnienie (wyzwalacze) — zaakceptuj.
+   Funkcja założy zakładkę „Wyceny”, ustawi formaty i włączy automatyczną wysyłkę wycen.
+3. **Wdróż → Zarządzaj wdrożeniami → ołówek → Wersja: Nowa wersja → Wdróż** (URL zostaje ten sam).
+4. Test: uruchom **`testQuote`** — w zakładce „Wyceny” pojawi się wiersz testowy, a na maila przyjdą 2 wiadomości.
+
+### Jak wysłać wycenę klientowi
+
+1. Otwórz arkusz → zakładka **„Wyceny”** (działa też w aplikacji Arkusze na telefonie).
+2. W wierszu zgłoszenia uzupełnij zielone kolumny:
+   - **kwota (zł)** — np. `3200` albo `3200,50`,
+   - **zakres wyceny** — co dokładnie zrobisz (możesz pisać w kilku liniach),
+   - **czas realizacji** — np. `3–4 tygodnie` (opcjonalnie).
+3. Zaznacz pole **„wyślij wycenę”**.
+4. Klient dostaje maila „Wycena W-…” z zakresem, kwotą, warunkami płatności (50/50) i datą ważności (14 dni). Ty dostajesz kopię (UDW).
+   Status zmienia się na **„wycena wysłana”**, a kolumny „wysłano” i „ważna do” uzupełniają się same.
+
+Jeśli zaznaczysz pole bez kwoty lub zakresu — nic nie zostanie wysłane, pole się odznaczy, a w komórce pojawi się notatka, czego brakuje.
+Statusy dalej zmieniasz ręcznie z listy: `nowe`, `w kontakcie`, `wycena wysłana`, `zaakceptowana`, `odrzucona`.
+
 ## Zmiana skryptu później
 
 Po każdej zmianie kodu w Apps Script: **Wdróż → Zarządzaj wdrożeniami → ołówek (Edytuj) → Wersja: Nowa wersja → Wdróż**.

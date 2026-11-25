@@ -15,7 +15,10 @@ export async function readFields(request: Request): Promise<Fields> {
     return out;
   }
   const form = await request.formData();
-  for (const [k, v] of form.entries()) if (typeof v === 'string') out[k] = v;
+  for (const [k, v] of form.entries()) {
+    if (typeof v !== 'string') continue;
+    out[k] = k in out ? `${out[k]}, ${v}` : v; // np. kilka zaznaczonych checkboxów
+  }
   return out;
 }
 
@@ -59,6 +62,15 @@ export function url(f: Fields, key: string, label: string): string {
 export function oneOf<T extends string>(f: Fields, key: string, allowed: readonly T[], fallback: T): T {
   const value = (f[key] ?? '').trim() as T;
   return allowed.includes(value) ? value : fallback;
+}
+
+/** Lista wartości (np. z checkboxów) — zostawia tylko dozwolone. */
+export function manyOf(f: Fields, key: string, allowed: readonly string[]): string {
+  return (f[key] ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s, i, arr) => allowed.includes(s) && arr.indexOf(s) === i)
+    .join(', ');
 }
 
 export function consent(f: Fields): void {

@@ -35,7 +35,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (!human) return respond(request, false, 'Weryfikacja antyspamowa nie powiodła się. Odśwież stronę i spróbuj ponownie.', 403);
 
   const saved = await forwardToAppsScript(env, 'waitlist', data);
-  if (!saved) {
+  if (!saved.ok) {
     return respond(request, false, 'Nie udało się zapisać. Spróbuj za chwilę.', 502);
   }
   return respond(request, true, SUCCESS);

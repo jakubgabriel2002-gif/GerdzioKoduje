@@ -226,6 +226,21 @@ fieldset.field { border: 0; padding: 0; }
 }
 .form__status[data-state='success'] { border-color: var(--accent); }
 .form__status[data-state='error'] { border-color: var(--danger); color: #ffd2d2; }
+.quote-box {
+  display: grid;
+  gap: 1.1rem;
+  margin: 0;
+  padding: 1.1rem 1.1rem 1.25rem;
+  border: 1px dashed var(--accent-line);
+  border-radius: var(--radius-btn);
+  background: var(--accent-tint);
+  min-width: 0;
+}
+.quote-box__legend { padding: 0 0.4rem; font-size: var(--step--1); font-weight: 800; color: var(--accent); }
+.choices--grid { display: grid; gap: 0.1rem 1rem; }
+@media (min-width: 30rem) { .choices--grid { grid-template-columns: 1fr 1fr; } }
+.choices--grid .choice { min-height: 2.5rem; font-size: var(--step--1); align-items: flex-start; padding-top: 0.45rem; }
+.choices--grid .choice input { margin-top: 0.15rem; }
 .form-card { background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: clamp(1.25rem, 1rem + 1.5vw, 2.5rem); }
 
 /* ===== Przejścia między stronami (View Transitions, bez JS) ===== */

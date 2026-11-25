@@ -8,7 +8,7 @@ const { title, description, themeColor, theme } = Astro.props;
 <!doctype html>
 <html lang="pl">
   <head>
-    <Head title={title} description={description} themeColor={themeColor} noindex />
+    <Head title={title} description={description} themeColor={themeColor} />
   </head>
   <body class:list={['demo', `demo--${theme}`]}>
     <a class="d-skip" href="#tresc">Przejdź do treści</a>

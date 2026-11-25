@@ -5,8 +5,8 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 <header class="site-header">
   <div class="container site-header__inner">
-    <a href="/" class="site-header__brand" aria-label="Gerdzio Koduje — strona główna">
-      <Lockup size="sm" />
+    <a href="/" class="site-header__brand">
+      <Lockup size="sm" /><span class="visually-hidden"> — strona główna</span>
     </a>
 
     <button

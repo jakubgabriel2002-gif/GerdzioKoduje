@@ -38,6 +38,7 @@ import { packageOptions, quote } from '../../config';
 
   <fieldset class="quote-box" data-quote-fields>
     <legend class="quote-box__legend">Szczegóły indywidualnej wyceny <span class="dim">(opcjonalnie)</span></legend>
+    <div class="quote-box__inner">
     <div class="field">
       <span class="field__label" id="lead-types-label">Czego potrzebujesz?</span>
       <div class="choices choices--grid" role="group" aria-labelledby="lead-types-label">
@@ -59,6 +60,7 @@ import { packageOptions, quote } from '../../config';
           {quote.deadlines.map((o) => <option value={o}>{o}</option>)}
         </select>
       </div>
+    </div>
     </div>
   </fieldset>
 

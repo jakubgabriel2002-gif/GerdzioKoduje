@@ -31,7 +31,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
           <dl class="q-meta">
             <div><dt>Czas realizacji</dt><dd id="q-time"></dd></div>
-            <div><dt>Płatność</dt><dd>zaliczka 50% przed startem, reszta po publikacji</dd></div>
+            <div><dt>Płatność</dt><dd>zaliczka 50% przed startem (link do płatności po akceptacji), reszta po publikacji</dd></div>
             <div><dt>Ważna do</dt><dd id="q-valid"></dd></div>
           </dl>
           <h2 class="q-h2">Zakres</h2>
@@ -45,12 +45,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
 
         <form id="q-form" class="q-form" novalidate>
-          <fieldset class="q-options">
-            <legend class="q-h2">Twoja decyzja</legend>
+          <h2 class="q-h2" id="q-decision">Twoja decyzja</h2>
+          <div class="q-options" role="radiogroup" aria-labelledby="q-decision">
             <label class="q-option q-option--accept">
               <input type="radio" name="action" value="accept" />
               <span class="q-option__mark" aria-hidden="true"></span>
-              <span class="q-option__body"><b>Akceptuję wycenę</b><small>Ustalimy termin startu i dane do zaliczki.</small></span>
+              <span class="q-option__body"><b>Akceptuję wycenę</b><small>W ciągu 24 h dostaniesz osobnego maila z linkiem do płatności zaliczki.</small></span>
             </label>
             <label class="q-option">
               <input type="radio" name="action" value="negotiate" />
@@ -62,7 +62,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               <span class="q-option__mark" aria-hidden="true"></span>
               <span class="q-option__body"><b>Odrzucam wycenę</b><small>Możesz napisać, co zdecydowało — to mi pomoże.</small></span>
             </label>
-          </fieldset>
+          </div>
           <p id="q-expired" class="q-warn" hidden>Ta wycena wygasła — nie można jej już zaakceptować. Wybierz „Chcę negocjować”, a przygotuję aktualną.</p>
 
           <div class="field" data-for="negotiate" hidden>
@@ -206,7 +206,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         return;
       }
       const done = {
-        accept: ['Dziękuję za akceptację!', 'W ciągu 24 h odezwę się, żeby ustalić termin startu i wysłać dane do zaliczki. Potwierdzenie jest już na Twoim mailu.'],
+        accept: ['Dziękuję za akceptację!', 'W ciągu 24 h wyślę Ci osobnego maila z linkiem do płatności zaliczki (50%). Po wpłacie ustalimy termin startu. Potwierdzenie jest już na Twoim mailu.'],
         negotiate: ['Dzięki za propozycję!', 'Przeanalizuję ją i odezwę się w ciągu 24 h z poprawioną wyceną. Potwierdzenie jest już na Twoim mailu.'],
         reject: ['Dziękuję za odpowiedź', 'Szkoda, ale rozumiem. Gdyby pomysł wrócił — odpowiedz na maila z wyceną.'],
       }[action as 'accept' | 'negotiate' | 'reject'];
@@ -245,7 +245,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .q-note { margin-top: 1rem; color: var(--text-muted); font-size: var(--step--1); }
 
   .q-form { display: grid; gap: 1.1rem; margin-top: 0.5rem; }
-  .q-options { border: 0; padding: 0; margin: 0; display: grid; gap: 0.65rem; min-width: 0; }
+  .q-options { display: grid; gap: 0.65rem; }
+  .q-form .q-h2 { margin-bottom: -0.35rem; }
   .q-option {
     position: relative;
     display: flex;

@@ -271,7 +271,7 @@ function sendQuote_(sh, row) {
     'ZAKRES:\n' + scope + '\n\n' +
     'Czas realizacji: ' + time + '\n' +
     'Kwota: ' + price + '\n' +
-    'Płatność: zaliczka 50% przed startem, reszta po publikacji.\n' +
+    'Płatność: zaliczka 50% przed startem (link do płatności wyślę po akceptacji), reszta po publikacji.\n' +
     'Wycena ważna do: ' + fmtDate_(validUntil) + '\n\n' +
     'Domenę zawsze rejestruję na klienta — strona i adres są Twoje.\n\n' +
     'Odpowiedz na wycenę (akceptacja, negocjacja lub odrzucenie):\n' + link('accept') + '\n\n' +
@@ -283,7 +283,7 @@ function sendQuote_(sh, row) {
     h2_('Zakres') +
     '<div style="margin:0 0 16px;padding:14px 16px;background:#f6f7f4;border-radius:8px;font-size:15px;line-height:1.6;color:#1b1b1b">' +
     esc_(scope).replace(/\n/g, '<br>') + '</div>' +
-    rows_([['Czas realizacji', time], ['Płatność', 'zaliczka 50% przed startem, reszta po publikacji'], ['Ważna do', fmtDate_(validUntil)]]) +
+    rows_([['Czas realizacji', time], ['Płatność', 'zaliczka 50% przed startem (link do płatności wyślę po akceptacji), reszta po publikacji'], ['Ważna do', fmtDate_(validUntil)]]) +
     '<div style="margin:18px 0;padding:18px 16px;border:2px solid #15803d;border-radius:10px;text-align:center">' +
     '<div style="font-size:13px;color:#555;text-transform:uppercase;letter-spacing:1px">Kwota</div>' +
     '<div style="font-size:30px;font-weight:bold;color:#15803d;margin-top:4px">' + price + '</div></div>' +
@@ -417,11 +417,11 @@ function respondQuote_(d) {
         p_('dziękuję za zaufanie — wycena <b>' + esc_(ref) + '</b> (' + esc_(amount) + ') została zaakceptowana.') +
         h2_('Co dalej?') +
         steps_([
-          'W ciągu <b>24 h</b> odezwę się, żeby ustalić termin startu.',
-          'Wyślę dane do wpłaty <b>zaliczki 50%</b>.',
-          'Po wpłacie zaczynam pracę — pierwszą makietę zobaczysz w <b>1–2 dni</b>.',
+          'W ciągu <b>24 h</b> wyślę Ci <b>osobnego maila z linkiem do płatności zaliczki (50%)</b>.',
+          'Po wpłacie ustalimy termin startu.',
+          'Pierwszą makietę zobaczysz w <b>1–2 dni</b> od startu.',
         ]),
-      text: 'Dziękuję za akceptację wyceny ' + ref + ' (' + amount + ').\nW ciągu 24 h odezwę się, żeby ustalić termin startu i wysłać dane do wpłaty zaliczki 50%.',
+      text: 'Dziękuję za akceptację wyceny ' + ref + ' (' + amount + ').\n\nCo dalej:\n1. W ciągu 24 h wyślę Ci osobnego maila z linkiem do płatności zaliczki (50%).\n2. Po wpłacie ustalimy termin startu.\n3. Pierwszą makietę zobaczysz w 1–2 dni od startu.',
     },
     negotiate: {
       subject: 'Wycena ' + ref + ' — otrzymałem Twoją propozycję',
@@ -457,6 +457,9 @@ function respondQuote_(d) {
       rows_([['Firma', company], ['Kwota', amount], ['Decyzja', labels[action]], ['Komentarz', fullComment || '—']]) +
       (action === 'negotiate'
         ? p_('Żeby wysłać poprawioną wycenę: zmień kwotę/zakres, wyczyść kolumnę <b>„wysłano”</b> i ponownie zaznacz <b>„wyślij wycenę”</b>.')
+        : '') +
+      (action === 'accept'
+        ? p_('<b>Do zrobienia:</b> w ciągu 24 h wyślij klientowi maila z linkiem do płatności zaliczki 50% (' + esc_(fmtMoney_(parseAmount_(q.get('kwota (zł)')) / 2)) + ').')
         : '') +
       button_('Otwórz arkusz', spreadsheet_().getUrl())),
   });

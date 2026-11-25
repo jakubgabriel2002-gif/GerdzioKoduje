@@ -1,0 +1,19 @@
+---
+interface Props { hours: [string, string][]; caption?: string }
+const { hours, caption = 'Godziny otwarcia' } = Astro.props;
+---
+<table class="d-hours">
+  <caption class="d-visually-hidden">{caption}</caption>
+  <tbody>
+    {hours.map(([day, time]) => (
+      <tr><th scope="row">{day}</th><td>{time}</td></tr>
+    ))}
+  </tbody>
+</table>
+
+<style is:global>
+  .d-hours { width: 100%; border-collapse: collapse; }
+  .d-hours th, .d-hours td { padding: 0.6rem 0; border-bottom: 1px solid var(--d-line, #ddd); text-align: left; font-weight: 400; }
+  .d-hours th { font-weight: 600; }
+  .d-hours td { text-align: right; font-variant-numeric: tabular-nums; }
+</style>

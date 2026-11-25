@@ -1,0 +1,70 @@
+---
+/**
+ * Formularz w demach. method="dialog" poza <dialog> nic nie wysyła i nie przeładowuje strony
+ * (także bez JS). Z JS pokazujemy komunikat w formularzu.
+ */
+interface Props { id: string; services: string[]; submitLabel?: string }
+const { id, services, submitLabel = 'Wyślij' } = Astro.props;
+---
+<form class="d-form" method="dialog" data-demo-form aria-describedby={`${id}-note`}>
+  <div class="d-form__row">
+    <div class="d-field">
+      <label for={`${id}-name`}>Imię</label>
+      <input id={`${id}-name`} name="name" type="text" autocomplete="off" required />
+    </div>
+    <div class="d-field">
+      <label for={`${id}-phone`}>Telefon</label>
+      <input id={`${id}-phone`} name="phone" type="tel" autocomplete="off" required />
+    </div>
+  </div>
+  <div class="d-field">
+    <label for={`${id}-service`}>Usługa</label>
+    <select id={`${id}-service`} name="service">
+      {services.map((s) => <option>{s}</option>)}
+    </select>
+  </div>
+  <div class="d-field">
+    <label for={`${id}-msg`}>Wiadomość</label>
+    <textarea id={`${id}-msg`} name="message" rows="4"></textarea>
+  </div>
+  <button type="submit" class="d-btn">{submitLabel}</button>
+  <p class="d-form__note" id={`${id}-note`}>To demo — formularz nie wysyła danych.</p>
+  <p class="d-form__status" role="status" aria-live="polite"></p>
+</form>
+
+<style is:global>
+  .d-form { display: grid; gap: 1rem; }
+  .d-form__row { display: grid; gap: 1rem; }
+  @media (min-width: 36rem) { .d-form__row { grid-template-columns: 1fr 1fr; } }
+  .d-field { display: grid; gap: 0.35rem; }
+  .d-field label { font-weight: 600; font-size: 0.92rem; }
+  .d-field input, .d-field select, .d-field textarea {
+    width: 100%;
+    min-height: 2.9rem;
+    padding: 0.6rem 0.8rem;
+    background: var(--d-input-bg, #fff);
+    color: var(--d-input-text, #111);
+    border: 1px solid var(--d-input-border, #999);
+    border-radius: var(--d-radius, 6px);
+  }
+  .d-form__note { font-size: 0.88rem; color: var(--d-muted); }
+  .d-form__status:empty { display: none; }
+  .d-form__status {
+    padding: 0.8rem 1rem;
+    border-radius: var(--d-radius, 6px);
+    background: var(--d-status-bg, #fff3cd);
+    color: var(--d-status-text, #3d2e00);
+    font-weight: 600;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form[data-demo-form]').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const status = form.querySelector('.d-form__status');
+      if (status) status.textContent = 'To demo — formularz nie wysyła danych. Na prawdziwej stronie zgłoszenie trafiłoby do arkusza, a klient dostałby automatyczną odpowiedź.';
+      form.reset();
+    });
+  });
+</script>

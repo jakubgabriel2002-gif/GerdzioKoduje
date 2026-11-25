@@ -1,0 +1,30 @@
+---
+import '@fontsource/jetbrains-mono/latin-500.css';
+import '@fontsource/jetbrains-mono/latin-ext-500.css';
+---
+<div class="demo-bar" role="note">
+  <p>
+    Strona pokazowa fikcyjnej firmy, zrobiona przez <a href="/" class="demo-bar__brand">Gerdzio Koduje</a>.{' '}
+    <span class="demo-bar__q">Chcesz taką?</span>{' '}<a href="/#kontakt" class="demo-bar__cta">→ Wyceń</a>
+  </p>
+</div>
+
+<style>
+  .demo-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0b0b0c;
+    color: #f5f5f2;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 500;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    padding: 0.55rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid #22e07a;
+  }
+  .demo-bar a { color: #22e07a; font-weight: 500; }
+  .demo-bar__cta { display: inline-block; padding: 0.15rem 0.2rem; white-space: nowrap; }
+  .demo-bar a:focus-visible { outline: 2px solid #22e07a; outline-offset: 2px; }
+</style>

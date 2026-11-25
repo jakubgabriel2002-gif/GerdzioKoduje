@@ -1,0 +1,44 @@
+---
+/** Layout stron demo — bez stylu Gerdzio Koduje; każde demo ma własny motyw. */
+import Head from './Head.astro';
+import DemoBar from '../components/demo/DemoBar.astro';
+interface Props { title: string; description: string; themeColor: string; theme: string }
+const { title, description, themeColor, theme } = Astro.props;
+---
+<!doctype html>
+<html lang="pl">
+  <head>
+    <Head title={title} description={description} themeColor={themeColor} noindex />
+  </head>
+  <body class:list={['demo', `demo--${theme}`]}>
+    <a class="d-skip" href="#tresc">Przejdź do treści</a>
+    <DemoBar />
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  :where(.demo *, .demo *::before, .demo *::after) { box-sizing: border-box; }
+  :where(.demo, .demo *) { margin: 0; }
+  .demo [hidden] { display: none !important; }
+  .demo {
+    background: var(--d-bg);
+    color: var(--d-text);
+    font-family: var(--d-font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .demo img, .demo svg { display: block; max-width: 100%; height: auto; }
+  .demo input, .demo button, .demo textarea, .demo select { font: inherit; color: inherit; }
+  .demo h1, .demo h2, .demo h3 { font-family: var(--d-font-head); line-height: 1.12; text-wrap: balance; overflow-wrap: break-word; }
+  .demo a { color: var(--d-link, var(--d-accent)); }
+  .demo :focus-visible { outline: 3px solid var(--d-focus, var(--d-accent)); outline-offset: 3px; }
+  .d-container { width: min(100% - 2rem, 70rem); margin-inline: auto; }
+  .d-section { padding-block: clamp(3.5rem, 2.5rem + 4vw, 6rem); }
+  .d-skip { position: absolute; left: 1rem; top: -100px; z-index: 200; background: #fff; color: #000; padding: 0.5rem 1rem; }
+  .d-skip:focus { top: 3.5rem; }
+  .d-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  html:has(.demo) { scroll-padding-top: 4.5rem; }
+  @media (prefers-reduced-motion: no-preference) { html:has(.demo) { scroll-behavior: smooth; } }
+</style>

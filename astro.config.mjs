@@ -9,8 +9,8 @@ export default defineConfig({
   build: { format: 'directory' },
   integrations: [
     sitemap({
-      // /dziekuje to strona techniczna, nie ma sensu jej indeksować
-      filter: (page) => !page.includes('/dziekuje'),
+      // /dziekuje i dema (noindex) nie trafiają do mapy strony
+      filter: (page) => !page.includes('/dziekuje') && !page.includes('/demo/'),
     }),
   ],
 });

@@ -137,7 +137,7 @@ export const faq = [
 export const demos = [
   {
     slug: 'warsztat',
-    name: 'Auto Serwis Kowalik',
+    name: 'Tłok & Klucz',
     industry: 'Warsztat samochodowy',
     text: 'Mechanika, diagnostyka i wymiana opon. Cennik usług i szybki formularz umówienia wizyty.',
     image: '/img/portfolio/warsztat.webp',

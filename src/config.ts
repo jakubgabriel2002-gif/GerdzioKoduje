@@ -43,7 +43,7 @@ export const nav = [
   { label: 'Kontakt', href: '/#kontakt' },
 ];
 
-/** Pakiety. Cena to liczba w zł — na stronie wyświetlana jako „od …”. */
+/** Pakiety. Cena to liczba w zł (grosze po kropce, np. 499.99) — na stronie wyświetlana jako „od …”. */
 export type Pkg = {
   id: string;
   name: string;
@@ -61,7 +61,7 @@ export const packages: Pkg[] = [
   {
     id: 'wizytowka',
     name: 'Wizytówka',
-    price: 1000,
+    price: 499.99,
     summary: 'Jedna dopracowana strona, która mówi klientowi wszystko, czego potrzebuje.',
     features: ['1 strona', 'o firmie', 'usługi', 'kontakt', 'mapa dojazdu', 'wersja mobilna'],
     inForm: true,
@@ -69,7 +69,7 @@ export const packages: Pkg[] = [
   {
     id: 'strona-firmowa',
     name: 'Strona firmowa',
-    price: 2000,
+    price: 1499.99,
     featured: true,
     badge: 'Najczęściej wybierana',
     summary: 'Pełna strona, która sama odpowiada na zapytania i zbiera je w jednym miejscu.',
@@ -92,8 +92,17 @@ export const packages: Pkg[] = [
   },
 ];
 
-export const formatPrice = (zl: number) =>
-  new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 0 }).format(zl).replace(/\s/g, ' ') + ' zł';
+export const formatPrice = (zl: number) => {
+  const hasGrosze = Math.round(zl * 100) % 100 !== 0;
+  return (
+    new Intl.NumberFormat('pl-PL', {
+      minimumFractionDigits: hasGrosze ? 2 : 0,
+      maximumFractionDigits: 2,
+    })
+      .format(zl)
+      .replace(/\s/g, '\u00a0') + '\u00a0zł'
+  );
+};
 
 /** Opcje pola „pakiet” w formularzu firmowym. */
 export const packageOptions = [

@@ -17,8 +17,7 @@ import { packages, formatPrice } from '../../config';
           </div>
           <p class="pkg__price">
             <span class="pkg__from">od</span>
-            <strong>{formatPrice(p.price)}</strong>
-            {p.period && <span class="pkg__period">{p.period}</span>}
+            <span class="pkg__amount"><strong>{formatPrice(p.price)}</strong>{p.period && <span class="pkg__period">{p.period}</span>}</span>
           </p>
           <p class="pkg__summary">{p.summary}</p>
           <ul class="check-list pkg__features">
@@ -63,8 +62,10 @@ import { packages, formatPrice } from '../../config';
     font-weight: 800;
   }
   .pkg__badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-  .pkg__price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; }
-  .pkg__price strong { font-size: clamp(2rem, 1.6rem + 1.6vw, 2.75rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+  .pkg__price { display: grid; gap: 0.35rem; }
+  .pkg__from { font-size: var(--step--1); }
+  .pkg__amount { display: flex; align-items: baseline; gap: 0.4rem; white-space: nowrap; }
+  .pkg__price strong { font-size: clamp(1.9rem, 1.5rem + 1.2vw, 2.5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
   .pkg__from, .pkg__period { color: var(--text-muted); }
   .pkg__summary { color: var(--text-muted); padding-bottom: 1.1rem; border-bottom: 1px solid var(--border); }
   .pkg--featured .pkg__summary { border-color: var(--accent-line); }

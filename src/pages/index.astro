@@ -9,7 +9,7 @@ import Faq from '../components/home/Faq.astro';
 import Contact from '../components/home/Contact.astro';
 import { packages, formatPrice } from '../config';
 
-const prices = packages.map((p) => `${p.name} od ${formatPrice(p.price)}${p.period ?? ''}`).join(', ');
+const prices = packages.map((p) => `${p.name} od ${formatPrice(p.price)}${p.period ?? ''}`).join(', ').replace(/\.$/, '');
 ---
 <BaseLayout
   title="Gerdzio Koduje — strony dla firm, które same obsługują klientów"

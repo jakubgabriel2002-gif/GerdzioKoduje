@@ -46,7 +46,7 @@ export const nav = [
   { label: 'Kontakt', href: '/dla-firm#kontakt' },
 ];
 
-/** Pakiety. Cena to liczba w zł (grosze po kropce, np. 499.99) — na stronie wyświetlana jako „od …”. */
+/** Pakiety. Cena to liczba w zł (pełne złote, np. 799) — na stronie wyświetlana jako „od …”. */
 export type Pkg = {
   id: string;
   name: string;
@@ -69,7 +69,7 @@ export const packages: Pkg[] = [
   {
     id: 'wizytowka',
     name: 'Wizytówka',
-    price: 499.99,
+    price: 799,
     summary: 'Jedna dopracowana strona, która mówi klientowi wszystko, czego potrzebuje.',
     features: ['1 strona', 'o firmie', 'usługi', 'kontakt', 'mapa dojazdu', 'wersja mobilna'],
     inForm: true,
@@ -77,14 +77,14 @@ export const packages: Pkg[] = [
   {
     id: 'strona-firmowa',
     name: 'Strona firmowa',
-    price: 1499.99,
+    price: 1499,
     featured: true,
-    badge: 'Najczęściej wybierana',
+    badge: 'Polecana',
     summary: 'Pełna strona, która sama odpowiada na zapytania i zbiera je w jednym miejscu.',
     features: [
       '3–5 podstron',
       'formularz z automatyczną odpowiedzią',
-      'zapis zapytań w arkuszu',
+      'zapis zapytań do arkusza',
       'wersja mobilna',
     ],
     inForm: true,
@@ -95,7 +95,7 @@ export const packages: Pkg[] = [
     priceLabel: 'do ustalenia',
     summary: 'Masz pomysł, którego nie ma w pakietach? Opisz go — przygotuję wycenę dopasowaną do Ciebie.',
     features: ['sklep internetowy', 'rezerwacje i zapisy online', 'aplikacja PWA dla firmy', 'integracje (kalendarz, płatności, CRM)', 'wszystko, co wymyślisz'],
-    cta: 'Poproś o wycenę',
+    cta: 'Napisz, czego potrzebujesz',
     inForm: true,
   },
   {
@@ -108,6 +108,15 @@ export const packages: Pkg[] = [
     inForm: false,
   },
 ];
+
+/**
+ * Dopisek nad pakietami (np. promocja). Pusty tekst = dopisek się nie wyświetla.
+ */
+export const pricingNote = 'Ceny startowe dla pierwszych 5 firm.';
+
+/** Najniższa cena „od” spośród pakietów z formularza (np. do kafelka „Dla firm”). */
+export const minPackagePrice = () =>
+  Math.min(...packages.filter((p) => p.inForm && p.price !== undefined).map((p) => p.price!));
 
 export const formatPrice = (zl: number) => {
   const hasGrosze = Math.round(zl * 100) % 100 !== 0;

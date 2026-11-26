@@ -4,9 +4,9 @@
  * Treść dla firm jest pod /dla-firm, nauka pod /nauka, aplikacje pod /aplikacje.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { packages, formatPrice, apps } from '../config';
+import { formatPrice, apps, minPackagePrice } from '../config';
 
-const minPrice = Math.min(...packages.filter((p) => p.inForm && p.price !== undefined).map((p) => p.price!));
+const minPrice = minPackagePrice();
 const appsAvailable = apps.filter((a) => a.status === 'dostępna').length;
 ---
 <BaseLayout

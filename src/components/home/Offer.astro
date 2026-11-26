@@ -1,5 +1,5 @@
 ---
-import { packages, formatPrice } from '../../config';
+import { packages, formatPrice, pricingNote } from '../../config';
 ---
 <section id="oferta" class="section" aria-labelledby="oferta-title">
   <div class="container">
@@ -7,6 +7,8 @@ import { packages, formatPrice } from '../../config';
       <h2 id="oferta-title">Oferta dla firm</h2>
       <p>Ceny „od” — dokładną wycenę dostajesz po krótkim briefie. Domena zawsze rejestrowana na Ciebie.</p>
     </div>
+
+    {pricingNote && <p class="pricing-note"><span class="pricing-note__dot" aria-hidden="true"></span>{pricingNote}</p>}
 
     <ul class="packages">
       {packages.map((p) => (
@@ -44,6 +46,20 @@ import { packages, formatPrice } from '../../config';
 </section>
 
 <style>
+  .pricing-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: var(--accent-tint);
+    border: 1px solid var(--accent-line);
+    color: var(--accent);
+    font-size: var(--step--1);
+    font-weight: 800;
+  }
+  .pricing-note__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
   .packages { list-style: none; padding: 0; display: grid; gap: 1.25rem; }
   .pkg {
     display: flex;
@@ -80,7 +96,7 @@ import { packages, formatPrice } from '../../config';
   .pkg__amount--custom strong { font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem); letter-spacing: -0.03em; }
   .pkg--custom { background: var(--bg); border-style: dashed; border-color: var(--border-strong); }
   .pkg--custom:hover { border-color: var(--accent-line); }
-  .pkg .btn { margin-top: auto; }
+  .pkg .btn { margin-top: auto; text-align: center; }
   .offer-note { margin-top: 2.5rem; color: var(--text-muted); max-width: 46rem; }
   @media (min-width: 44rem) {
     .packages { grid-template-columns: repeat(2, 1fr); }

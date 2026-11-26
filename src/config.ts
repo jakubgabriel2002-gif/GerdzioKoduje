@@ -62,6 +62,8 @@ export type Pkg = {
   features: string[];
   /** Czy pakiet pojawia się w polu „pakiet” formularza. */
   inForm: boolean;
+  /** Nazwa w formularzu i w arkuszu, jeśli ma być inna niż na karcie (np. „Opieka nad stroną”). */
+  formName?: string;
 };
 
 export const packages: Pkg[] = [
@@ -104,7 +106,8 @@ export const packages: Pkg[] = [
     period: '/mies.',
     summary: 'Ty prowadzisz firmę, ja pilnuję strony.',
     features: ['zmiany treści', 'aktualizacje', 'pilnowanie, że strona działa'],
-    inForm: false,
+    inForm: true,
+    formName: 'Opieka nad stroną',
   },
 ];
 
@@ -113,9 +116,12 @@ export const packages: Pkg[] = [
  */
 export const pricingNote = 'Ceny startowe dla pierwszych 5 firm.';
 
-/** Najniższa cena „od” spośród pakietów z formularza (np. do kafelka „Dla firm”). */
+/** Najniższa cena „od” spośród stron (bez abonamentu Opieka) — np. do kafelka „Dla firm”. */
 export const minPackagePrice = () =>
-  Math.min(...packages.filter((p) => p.inForm && p.price !== undefined).map((p) => p.price!));
+  Math.min(...packages.filter((p) => p.inForm && p.price !== undefined && !p.period).map((p) => p.price!));
+
+/** Nazwa pakietu tak, jak trafia do formularza i arkusza. */
+export const formPackageName = (p: Pkg) => p.formName ?? p.name;
 
 export const formatPrice = (zl: number) => {
   const hasGrosze = Math.round(zl * 100) % 100 !== 0;
@@ -147,10 +153,10 @@ export const quote = {
   deadlines: ['Jak najszybciej', 'W ciągu miesiąca', 'W ciągu 2–3 miesięcy', 'Bez pośpiechu'],
 };
 
-/** Opcje pola „pakiet” w formularzu firmowym. */
-export const packageOptions = [
-  ...packages.filter((p) => p.inForm).map((p) => p.name),
-  'Nie wiem jeszcze',
+/** Opcje pola „pakiet” w formularzu firmowym (id → wybór z adresu ?pakiet=…). */
+export const packageOptions: { id: string; name: string }[] = [
+  ...packages.filter((p) => p.inForm).map((p) => ({ id: p.id, name: formPackageName(p) })),
+  { id: 'nie-wiem', name: 'Nie wiem jeszcze' },
 ];
 
 export const processSteps = [

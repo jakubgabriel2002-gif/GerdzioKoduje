@@ -29,7 +29,7 @@ const versions: { v: DemoVersion; label: string }[] = [
           <a href={demoUrl(firm, x.v)} aria-current={x.v === version ? 'page' : undefined}>{x.label}</a>
         ))}
       </nav>
-      <a href="/dla-firm#kontakt" class="demo-bar__cta">Chcę taką <span aria-hidden="true">→</span></a>
+      <a href={`/dla-firm/?pakiet=${pkg.id}#kontakt`} class="demo-bar__cta">Chcę taką <span aria-hidden="true">→</span></a>
     </div>
   </div>
 </div>

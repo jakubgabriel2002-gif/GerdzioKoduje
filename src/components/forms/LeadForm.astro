@@ -31,7 +31,7 @@ import { packageOptions, quote } from '../../config';
     <div class="field">
       <label for="lead-package">Pakiet</label>
       <select id="lead-package" name="package">
-        {packageOptions.map((o) => <option value={o} selected={o === 'Nie wiem jeszcze'}>{o}</option>)}
+        {packageOptions.map((o) => <option value={o.name} data-id={o.id} selected={o.id === 'nie-wiem'}>{o.name}</option>)}
       </select>
     </div>
   </div>
@@ -118,6 +118,27 @@ import { packageOptions, quote } from '../../config';
     form.addEventListener('reset', () => setTimeout(sync));
     sync();
   });
+  // Wejście z adresem ?pakiet=<id> (np. „Chcę taką” w demach) od razu wybiera pakiet.
+  const fromUrl = new URLSearchParams(location.search).get('pakiet');
+  if (fromUrl) {
+    const sel = document.querySelector<HTMLSelectElement>('#lead-package');
+    const opt = sel?.querySelector<HTMLOptionElement>(`option[data-id="${CSS.escape(fromUrl)}"]`);
+    if (sel && opt) {
+      sel.value = opt.value;
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  }
+  // Opieka dotyczy istniejącej strony — od razu zaznaczamy „mam stronę” i pokazujemy pole na link.
+  document.querySelectorAll<HTMLSelectElement>('#lead-package').forEach((sel) =>
+    sel.addEventListener('change', () => {
+      if (sel.selectedOptions[0]?.dataset.id !== 'opieka') return;
+      const yes = sel.form?.querySelector<HTMLInputElement>('input[name="hasSite"][value="tak"]');
+      if (yes && !yes.checked) {
+        yes.checked = true;
+        yes.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }),
+  );
   // Klik w „Zapytaj o …” przy pakiecie ustawia go w formularzu.
   document.querySelectorAll<HTMLAnchorElement>('a[data-package]').forEach((a) =>
     a.addEventListener('click', () => {

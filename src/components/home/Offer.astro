@@ -1,5 +1,5 @@
 ---
-import { packages, formatPrice, pricingNote } from '../../config';
+import { packages, formatPrice, pricingNote, formPackageName } from '../../config';
 ---
 <section id="oferta" class="section" aria-labelledby="oferta-title">
   <div class="container">
@@ -32,7 +32,7 @@ import { packages, formatPrice, pricingNote } from '../../config';
           <ul class="check-list pkg__features">
             {p.features.map((f) => <li>{f}</li>)}
           </ul>
-          <a href="#kontakt" class:list={['btn', 'btn--block', { 'btn--secondary': !p.featured }]} data-package={p.inForm ? p.name : undefined}>
+          <a href="#kontakt" class:list={['btn', 'btn--block', { 'btn--secondary': !p.featured }]} data-package={p.inForm ? formPackageName(p) : undefined}>
             {p.cta ?? 'Zapytaj o ten pakiet'}<span class="visually-hidden">: {p.name}</span>
           </a>
         </li>

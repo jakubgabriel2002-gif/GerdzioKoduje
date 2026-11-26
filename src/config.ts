@@ -6,8 +6,8 @@
 
 export const site = {
   brand: 'Gerdzio Koduje',
+  /** Nazwa domeny do tekstów (np. regulamin). Adres strony dla SEO/canonical: `site` w astro.config.mjs. */
   domain: 'gerdziokoduje.pl',
-  url: 'https://gerdziokoduje.pl',
   owner: 'Jakub',
   tagline: 'buduję aplikacje z AI',
   defaultDescription:
@@ -41,7 +41,6 @@ export const socialList = [
 export const nav = [
   { label: 'Dla firm', href: '/dla-firm' },
   { label: 'Portfolio', href: '/dla-firm#portfolio' },
-  { label: 'Aplikacje', href: '/aplikacje' },
   { label: 'Nauka', href: '/nauka' },
   { label: 'Kontakt', href: '/dla-firm#kontakt' },
 ];

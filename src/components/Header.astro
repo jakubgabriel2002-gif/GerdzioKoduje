@@ -21,7 +21,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
         aria-controls="site-nav"
       >
         <span class="menu-toggle__icon" aria-hidden="true"><span></span></span>
-        <span class="menu-toggle__label">menu</span>
+        <span class="sr-only">Menu</span>
       </button>
     </div>
 
@@ -78,9 +78,8 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   .apps-link:hover, .apps-link[aria-current='page'] { border-color: var(--accent); }
   .apps-link__icon { display: grid; grid-template-columns: 5px 5px; gap: 2px; }
   .apps-link__icon i { width: 5px; height: 5px; border-radius: 1.5px; background: var(--accent); }
-  /* Na wąskich ekranach: hamburger bez napisu, mniejsze odstępy */
+  /* Na wąskich ekranach: mniejsze odstępy */
   @media (max-width: 30rem) {
-    .menu-toggle__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
     .menu-toggle { padding: 0.4rem 0.7rem; }
     .apps-link { padding: 0.4rem 0.7rem; }
   }
@@ -130,9 +129,10 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   .menu-toggle[aria-expanded='true'] .menu-toggle__icon::after { transform: translateY(-6px) rotate(-45deg); }
 
   @media (min-width: 60rem) {
-    .site-header__inner { display: flex; justify-content: space-between; gap: 1.5rem; }
+    .site-header__inner { display: flex; justify-content: flex-start; gap: 1.25rem; }
     .menu-toggle, :global(.js) .menu-toggle { display: none; }
-    .site-header__actions { display: none; }
+    .site-header__actions { order: 2; }
+    .site-nav { order: 1; margin-left: auto; }
     .site-nav, :global(.js) .site-nav {
       display: flex;
       flex-direction: row;

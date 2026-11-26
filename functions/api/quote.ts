@@ -20,6 +20,7 @@ const ERRORS: Record<string, string> = {
   closed: 'Na tę wycenę udzielono już odpowiedzi.',
   expired: 'Ta wycena wygasła. Wybierz „Chcę negocjować” albo odpowiedz na maila — przygotuję aktualną.',
   bad_action: 'Nieznana akcja.',
+  terms: 'Żeby zaakceptować wycenę, zaznacz akceptację regulaminu.',
 };
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
@@ -42,6 +43,14 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }
   // Honeypot
   if (str('website', 200)) return json({ ok: true });
+  // Akceptacja wymaga zgody na regulamin — zapisujemy ją w komentarzu klienta (arkusz)
+  if (action === 'accept' && str('terms', 5) !== 'tak') {
+    return json({ ok: false, error: 'terms', message: ERRORS.terms }, 400);
+  }
+  const termsNote =
+    action === 'accept'
+      ? `Regulamin (wersja ${str('termsVersion', 20) || '?'}) zaakceptowany; żądanie rozpoczęcia prac przed upływem 14 dni.`
+      : '';
 
   const res =
     action === 'get'
@@ -50,7 +59,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
           ref,
           token,
           action,
-          message: str('message', 2000),
+          message: [termsNote, str('message', 2000)].filter(Boolean).join('\n'),
           price: str('price', 40),
         });
 

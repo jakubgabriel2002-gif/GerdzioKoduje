@@ -19,7 +19,7 @@ const year = new Date().getFullYear();
   </div>
   <div class="container site-footer__bottom">
     <p>© {year} {site.brand}</p>
-    <a href="/polityka-prywatnosci">Polityka prywatności</a>
+    <span class="site-footer__links"><a href="/regulamin">Regulamin</a><a href="/polityka-prywatnosci">Polityka prywatności</a></span>
   </div>
 </footer>
 
@@ -39,6 +39,7 @@ const year = new Date().getFullYear();
     color: var(--text-muted);
     font-size: var(--step--1);
   }
+  .site-footer__links { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
   .site-footer__bottom a { color: var(--text-muted); padding-block: 0.3rem; }
   .site-footer__bottom a:hover { color: var(--accent); }
   @media (min-width: 48rem) {

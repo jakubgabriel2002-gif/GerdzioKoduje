@@ -1,0 +1,119 @@
+---
+/**
+ * Regulamin świadczenia usług. To szablon przygotowany na podstawie ustaleń —
+ * PRZED UŻYCIEM zweryfikuj go (najlepiej z prawnikiem). Zobacz README.
+ * Przy każdej zmianie zaktualizuj `updated` w src/config.ts (terms.updated).
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EmailLink from '../components/EmailLink.astro';
+import { site, terms } from '../config';
+---
+<BaseLayout title="Regulamin usług | Gerdzio Koduje" description="Zasady świadczenia usług Gerdzio Koduje: zamówienie, wycena, płatności, realizacja, prawa autorskie, odstąpienie i reklamacje.">
+  <section class="section">
+    <div class="container prose">
+      <h1>Regulamin świadczenia usług</h1>
+      <p class="muted">Obowiązuje od: {terms.updated}</p>
+
+      <h2>§ 1. Usługodawca i definicje</h2>
+      <ol>
+        <li>Usługi świadczy <strong>Jakub Gabriel</strong>, 14-260 Lubawa, prowadzący działalność nierejestrowaną pod marką {site.brand} (dalej: <strong>Usługodawca</strong>). Kontakt: <EmailLink subject="Regulamin" />.</li>
+        <li><strong>Klient</strong> — osoba fizyczna, osoba prawna lub jednostka organizacyjna, która zamawia usługę.</li>
+        <li><strong>Konsument</strong> — Klient będący osobą fizyczną, który zawiera umowę niezwiązaną bezpośrednio z jego działalnością gospodarczą lub zawodową; postanowienia dotyczące Konsumenta stosuje się też do przedsiębiorcy będącego osobą fizyczną, gdy umowa nie ma dla niego charakteru zawodowego (art. 38a ustawy o prawach konsumenta).</li>
+        <li><strong>Wycena</strong> — oferta Usługodawcy przesłana e-mailem, określająca zakres, cenę, czas realizacji i termin ważności.</li>
+        <li><strong>Serwis</strong> — strona internetowa {site.domain}.</li>
+      </ol>
+
+      <h2>§ 2. Rodzaje usług</h2>
+      <ol>
+        <li>Usługodawca projektuje i wykonuje strony internetowe oraz aplikacje (w tym pakiety „Wizytówka”, „Strona firmowa” i projekty wyceniane indywidualnie), a także świadczy usługę stałej opieki nad stroną („Opieka”).</li>
+        <li>Ceny podane w Serwisie są cenami „od” i nie stanowią oferty w rozumieniu Kodeksu cywilnego. Wiążąca jest wyłącznie Wycena.</li>
+        <li>Usługodawca nie jest płatnikiem VAT. Ceny w Wycenie są kwotami ostatecznymi do zapłaty.</li>
+      </ol>
+
+      <h2>§ 3. Zamówienie i zawarcie umowy</h2>
+      <ol>
+        <li>Klient składa zapytanie przez formularz w Serwisie lub e-mailem.</li>
+        <li>Usługodawca przesyła Wycenę e-mailem. Wycena jest ważna przez okres w niej wskazany (domyślnie 14 dni).</li>
+        <li>Umowa zostaje zawarta z chwilą akceptacji Wyceny przez Klienta — przyciskiem „Akceptuję wycenę” na stronie Wyceny (wraz z akceptacją niniejszego Regulaminu) albo odpowiedzią e-mail z akceptacją.</li>
+        <li>Klient może przed akceptacją zaproponować zmiany (negocjacja). Zmieniona Wycena wymaga ponownej akceptacji.</li>
+        <li>Treść umowy stanowią: zaakceptowana Wycena i niniejszy Regulamin. Potwierdzenie zawarcia umowy Klient otrzymuje e-mailem.</li>
+      </ol>
+
+      <h2>§ 4. Płatności</h2>
+      <ol>
+        <li>Przed rozpoczęciem prac Klient wpłaca zaliczkę w wysokości <strong>50%</strong> ceny z Wyceny. Pozostałe 50% Klient płaci po publikacji strony lub przekazaniu dzieła, przed przeniesieniem praw autorskich.</li>
+        <li>Zaliczkę można zapłacić online (karta, BLIK, Przelewy24) za pośrednictwem Stripe Payments Europe, Ltd. albo przelewem — zgodnie z informacją w Wycenie.</li>
+        <li>Usługę „Opieka” rozlicza się z góry za każdy miesiąc, w kwocie wskazanej w Serwisie lub Wycenie.</li>
+        <li>Na żądanie Klienta Usługodawca wystawia rachunek.</li>
+        <li>Rozpoczęcie prac następuje po zaksięgowaniu zaliczki. Termin realizacji liczy się od tego dnia.</li>
+      </ol>
+
+      <h2>§ 5. Realizacja</h2>
+      <ol>
+        <li>Realizacja obejmuje: krótki brief, makietę (zwykle w ciągu 1–2 dni roboczych od startu), poprawki oraz publikację.</li>
+        <li>W cenie są <strong>2 rundy poprawek</strong> w zakresie z Wyceny. Kolejne poprawki lub zmiany wykraczające poza zakres wycenia się osobno — po akceptacji Klienta.</li>
+        <li>Klient dostarcza materiały (teksty, zdjęcia, logo, dane kontaktowe) i odpowiada za to, że ma do nich prawa oraz że nie naruszają prawa ani praw osób trzecich.</li>
+        <li>Termin realizacji z Wyceny wydłuża się o czas oczekiwania na materiały, odpowiedzi lub akceptacje Klienta.</li>
+        <li>Brak uwag Klienta do przekazanej wersji w ciągu 14 dni od jej przesłania oznacza jej akceptację, o ile Usługodawca przypomni o tym e-mailem co najmniej 3 dni przed upływem terminu.</li>
+      </ol>
+
+      <h2>§ 6. Domena, hosting i dostępy</h2>
+      <ol>
+        <li>Domena jest zawsze rejestrowana na Klienta. Koszty domeny i ewentualnych płatnych usług zewnętrznych ponosi Klient, jeśli Wycena nie stanowi inaczej.</li>
+        <li>Po pełnej zapłacie Klient otrzymuje dostęp do strony i jej plików.</li>
+      </ol>
+
+      <h2>§ 7. Prawa autorskie</h2>
+      <ol>
+        <li>Z chwilą zapłaty całej ceny Usługodawca przenosi na Klienta autorskie prawa majątkowe do wykonanej strony (projektu graficznego i kodu przygotowanego dla Klienta) na polach eksploatacji: utrwalanie i zwielokrotnianie, wprowadzanie do pamięci komputera i do sieci, publiczne udostępnianie w internecie, modyfikowanie i rozpowszechnianie.</li>
+        <li>Przeniesienie nie obejmuje elementów udostępnianych na licencjach otwartych lub przez podmioty trzecie (np. biblioteki, fonty, ikony) — Klient korzysta z nich na warunkach tych licencji.</li>
+        <li>Usługodawca może pokazać wykonaną stronę w swoim portfolio i mediach społecznościowych, chyba że Klient się temu sprzeciwi e-mailem.</li>
+      </ol>
+
+      <h2>§ 8. Opieka nad stroną</h2>
+      <ol>
+        <li>Opieka obejmuje: drobne zmiany treści, aktualizacje oraz monitorowanie działania strony — w zakresie z Serwisu lub Wyceny.</li>
+        <li>Opieka jest zawierana na czas nieokreślony. Każda ze stron może ją wypowiedzieć e-mailem ze skutkiem na koniec bieżącego okresu rozliczeniowego (miesiąca).</li>
+      </ol>
+
+      <h2>§ 9. Odstąpienie od umowy (Konsumenci)</h2>
+      <ol>
+        <li>Konsument może odstąpić od umowy zawartej na odległość w terminie <strong>14 dni</strong> od jej zawarcia, bez podawania przyczyny, wysyłając oświadczenie e-mailem na adres Usługodawcy.</li>
+        <li>Jeśli Konsument zażądał rozpoczęcia prac przed upływem tego terminu (zaznaczając to przy akceptacji Wyceny), a następnie odstąpi od umowy, zapłaci za usługi wykonane do chwili odstąpienia — proporcjonalnie do zakresu wykonanych prac. Pozostałą część wpłaconej kwoty Usługodawca zwraca w ciągu 14 dni, tą samą metodą płatności.</li>
+        <li>Konsument traci prawo odstąpienia, gdy usługa zostanie w pełni wykonana za jego wyraźną zgodą, jeśli przed rozpoczęciem świadczenia został poinformowany o utracie tego prawa.</li>
+        <li>Klienci niebędący Konsumentami mogą zrezygnować z zamówienia w każdym czasie; Usługodawca zachowuje wtedy wynagrodzenie za prace wykonane do dnia rezygnacji (rozliczane z zaliczki), a nadwyżkę zaliczki zwraca.</li>
+      </ol>
+
+      <h2>§ 10. Reklamacje</h2>
+      <ol>
+        <li>Reklamacje można składać e-mailem, opisując problem.</li>
+        <li>Usługodawca odpowiada na reklamację w ciągu <strong>14 dni</strong>. Brak odpowiedzi w tym terminie oznacza uznanie reklamacji.</li>
+        <li>Błędy w działaniu strony wynikające z pracy Usługodawcy zgłoszone w ciągu 30 dni od publikacji są poprawiane bezpłatnie.</li>
+        <li>Konsument może skorzystać z pozasądowych sposobów rozpatrywania sporów, m.in. pomocy miejskiego lub powiatowego rzecznika konsumentów oraz wojewódzkiego inspektoratu Inspekcji Handlowej.</li>
+      </ol>
+
+      <h2>§ 11. Odpowiedzialność</h2>
+      <ol>
+        <li>Usługodawca nie odpowiada za treści i materiały dostarczone przez Klienta ani za zmiany wprowadzone w stronie przez Klienta lub osoby trzecie.</li>
+        <li>Usługodawca nie odpowiada za przerwy w działaniu usług zewnętrznych (np. hostingu, rejestratora domeny, Google, Cloudflare, Stripe), na które nie ma wpływu.</li>
+        <li>Wobec Klientów niebędących Konsumentami odpowiedzialność Usługodawcy jest ograniczona do wysokości wynagrodzenia otrzymanego z danej umowy. Ograniczenie nie dotyczy szkód wyrządzonych umyślnie.</li>
+      </ol>
+
+      <h2>§ 12. Dane osobowe</h2>
+      <p>Zasady przetwarzania danych osobowych opisuje <a href="/polityka-prywatnosci">Polityka prywatności</a>.</p>
+
+      <h2>§ 13. Postanowienia końcowe</h2>
+      <ol>
+        <li>Regulamin jest dostępny bezpłatnie w Serwisie pod adresem {site.domain}/regulamin w formie umożliwiającej jego pobranie i zapisanie.</li>
+        <li>Zmiany Regulaminu nie dotyczą umów zawartych przed ich wprowadzeniem.</li>
+        <li>W sprawach nieuregulowanych stosuje się prawo polskie, w szczególności Kodeks cywilny i ustawę o prawach konsumenta.</li>
+        <li>Spory z Klientami niebędącymi Konsumentami rozstrzyga sąd właściwy dla miejsca zamieszkania Usługodawcy.</li>
+      </ol>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prose ol { padding-left: 1.3em; }
+  .prose ol li + li { margin-top: 0.5em; }
+</style>

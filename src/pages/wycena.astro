@@ -5,6 +5,7 @@
  * Dane pobiera i zapisuje przez /api/quote (→ Google Apps Script).
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { terms } from '../config';
 ---
 <BaseLayout title="Twoja wycena | Gerdzio Koduje" description="Podsumowanie wyceny i odpowiedź na nią." noindex>
   <section class="section q-page">
@@ -44,7 +45,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <p class="muted">Chcesz coś zmienić? Odpowiedz na maila z wyceną.</p>
         </div>
 
-        <form id="q-form" class="q-form" novalidate>
+        <form id="q-form" class="q-form" novalidate data-terms-version={terms.version}>
           <h2 class="q-h2" id="q-decision">Twoja decyzja</h2>
           <div class="q-options" role="radiogroup" aria-labelledby="q-decision">
             <label class="q-option q-option--accept">
@@ -72,6 +73,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <div class="field" data-for="negotiate reject" hidden>
             <label for="q-message" id="q-message-label">Komentarz <span class="dim">(opcjonalnie)</span></label>
             <textarea id="q-message" name="message" rows="4" maxlength="2000"></textarea>
+          </div>
+          <div data-for="accept" hidden>
+            <label class="consent q-terms">
+              <input type="checkbox" name="terms" value="tak" id="q-terms-check" />
+              <span>Akceptuję <a href="/regulamin" target="_blank" rel="noopener">regulamin usług</a> i żądam rozpoczęcia prac przed upływem 14 dni na odstąpienie od umowy (jeśli to prawo mi przysługuje). Rozumiem, że przy odstąpieniu zapłacę za prace wykonane do tego czasu. <span class="req" aria-hidden="true">*</span></span>
+            </label>
           </div>
           <div class="hp" aria-hidden="true">
             <label for="q-website">Nie wypełniaj tego pola</label>
@@ -237,7 +244,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         el.hidden = !el.dataset.for!.split(' ').includes(action);
       });
       $('q-message-label').firstChild!.textContent = action === 'reject' ? 'Powód ' : 'Komentarz ';
-      submit.disabled = !action;
+      const termsOk = action !== 'accept' || $<HTMLInputElement>('q-terms-check').checked;
+      submit.disabled = !action || !termsOk;
       submit.textContent = LABELS[action] ?? 'Wybierz odpowiedź';
     };
     form.addEventListener('change', sync);
@@ -261,6 +269,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           message: String(fd.get('message') ?? ''),
           price: String(fd.get('price') ?? ''),
           website: String(fd.get('website') ?? ''),
+          terms: action === 'accept' && fd.get('terms') === 'tak' ? 'tak' : '',
+          termsVersion: form.dataset.termsVersion ?? '',
         });
       } catch {
         res = { ok: false, message: 'Nie udało się połączyć. Spróbuj za chwilę.' };
@@ -340,6 +350,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .q-option:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
   .q-option.is-disabled { opacity: 0.45; cursor: not-allowed; }
   .q-warn { color: #ffd56b; font-size: var(--step--1); }
+  .q-terms { padding: 0.9rem 1rem; border-radius: var(--radius-btn); border: 1px solid var(--border-strong); background: var(--bg-raised); }
 
   .q-closed { margin-top: 2rem; padding: 1.25rem; border-radius: var(--radius-btn); border: 1px solid var(--border-strong); background: var(--bg-raised); display: grid; gap: 0.5rem; }
 

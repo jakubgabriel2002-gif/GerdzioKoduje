@@ -19,6 +19,9 @@ export const site = {
   email: { user: 'jakub.gabriel2002', domain: 'gmail.com' },
 };
 
+/** Regulamin usług — data wersji (zmień przy każdej zmianie treści /regulamin). */
+export const terms = { updated: '26 listopada 2026 r.', version: '2026-11-26' };
+
 export const social = {
   // zmienić na @gerdziokoduje ok. 14.12.2026
   tiktok: 'https://www.tiktok.com/@firmanaai',

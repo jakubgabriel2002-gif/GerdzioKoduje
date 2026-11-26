@@ -180,5 +180,6 @@ Push na `main` = automatyczny build i wdrożenie na Cloudflare (ok. 1–2 min). 
 
 ## Do weryfikacji przed startem
 
+- **Regulamin usług** (`src/pages/regulamin.astro`) to szablon przygotowany na podstawie ustaleń (zaliczka 50%, 2 rundy poprawek, domena na klienta itd.) — **zweryfikuj go przed użyciem**, najlepiej z prawnikiem. Datę wersji zmieniasz w `src/config.ts` (`terms`). Akceptacja regulaminu przy wycenie zapisuje się w arkuszu w kolumnie „komentarz klienta”.
 - **Polityka prywatności** (`src/pages/polityka-prywatnosci.astro`) ma uzupełnione dane, ale warto **zweryfikować treść** — najlepiej z prawnikiem lub na podstawie aktualnych wytycznych UODO. Nie jest to porada prawna. Przy zmianach aktualizuj datę na górze dokumentu.
 - Linki social z komentarzami w `config.ts` (TikTok — zmiana nazwy ok. 14.12.2026, Facebook — docelowy adres strony).

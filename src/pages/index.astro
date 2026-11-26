@@ -1,13 +1,12 @@
 ---
 /**
  * Strona startowa — wybór ścieżki: firma / nauka (+ kafelek aplikacji).
- * Treść dla firm jest pod /dla-firm, nauka pod /nauka, aplikacje pod /aplikacje.
+ * Treść dla firm jest pod /dla-firm, nauka pod /nauka, aplikacje na apps.gerdziokoduje.pl.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { formatPrice, apps, minPackagePrice } from '../config';
+import { formatPrice, appsUrl, minPackagePrice } from '../config';
 
 const minPrice = minPackagePrice();
-const appsAvailable = apps.filter((a) => a.status === 'dostępna').length;
 ---
 <BaseLayout
   title="Gerdzio Koduje — strony dla firm i nauka budowania aplikacji z AI"
@@ -65,13 +64,13 @@ const appsAvailable = apps.filter((a) => a.status === 'dostępna').length;
         </a>
       </div>
 
-      <a class="apps-tile" href="/aplikacje">
+      <a class="apps-tile" href={appsUrl}>
         <span class="apps-tile__icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
         <span class="apps-tile__body">
           <span class="apps-tile__title">Moje aplikacje</span>
           <span class="apps-tile__text">Aplikacje PWA — instalujesz prosto z przeglądarki, bez sklepu.</span>
         </span>
-        <span class="apps-tile__badge">{appsAvailable > 0 ? `${appsAvailable} do pobrania` : 'wkrótce'}</span>
+        <span class="apps-tile__badge">apps.gerdziokoduje.pl</span>
         <span class="apps-tile__go" aria-hidden="true">→</span>
       </a>
     </div>

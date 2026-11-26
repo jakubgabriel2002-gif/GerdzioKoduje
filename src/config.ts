@@ -290,33 +290,11 @@ export const packageComparison: [string, boolean | string, boolean | string][] =
 ];
 
 /**
- * Moje aplikacje (PWA) — pokazują się na /aplikacje.
- * Pusta lista = strona pokazuje komunikat „wkrótce”.
- *
- * Jak dodać aplikację: skopiuj przykład spod listy, usuń // i uzupełnij.
- *  - url: adres, pod którym aplikacja działa (np. https://apps.gerdziokoduje.pl/notatki/),
- *  - icon: ikona w public/img/apps/ (najlepiej kwadratowa, 192×192 PNG lub SVG),
- *  - status: 'dostępna' albo 'wkrótce' (wtedy bez przycisku „Otwórz”).
+ * Moje aplikacje (PWA) są na osobnej subdomenie (repo gerdziokoduje-apps).
+ * Link „Aplikacje” w nagłówku i kafelek na stronie startowej prowadzą tutaj,
+ * a stary adres /aplikacje przekierowuje public/_redirects.
  */
-export type App = {
-  name: string;
-  description: string;
-  url: string;
-  icon?: string;
-  status: 'dostępna' | 'wkrótce';
-  tags?: string[];
-};
-
-export const apps: App[] = [
-  // {
-  //   name: 'Nazwa aplikacji',
-  //   description: 'Jedno–dwa zdania: co robi i dla kogo jest.',
-  //   url: 'https://apps.gerdziokoduje.pl/nazwa/',
-  //   icon: '/img/apps/nazwa.png',
-  //   status: 'dostępna',
-  //   tags: ['darmowa', 'offline'],
-  // },
-];
+export const appsUrl = 'https://apps.gerdziokoduje.pl/';
 
 /** Klucz publiczny Turnstile — ustawiany przy buildzie ze zmiennej TURNSTILE_SITE_KEY (patrz astro.config.mjs). Pusty = brak widgetu. */
 export const turnstileSiteKey: string = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';

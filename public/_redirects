@@ -9,6 +9,9 @@
 /demo/barber/             /demo/barber/firmowa/        301
 /demo/fizjo               /demo/fizjo/firmowa/         301
 /demo/fizjo/              /demo/fizjo/firmowa/         301
+# Aplikacje przeniesione na subdomenę
+/aplikacje                https://apps.gerdziokoduje.pl/  301
+/aplikacje/               https://apps.gerdziokoduje.pl/  301
 # Usunięte demo warsztatu
 /demo/warsztat            /dla-firm/#portfolio         301
 /demo/warsztat/           /dla-firm/#portfolio         301

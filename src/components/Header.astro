@@ -1,6 +1,6 @@
 ---
 import Lockup from './Lockup.astro';
-import { nav } from '../config';
+import { nav, appsUrl } from '../config';
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 <header class="site-header">
@@ -10,7 +10,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     </a>
 
     <div class="site-header__actions">
-      <a href="/aplikacje" class="apps-link" aria-current={path === '/aplikacje' ? 'page' : undefined}>
+      <a href={appsUrl} class="apps-link">
         <span class="apps-link__icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
         Aplikacje
       </a>
@@ -75,7 +75,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     text-decoration: none;
     transition: border-color 0.15s;
   }
-  .apps-link:hover, .apps-link[aria-current='page'] { border-color: var(--accent); }
+  .apps-link:hover { border-color: var(--accent); }
   .apps-link__icon { display: grid; grid-template-columns: 5px 5px; gap: 2px; }
   .apps-link__icon i { width: 5px; height: 5px; border-radius: 1.5px; background: var(--accent); }
   /* Na wąskich ekranach: mniejsze odstępy */

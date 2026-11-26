@@ -14,7 +14,6 @@ const SELECTOR = [
   'main .contact > *',
   'main .plans > li',
   'main .install > *',
-  'main .apps > li',
   'main [data-reveal-auto]',
 ].join(',');
 

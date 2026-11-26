@@ -50,7 +50,7 @@ Bez `TURNSTILE_SECRET` weryfikacja antyspamowa jest pomijana (tryb dev).
 │  │  └─ demo/             pasek demo, nagłówek z menu mobilnym, formularz demo, kontakt, mapa, godziny
 │  ├─ demos/<firma>/       każde demo: Layout (nagłówek, stopka), Sections (sekcje), theme.css (wygląd)
 │  ├─ scripts/form.ts      wysyłka formularzy przez fetch (progressive enhancement)
-│  └─ pages/               podstrony: / (ekran wyboru), /dla-firm, /nauka, /aplikacje, /regulamin, /polityka-prywatnosci, /wycena, /dziekuje, 404,
+│  └─ pages/               podstrony: / (ekran wyboru), /dla-firm, /nauka, /regulamin, /polityka-prywatnosci, /wycena, /dziekuje, 404,
 │                          /demo/<firma>/wizytowka/ i /demo/<firma>/firmowa/<podstrona>/
 ├─ functions/
 │  ├─ _lib/                walidacja, Turnstile, wysyłka do Apps Script, odpowiedzi
@@ -83,11 +83,11 @@ i **Strona firmowa** (`/demo/<firma>/firmowa/` + 3 podstrony, z formularzem demo
 tabela porównawcza nad portfolio — w `packageComparison`. Treści i wygląd danej firmy: `src/demos/<firma>/`.
 Po zmianie wyglądu dem odśwież miniatury: `npm run build && npm run images`. Stare adresy `/demo/<firma>/` przekierowuje `public/_redirects`.
 
-### Jak dodać aplikację na /aplikacje
+### Aplikacje
 
-1. Wrzuć ikonę (kwadratową, np. 192×192 PNG) do `public/img/apps/`.
-2. W `src/config.ts` znajdź listę `apps`, skopiuj zakomentowany przykład, usuń `//` i uzupełnij: nazwę, opis, adres aplikacji (`url`), ikonę i `status` (`'dostępna'` albo `'wkrótce'`).
-3. Commit + push — aplikacja pojawi się na stronie. Dopóki lista jest pusta, strona pokazuje komunikat „wkrótce”.
+Aplikacje są na **apps.gerdziokoduje.pl** (osobne repo `gerdziokoduje-apps`, tam jest instrukcja dodawania).
+Link „Aplikacje” w nagłówku i kafelek na stronie startowej prowadzą na adres `appsUrl` z `src/config.ts`,
+a stary adres `/aplikacje` przekierowuje `public/_redirects`.
 
 Teksty sekcji (np. „O mnie”, hero) są w `src/components/home/*.astro`, a strona Nauka w `src/pages/nauka.astro`.
 Kolory marki: `src/styles/tokens.css`.
@@ -155,7 +155,7 @@ Po zmianie domeny pamiętaj o adresach poza kodem: hostnames w Turnstile, URL we
 
 Aplikacje PWA trzymamy w **osobnym projekcie Cloudflare Pages** podpiętym pod `apps.gerdziokoduje.pl`
 (Workers & Pages → projekt aplikacji → Custom domains → `apps.gerdziokoduje.pl`). Rekord DNS Cloudflare dodaje sam.
-Na stronie głównej aplikacje wpisujesz w `src/config.ts` (`apps`, pole `url`, np. `https://apps.gerdziokoduje.pl/nazwa/`).
+Na stronie głównej prowadzą tam link „Aplikacje” w nagłówku i kafelek „Moje aplikacje” (`appsUrl` w `src/config.ts`).
 
 ### Wdrożenie Apps Script
 

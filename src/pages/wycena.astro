@@ -120,6 +120,7 @@ import { terms } from '../config';
 </BaseLayout>
 
 <script>
+  import { atLeast, buttonLoading, buttonRestore, setStatus } from '../scripts/sending';
   type Quote = {
     ref: string; company: string; amount: string; scope: string; time: string;
     validUntil: string; status: string; expired: boolean; closed: boolean;
@@ -157,10 +158,8 @@ import { terms } from '../config';
     const btn = $<HTMLButtonElement>('q-pay-btn');
     const status = $('q-pay-status');
     btn.onclick = async () => {
-      btn.disabled = true;
-      btn.textContent = 'Otwieram płatność…';
-      status.dataset.state = 'loading';
-      status.textContent = 'Za chwilę przekieruję Cię do bezpiecznej płatności Stripe…';
+      buttonLoading(btn, 'Otwieram płatność');
+      setStatus(status, 'loading', 'Za chwilę przekieruję Cię do bezpiecznej płatności Stripe…');
       try {
         const res = await fetch('/api/pay', {
           method: 'POST',
@@ -172,10 +171,8 @@ import { terms } from '../config';
         if (data.paid) { hide('q-pay'); show('q-paid'); return; }
         throw new Error(data.message);
       } catch (err) {
-        status.dataset.state = 'error';
-        status.textContent = (err as Error).message || 'Nie udało się otworzyć płatności. Spróbuj za chwilę.';
-        btn.disabled = false;
-        btn.textContent = 'Zapłać zaliczkę';
+        setStatus(status, 'error', (err as Error).message || 'Nie udało się otworzyć płatności. Spróbuj za chwilę.');
+        buttonRestore(btn);
       }
     };
   }
@@ -257,28 +254,27 @@ import { terms } from '../config';
       e.preventDefault();
       const action = form.querySelector<HTMLInputElement>('input[name="action"]:checked')?.value;
       if (!action) return;
-      submit.disabled = true;
-      submit.textContent = 'Wysyłanie…';
-      status.dataset.state = 'loading';
-      status.textContent = 'Zapisuję odpowiedź…';
+      form.dataset.sending = '1';
+      buttonLoading(submit);
+      setStatus(status, 'loading', 'Zapisuję odpowiedź…');
       const fd = new FormData(form);
       let res;
       try {
-        res = await api({
+        res = await atLeast(api({
           action,
           message: String(fd.get('message') ?? ''),
           price: String(fd.get('price') ?? ''),
           website: String(fd.get('website') ?? ''),
           terms: action === 'accept' && fd.get('terms') === 'tak' ? 'tak' : '',
           termsVersion: form.dataset.termsVersion ?? '',
-        });
+        }));
       } catch {
         res = { ok: false, message: 'Nie udało się połączyć. Spróbuj za chwilę.' };
       }
       if (!res.ok) {
-        status.dataset.state = 'error';
-        status.textContent = res.message ?? 'Coś poszło nie tak.';
-        submit.disabled = false;
+        delete form.dataset.sending;
+        setStatus(status, 'error', res.message ?? 'Coś poszło nie tak.');
+        buttonRestore(submit);
         submit.textContent = LABELS[action];
         return;
       }

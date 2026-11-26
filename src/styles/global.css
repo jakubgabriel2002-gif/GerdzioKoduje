@@ -228,6 +228,56 @@ fieldset.field > legend { padding: 0; margin-bottom: 0.4rem; }
 }
 .form__status[data-state='success'] { border-color: var(--accent); }
 .form__status[data-state='error'] { border-color: var(--danger); color: #ffd2d2; }
+
+/* ===== Wysyłanie formularzy (src/scripts/sending.ts) ===== */
+.btn[data-state] { position: relative; overflow: hidden; opacity: 1; isolation: isolate; }
+.btn[data-state='loading'] { cursor: progress; gap: 0.55rem; }
+.btn[data-state='loading']::after {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.45) 50%, transparent 80%);
+  transform: translateX(-100%);
+  animation: f-btn-sweep 1.3s ease-in-out infinite;
+}
+.btn__spinner { width: 1.05em; height: 1.05em; flex: none; border-radius: 50%; border: 2.5px solid currentColor; border-right-color: transparent; animation: f-spin 0.7s linear infinite; }
+.btn__dots { display: inline-flex; margin-left: -0.5rem; }
+.btn__dots i { font-style: normal; animation: f-dot 1.2s infinite both; }
+.btn__dots i:nth-child(2) { animation-delay: 0.15s; }
+.btn__dots i:nth-child(3) { animation-delay: 0.3s; }
+.btn[data-state='success'] { animation: f-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.4); }
+.btn__check { width: 0.5rem; height: 0.9rem; flex: none; margin: -0.2rem 0.15rem 0 0; border: solid currentColor; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); animation: f-check-in 0.35s 0.1s cubic-bezier(0.2, 0.9, 0.3, 1.4) backwards; }
+
+form[data-sending] .field,
+form[data-sending] .quote-box,
+form[data-sending] .consent,
+form[data-sending] .q-options { opacity: 0.5; pointer-events: none; transition: opacity 0.3s; }
+
+.form__status[data-state='loading'] { position: relative; overflow: hidden; color: var(--text-muted); }
+.form__status[data-state='loading']::after {
+  content: ''; position: absolute; left: 0; bottom: 0; height: 2px; width: 40%;
+  background: var(--accent); border-radius: 2px;
+  animation: f-progress 1.1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.form__status[data-state='success'] { display: flex; gap: 0.75rem; align-items: flex-start; }
+.form__status[data-state='success']::before {
+  content: ''; flex: none; width: 0.45rem; height: 0.85rem; margin: 0.15rem 0.35rem 0 0.3rem;
+  border: solid var(--accent); border-width: 0 2.5px 2.5px 0; transform: rotate(45deg);
+}
+.form__status.is-anim { animation: f-status-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.form__status.is-anim[data-state='success']::before { animation: f-check-in 0.4s 0.15s cubic-bezier(0.2, 0.9, 0.3, 1.4) backwards; }
+.form__status.is-anim[data-state='error'] { animation: f-status-in 0.3s ease-out, f-shake 0.4s 0.1s ease-in-out; }
+
+@keyframes f-spin { to { transform: rotate(360deg); } }
+@keyframes f-btn-sweep { to { transform: translateX(100%); } }
+@keyframes f-dot { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+@keyframes f-progress { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
+@keyframes f-pop { 0% { transform: scale(0.94); } 60% { transform: scale(1.04); } 100% { transform: none; } }
+@keyframes f-check-in { from { opacity: 0; transform: rotate(45deg) scale(0.3); } }
+@keyframes f-status-in { from { opacity: 0; transform: translateY(8px); } }
+@keyframes f-shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+@media (prefers-reduced-motion: reduce) {
+  .btn[data-state]::after, .btn[data-state], .btn__check, .form__status.is-anim, .form__status.is-anim::before { animation: none !important; }
+  .btn__spinner { animation-duration: 1.6s; }
+}
 .quote-box {
   display: block;
   margin: 0;

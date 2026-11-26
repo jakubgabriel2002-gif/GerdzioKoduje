@@ -20,6 +20,48 @@ import EmailLink from '../EmailLink.astro';
   </div>
 </section>
 
+<script>
+  /**
+   * Linki do #kontakt (np. „Wyceń stronę”, „Zapytaj o pakiet”) przewijają prosto do ankiety,
+   * a nie do nagłówka sekcji, i od razu odpalają jej animację wejścia (bez czekania na przewinięcie).
+   */
+  const card = document.querySelector<HTMLElement>('#kontakt .form-card');
+  if (card) {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const root = document.documentElement;
+    const targetY = () => {
+      // pozycja bez przesunięcia z animacji wejścia (translateY), minus wysokość nagłówka
+      const ty = new DOMMatrixReadOnly(getComputedStyle(card).transform).m42 || 0;
+      const pad = parseFloat(getComputedStyle(root).scrollPaddingTop) || 0;
+      return Math.max(0, card.getBoundingClientRect().top + window.scrollY - ty - pad);
+    };
+    let placed = -1;
+    const go = (smooth: boolean) => {
+      document.querySelectorAll('#kontakt [data-reveal]').forEach((el) => el.classList.add('is-in'));
+      placed = targetY();
+      window.scrollTo({ top: placed, behavior: (smooth && !reduce ? 'smooth' : 'instant') as ScrollBehavior });
+    };
+    const samePage = (url: URL) => url.pathname.replace(/\/$/, '') === location.pathname.replace(/\/$/, '');
+    document.addEventListener('click', (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as Element).closest?.<HTMLAnchorElement>('a[href]');
+      if (!a) return;
+      const url = new URL(a.href, location.href);
+      if (url.hash !== '#kontakt' || !samePage(url)) return;
+      e.preventDefault();
+      if (location.hash !== '#kontakt') history.pushState(null, '', '#kontakt');
+      go(true);
+    });
+    // Wejście z innej strony (np. /dla-firm#kontakt z menu albo z dema).
+    if (location.hash === '#kontakt') {
+      requestAnimationFrame(() => go(false));
+      window.addEventListener('load', () => {
+        if (Math.abs(window.scrollY - placed) < 60) go(false); // korekta po doładowaniu fontów/obrazków
+      }, { once: true });
+    }
+  }
+</script>
+
 <style>
   .contact { display: grid; gap: 2.5rem; }
   .contact__intro { display: grid; gap: 1.25rem; align-content: start; }

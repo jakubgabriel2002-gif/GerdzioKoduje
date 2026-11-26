@@ -42,3 +42,19 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (!res || res.ok !== true) return new Response('apps script error', { status: 500 });
   return new Response('ok', { status: 200 });
 };
+
+/**
+ * GET — podgląd w przeglądarce: pokazuje, że endpoint działa i czy sekret jest ustawiony.
+ * (Stripe wysyła powiadomienia metodą POST — ta odpowiedź służy tylko do sprawdzenia.)
+ */
+export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
+  const configured = Boolean(env.STRIPE_WEBHOOK_SECRET);
+  const keySet = Boolean(env.STRIPE_SECRET_KEY);
+  const html = `<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Webhook Stripe</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0b0b0c;color:#f5f5f2;font:500 1rem/1.6 ui-monospace,Menlo,Consolas,monospace;padding:1rem}main{max-width:36rem}.ok{color:#22e07a}.no{color:#ff7a7a}</style></head>
+<body><main><h1>&gt; webhook Stripe działa<span class="ok">_</span></h1>
+<p>Ten adres przyjmuje powiadomienia od Stripe (metodą POST) — w przeglądarce nic więcej tu nie zobaczysz.</p>
+<p>STRIPE_WEBHOOK_SECRET: <b class="${configured ? 'ok' : 'no'}">${configured ? 'ustawiony ✓' : 'BRAK — dodaj w Cloudflare i zrób Retry deployment'}</b><br>
+STRIPE_SECRET_KEY: <b class="${keySet ? 'ok' : 'no'}">${keySet ? 'ustawiony ✓' : 'BRAK — dodaj w Cloudflare i zrób Retry deployment'}</b></p></main></body></html>`;
+  return new Response(html, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } });
+};

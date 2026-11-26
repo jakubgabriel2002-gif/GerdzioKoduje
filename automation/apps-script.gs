@@ -18,7 +18,7 @@ const OWNER_EMAIL = 'jakub.gabriel2002@gmail.com';
 const SIGNATURE = 'Gerdzio Koduje';
 /**
  * Adres strony (linki w mailach, w tym przyciski wyceny).
- * Dopóki nie masz domeny, dodaj we Właściwościach skryptu: SITE_URL = https://twoj-projekt.pages.dev
+ * Domyślnie https://gerdziokoduje.pl. Inny adres możesz ustawić we Właściwościach skryptu (SITE_URL).
  */
 const SITE_URL = 'https://gerdziokoduje.pl';
 const TZ = 'Europe/Warsaw';

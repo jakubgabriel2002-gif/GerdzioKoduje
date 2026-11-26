@@ -1,4 +1,6 @@
 export interface Env {
+  /** Główny adres strony bez https:// (np. gerdziokoduje.pl). Ustawiony = przekierowanie z www i *.pages.dev. */
+  CANONICAL_HOST?: string;
   /** URL wdrożonego Google Apps Script (kończy się na /exec). */
   APPS_SCRIPT_URL?: string;
   /** Wspólny sekret — ten sam co SECRET w apps-script.gs. */

@@ -138,17 +138,24 @@ Polityka prywatności już opisuje te statystyki.
 
 5. **Save and Deploy.** Folder `functions/` zostanie automatycznie wdrożony jako Pages Functions.
 
-Klucze Turnstile: **Cloudflare → Turnstile → Add widget**, domena `gerdziokoduje.pl` (do testów dodaj też `*.pages.dev`), tryb **Managed**. Klucz publiczny strona pobiera na żywo z `/api/turnstile-key`, więc zmiana kluczy działa bez nowego builda (wystarczy zapisać zmienne).
+Klucze Turnstile: **Cloudflare → Turnstile → Add widget**, domeny `gerdziokoduje.pl`, `www.gerdziokoduje.pl` i `gerdziokoduje.pages.dev`, tryb **Managed**. Klucz publiczny strona pobiera na żywo z `/api/turnstile-key`, więc zmiana kluczy działa bez nowego builda (wystarczy zapisać zmienne).
 
-### Podpięcie domeny gerdziokoduje.pl
+### Domena gerdziokoduje.pl
 
-1. W projekcie Pages: **Custom domains → Set up a custom domain** → `gerdziokoduje.pl`.
-2. Najprościej, gdy DNS domeny jest w Cloudflare:
-   - **Add a site** w Cloudflare → `gerdziokoduje.pl` → plan Free,
-   - u rejestratora domeny zmień **serwery nazw (nameservery)** na te 2 podane przez Cloudflare,
-   - po aktywacji (zwykle do kilku godzin) Cloudflare sam doda rekord dla Pages.
-3. Dodaj też `www.gerdziokoduje.pl` jako drugą domenę i ustaw przekierowanie www → bez www (**Rules → Redirect Rules** lub Bulk Redirects).
-4. Certyfikat HTTPS wystawia się automatycznie.
+Domena jest w Cloudflare i podpięta pod projekt Pages (Custom domains: `gerdziokoduje.pl` i `www.gerdziokoduje.pl`).
+Głównym adresem jest **`https://gerdziokoduje.pl`** (bez www) — tak jest ustawiony `site` w `astro.config.mjs` (canonical, sitemap, Open Graph).
+
+Przekierowanie na główny adres (z `www.` i z `gerdziokoduje.pages.dev`) robi `functions/_middleware.ts`.
+Włącza się zmienną w Cloudflare: **Settings → Variables and Secrets → `CANONICAL_HOST` = `gerdziokoduje.pl`** (Text) → Retry deployment.
+Formularze i webhooki (`/api/*`) oraz podglądy gałęzi nie są przekierowywane.
+
+Po zmianie domeny pamiętaj o adresach poza kodem: hostnames w Turnstile, URL webhooka w Stripe, `SITE_URL` w Apps Script.
+
+### Subdomena apps.gerdziokoduje.pl (aplikacje)
+
+Aplikacje PWA trzymamy w **osobnym projekcie Cloudflare Pages** podpiętym pod `apps.gerdziokoduje.pl`
+(Workers & Pages → projekt aplikacji → Custom domains → `apps.gerdziokoduje.pl`). Rekord DNS Cloudflare dodaje sam.
+Na stronie głównej aplikacje wpisujesz w `src/config.ts` (`apps`, pole `url`, np. `https://apps.gerdziokoduje.pl/nazwa/`).
 
 ### Wdrożenie Apps Script
 

@@ -294,7 +294,7 @@ export const packageComparison: [string, boolean | string, boolean | string][] =
  * Pusta lista = strona pokazuje komunikat „wkrótce”.
  *
  * Jak dodać aplikację: skopiuj przykład spod listy, usuń // i uzupełnij.
- *  - url: adres, pod którym aplikacja działa (np. https://notatki.gerdziokoduje.pl),
+ *  - url: adres, pod którym aplikacja działa (np. https://apps.gerdziokoduje.pl/notatki/),
  *  - icon: ikona w public/img/apps/ (najlepiej kwadratowa, 192×192 PNG lub SVG),
  *  - status: 'dostępna' albo 'wkrótce' (wtedy bez przycisku „Otwórz”).
  */
@@ -311,7 +311,7 @@ export const apps: App[] = [
   // {
   //   name: 'Nazwa aplikacji',
   //   description: 'Jedno–dwa zdania: co robi i dla kogo jest.',
-  //   url: 'https://nazwa.gerdziokoduje.pl',
+  //   url: 'https://apps.gerdziokoduje.pl/nazwa/',
   //   icon: '/img/apps/nazwa.png',
   //   status: 'dostępna',
   //   tags: ['darmowa', 'offline'],

@@ -136,9 +136,8 @@ Po potwierdzeniu:
 Linki są podpisane (HMAC z Twoim `SECRET`), więc nikt nie zmieni statusu cudzej wyceny, nawet znając jej numer.
 Po negocjacji możesz wysłać poprawioną wycenę: zmień kwotę/zakres, wyczyść kolumnę „wysłano” i ponownie zaznacz „wyślij wycenę”.
 
-**Ważne — adres strony w przyciskach:** dopóki nie masz domeny gerdziokoduje.pl, dodaj we **Właściwościach skryptu**
-(zębatka → Właściwości skryptu → Dodaj) właściwość `SITE_URL` z adresem Twojej strony, np. `https://gerdziokoduje.pages.dev`.
-Po podpięciu domeny zmień ją na `https://gerdziokoduje.pl` (albo usuń — to wartość domyślna).
+**Adres strony w przyciskach:** linki w mailach prowadzą na `https://gerdziokoduje.pl` (domyślnie w skrypcie).
+Jeśli masz we Właściwościach skryptu `SITE_URL` z adresem `…pages.dev`, zmień ją na `https://gerdziokoduje.pl` albo ją usuń.
 
 Jeśli zaznaczysz pole bez kwoty lub zakresu — nic nie zostanie wysłane, pole się odznaczy, a w komórce pojawi się notatka, czego brakuje.
 Statusy dalej zmieniasz ręcznie z listy: `nowe`, `w kontakcie`, `wycena wysłana`, `zaakceptowana`, `odrzucona`.
@@ -162,7 +161,7 @@ Dopóki tego nie skonfigurujesz, wszystko działa jak wcześniej (w mailu: „li
 4. **Klucz API:** Programiści → **Klucze API** → *Utwórz klucz ograniczony* → nazwa `gerdziokoduje` →
    uprawnienie **Checkout Sessions: Zapis** (reszta „Brak”) → skopiuj klucz `rk_live_…`.
 5. **Webhook:** Programiści → **Webhooki** → *Dodaj endpoint*:
-   - URL: `https://TWOJA-STRONA/api/stripe-webhook` (np. `https://gerdziokoduje.pages.dev/api/stripe-webhook`),
+   - URL: `https://gerdziokoduje.pl/api/stripe-webhook`,
    - zdarzenia: `checkout.session.completed` i `checkout.session.async_payment_succeeded`,
    - po zapisaniu skopiuj **Sekret podpisu** `whsec_…`.
 6. **Cloudflare:** projekt → Settings → Variables and Secrets → dodaj jako **Secret**:

@@ -1,0 +1,271 @@
+---
+/** Sekcje dema Atelier Malwa — używane przez Wizytówkę i Stronę firmową. */
+import DemoForm from '../../components/demo/DemoForm.astro';
+import DemoMap from '../../components/demo/DemoMap.astro';
+import DemoHours from '../../components/demo/DemoHours.astro';
+import DemoContact from '../../components/demo/DemoContact.astro';
+import { demoUrl } from '../../config';
+
+interface Props { part: string }
+const { part } = Astro.props;
+const url = (p = '') => demoUrl('beauty', 'firmowa', p);
+
+const categories = [
+  { name: 'Twarz', items: [
+    { name: 'Oczyszczanie wodorowe', time: '60 min', price: '180 zł' },
+    { name: 'Peeling kawitacyjny + maska', time: '45 min', price: '140 zł' },
+    { name: 'Zabieg nawilżający z kwasem hialuronowym', time: '60 min', price: '220 zł' },
+    { name: 'Konsultacja kosmetologiczna', time: '30 min', price: '60 zł' },
+  ] },
+  { name: 'Dłonie', items: [
+    { name: 'Manicure hybrydowy', time: '75 min', price: '120 zł' },
+    { name: 'Manicure japoński', time: '45 min', price: '90 zł' },
+    { name: 'Przedłużanie żelem', time: '120 min', price: '200 zł' },
+    { name: 'Zdjęcie hybrydy', time: '20 min', price: '30 zł' },
+  ] },
+  { name: 'Brwi i rzęsy', items: [
+    { name: 'Laminacja brwi z henną', time: '50 min', price: '130 zł' },
+    { name: 'Lifting rzęs', time: '60 min', price: '150 zł' },
+    { name: 'Regulacja brwi', time: '20 min', price: '40 zł' },
+    { name: 'Henna brwi i rzęs', time: '30 min', price: '50 zł' },
+  ] },
+];
+const short = [
+  { name: 'Oczyszczanie wodorowe', price: '180 zł' },
+  { name: 'Manicure hybrydowy', price: '120 zł' },
+  { name: 'Manicure japoński', price: '90 zł' },
+  { name: 'Laminacja brwi z henną', price: '130 zł' },
+  { name: 'Lifting rzęs', price: '150 zł' },
+  { name: 'Regulacja brwi', price: '40 zł' },
+];
+const popular = [categories[0].items[0], categories[1].items[0], categories[2].items[1]];
+const hours: [string, string][] = [
+  ['Poniedziałek – piątek', '9:00 – 19:00'],
+  ['Sobota', '9:00 – 14:00'],
+  ['Niedziela', 'zamknięte'],
+];
+const reviews = [
+  { text: 'Atmosfera jak w małym spa. Pani Ola wszystko wytłumaczyła i dobrała zabieg do mojej skóry.', who: 'Karolina' },
+  { text: 'Hybryda trzyma się trzy tygodnie bez odprysków. Wracam co miesiąc.', who: 'Natalia' },
+  { text: 'Laminacja brwi zmieniła moje poranki. Polecam z całego serca.', who: 'Agnieszka' },
+];
+const highlights = [
+  { t: 'Najpierw rozmowa', d: 'Każdy pierwszy zabieg zaczynamy od krótkiej konsultacji i dobrania pielęgnacji do Twojej skóry.' },
+  { t: 'Sterylne narzędzia', d: 'Narzędzia metalowe sterylizujemy w autoklawie, pilniki są jednorazowe.' },
+  { t: 'Czas tylko dla Ciebie', d: 'Nie umawiamy wizyt na zakładkę — nikt nie czeka w poczekalni i nikt Cię nie pogania.' },
+];
+const team = [
+  { name: 'Ola', role: 'kosmetolożka', d: 'Zabiegi na twarz i konsultacje. Lubi trudne przypadki i cerę wrażliwą.' },
+  { name: 'Magda', role: 'stylistka paznokci i brwi', d: 'Manicure japoński, hybrydy i laminacje. Perfekcjonistka od pierwszego pilnika.' },
+];
+const marquee = ['oczyszczanie wodorowe', 'manicure japoński', 'lifting rzęs', 'laminacja brwi', 'zabiegi nawilżające', 'przedłużanie żelem'];
+const services = categories.flatMap((c) => c.items.map((i) => i.name));
+---
+{part === 'hero' && (
+  <section class="m-hero">
+    <div class="d-container m-hero__in">
+      <div class="m-hero__copy">
+        <p class="m-eyebrow">Kosmetyka · Paznokcie · Brwi i rzęsy</p>
+        <h1>Piękno, które <em>nie musi</em> się spieszyć.</h1>
+        <p class="m-lead">Kameralny salon w Przykładowie. Zabiegi dobrane do Twojej skóry, spokojna atmosfera i czas tylko dla Ciebie.</p>
+        <div class="m-cta">
+          <a class="m-btn" href={url('rezerwacja')}>Zarezerwuj wizytę</a>
+          <a class="m-link" href={url('zabiegi')}>Zobacz zabiegi</a>
+        </div>
+      </div>
+      <div class="m-hero__art" aria-hidden="true">
+        <span class="m-arch m-arch--big"><span class="m-arch__shine"></span></span>
+        <span class="m-arch m-arch--small"></span>
+        <span class="m-petal m-petal--1"></span>
+        <span class="m-petal m-petal--2"></span>
+        <span class="m-badge"><b>4.9</b> średnia ocen<br />klientek</span>
+      </div>
+    </div>
+    <div class="d-marquee m-marquee" aria-hidden="true">
+      <div class="d-marquee__track">{[...marquee, ...marquee].map((m) => <span>{m} <i>✦</i></span>)}</div>
+    </div>
+  </section>
+)}
+
+{part === 'hero-wiz' && (
+  <section class="m-wiz">
+    <div class="d-container m-wiz__in">
+      <div class="m-wiz__copy">
+        <p class="m-eyebrow">Salon kosmetyczny · Przykładowo</p>
+        <h1>Atelier <em>Malwa</em></h1>
+        <p class="m-lead">Kosmetyka twarzy, paznokcie, brwi i rzęsy. Kameralnie, bez pośpiechu.</p>
+        <ul class="m-chips">
+          <li><span>Telefon</span><a href="tel:000000000">000 000 000</a></li>
+          <li><span>Adres</span>ul. Przykładowa 1</li>
+          <li><span>Dziś</span>9:00 – 19:00</li>
+        </ul>
+        <div class="m-cta">
+          <a class="m-btn" href="tel:000000000">Zadzwoń i umów się</a>
+          <a class="m-link" href="#uslugi">Cennik</a>
+        </div>
+      </div>
+      <div class="m-wiz__art" aria-hidden="true">
+        <span class="m-arch m-arch--wiz"><span class="m-arch__shine"></span></span>
+        <span class="m-petal m-petal--1"></span>
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'highlights' && (
+  <section class="d-section">
+    <div class="d-container">
+      <div class="m-head" data-anim><p class="m-eyebrow">Dlaczego my</p><h2>Małe rzeczy, które <em>robią różnicę</em></h2></div>
+      <ul class="m-high">
+        {highlights.map((h, i) => (
+          <li data-anim><span class="m-high__no">0{i + 1}</span><h3>{h.t}</h3><p>{h.d}</p></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+
+{part === 'services-teaser' && (
+  <section class="d-section m-about">
+    <div class="d-container">
+      <div class="m-head" data-anim><p class="m-eyebrow">Najczęściej wybierane</p><h2>Ulubione zabiegi</h2></div>
+      <ul class="m-teaser">
+        {popular.map((s) => (
+          <li data-anim><h3>{s.name}</h3><p>{s.time}</p><b>{s.price}</b></li>
+        ))}
+      </ul>
+      <p class="m-more" data-anim><a class="m-btn" href={url('zabiegi')}>Pełny cennik zabiegów</a></p>
+    </div>
+  </section>
+)}
+
+{part === 'services-full' && (
+  <section class="d-section">
+    <div class="d-container">
+      <h2 class="d-visually-hidden">Cennik zabiegów</h2>
+      <div class="m-cats">
+        {categories.map((c) => (
+          <div class="m-cat" data-anim>
+            <h3>{c.name}</h3>
+            <ul>{c.items.map((i) => <li><span class="m-cat__name">{i.name}<small>{i.time}</small></span><span class="m-cat__price">{i.price}</span></li>)}</ul>
+          </div>
+        ))}
+      </div>
+      <p class="m-note">Ceny przykładowe — salon jest fikcyjny.</p>
+    </div>
+  </section>
+)}
+
+{part === 'services-short' && (
+  <section id="uslugi" class="d-section">
+    <div class="d-container m-narrow">
+      <div class="m-head" data-anim><p class="m-eyebrow">Cennik</p><h2>Zabiegi</h2></div>
+      <ul class="m-list" data-anim>
+        {short.map((s) => <li><span>{s.name}</span><i aria-hidden="true"></i><b>{s.price}</b></li>)}
+      </ul>
+      <p class="m-note">Pełny cennik i szczegóły zabiegów — zadzwoń, chętnie doradzimy.</p>
+    </div>
+  </section>
+)}
+
+{part === 'about' && (
+  <section id="o-nas" class="d-section m-about">
+    <div class="d-container m-about__in">
+      <div class="m-about__art" data-anim="left" aria-hidden="true">
+        <span class="m-arch m-arch--about"></span>
+        <span class="m-stamp">od<br /><b>2018</b></span>
+      </div>
+      <div data-anim="right">
+        <p class="m-eyebrow">O nas</p>
+        <h2>Mały salon, <em>duża uważność</em></h2>
+        <p>Atelier Malwa to dwie kosmetolożki i jeden cel: żebyś wychodziła lżejsza, niż przyszłaś. Pracujemy na sprawdzonych kosmetykach i zawsze zaczynamy od rozmowy o Twojej skórze.</p>
+        <ul class="m-stats">
+          <li><b data-count="2400" data-suffix="+">2400+</b><span>wykonanych zabiegów</span></li>
+          <li><b data-count="2">2</b><span>kosmetolożki</span></li>
+          <li><b data-count="100" data-suffix="%">100%</b><span>sterylne narzędzia</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'about-short' && (
+  <section id="o-nas" class="d-section m-about">
+    <div class="d-container m-about__in">
+      <div class="m-about__art m-about__art--sm" data-anim="left" aria-hidden="true"><span class="m-arch m-arch--about"></span></div>
+      <div data-anim="right">
+        <p class="m-eyebrow">O nas</p>
+        <h2>Mały salon, <em>duża uważność</em></h2>
+        <p>Dwie kosmetolożki, sprawdzone kosmetyki i spokojna atmosfera. Każdy zabieg zaczynamy od rozmowy o Twojej skórze — bez pośpiechu i bez sprzedawania na siłę.</p>
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'team' && (
+  <section class="d-section">
+    <div class="d-container">
+      <div class="m-head" data-anim><p class="m-eyebrow">Zespół</p><h2>Poznaj nas</h2></div>
+      <ul class="m-team">
+        {team.map((p) => (
+          <li data-anim>
+            <span class="m-team__avatar" aria-hidden="true">{p.name[0]}</span>
+            <div><h3>{p.name}</h3><p class="m-team__role">{p.role}</p><p>{p.d}</p></div>
+          </li>
+        ))}
+      </ul>
+      <p class="m-note">Osoby fikcyjne — salon jest pokazowy.</p>
+    </div>
+  </section>
+)}
+
+{part === 'reviews' && (
+  <section class="d-section">
+    <div class="d-container">
+      <div class="m-head" data-anim><p class="m-eyebrow">Opinie <span class="m-tag">przykładowe</span></p><h2>Mówią o nas</h2></div>
+      <ul class="m-reviews">
+        {reviews.map((r) => (
+          <li data-anim><p class="m-stars" aria-label="Ocena 5 na 5">★★★★★</p><blockquote><p>„{r.text}”</p></blockquote><p class="m-reviews__who">{r.who}</p></li>
+        ))}
+      </ul>
+      <p class="m-note">Opinie przykładowe — salon jest fikcyjny.</p>
+    </div>
+  </section>
+)}
+
+{part === 'cta' && (
+  <section class="m-band">
+    <div class="d-container m-band__in" data-anim>
+      <h2>Zarezerwuj chwilę <em>dla siebie</em></h2>
+      <a class="m-btn m-btn--light" href={url('rezerwacja')}>Zarezerwuj wizytę</a>
+    </div>
+  </section>
+)}
+
+{part === 'contact-form' && (
+  <section class="d-section m-contact">
+    <div class="d-container m-contact__in">
+      <div class="m-contact__info" data-anim>
+        <h2>Kontakt i dojazd</h2>
+        <p>ul. Przykładowa 1, 00-000 Przykładowo<br />tel. <a href="tel:000000000">000 000 000</a> · kontakt@example.com</p>
+        <h3>Godziny otwarcia</h3>
+        <DemoHours hours={hours} />
+        <DemoMap address="ul. Przykładowa 1, 00-000 Przykładowo" />
+      </div>
+      <div class="m-card" data-anim>
+        <h3>Zapytaj o termin</h3>
+        <p class="m-card__lead">Odpowiadamy automatycznie od razu, a termin potwierdzamy w ciągu kilku godzin.</p>
+        <DemoForm id="m" services={services} submitLabel="Wyślij prośbę o termin" />
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'contact-simple' && (
+  <section id="kontakt" class="d-section m-contact">
+    <div class="d-container">
+      <div class="m-head" data-anim><p class="m-eyebrow">Kontakt</p><h2>Zadzwoń i umów się</h2></div>
+      <div data-anim><DemoContact hours={hours} /></div>
+    </div>
+  </section>
+)}

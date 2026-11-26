@@ -186,43 +186,107 @@ export const faq = [
   },
 ];
 
-/** Dema w portfolio. */
-export const demos = [
+/**
+ * Dema w portfolio — każda firma ma 2 wersje: Wizytówka (1 strona) i Strona firmowa (podstrony).
+ * Adresy: /demo/<slug>/wizytowka/ oraz /demo/<slug>/firmowa/<podstrona>/.
+ * Miniatury: public/img/portfolio/<slug>-wizytowka.webp i <slug>-firmowa.webp (npm run images).
+ */
+export type DemoVersion = 'wizytowka' | 'firmowa';
+export type Demo = {
+  slug: string;
+  name: string;
+  industry: string;
+  /** Opis wersji „Strona firmowa”. */
+  text: string;
+  /** Opis wersji „Wizytówka”. */
+  textWiz: string;
+  /** Podstrony wersji „Strona firmowa” (pierwsza = strona startowa, path ''). */
+  pages: { path: string; label: string }[];
+};
+
+export const demos: Demo[] = [
   {
     slug: 'beauty',
     name: 'Atelier Malwa',
     industry: 'Salon kosmetyczny',
     text: 'Kosmetyka, paznokcie, brwi i rzęsy. Elegancki cennik, opinie klientek i prośba o termin.',
-    image: '/img/portfolio/beauty.webp',
+    textWiz: 'Najważniejsze zabiegi z cenami, godziny, mapa i telefon — wszystko na jednej stronie.',
+    pages: [
+      { path: '', label: 'Start' },
+      { path: 'zabiegi', label: 'Zabiegi i cennik' },
+      { path: 'o-nas', label: 'O nas' },
+      { path: 'rezerwacja', label: 'Rezerwacja' },
+    ],
   },
   {
     slug: 'trener',
     name: 'Forma Od Podstaw',
     industry: 'Trener personalny',
     text: 'Treningi 1:1 i prowadzenie online. Pakiety, metoda pracy, postępy i zapis na trening próbny.',
-    image: '/img/portfolio/trener.webp',
+    textWiz: 'Cennik treningów, krótko o trenerze i szybki kontakt telefoniczny.',
+    pages: [
+      { path: '', label: 'Start' },
+      { path: 'oferta', label: 'Oferta' },
+      { path: 'metoda', label: 'Metoda' },
+      { path: 'zapisy', label: 'Zapisy' },
+    ],
   },
   {
     slug: 'restauracja',
     name: 'Bistro Kminek',
     industry: 'Restauracja',
-    text: 'Kuchnia sezonowa. Menu z zakładkami, danie dnia, godziny otwarcia i rezerwacja stolika.',
-    image: '/img/portfolio/restauracja.webp',
+    text: 'Kuchnia sezonowa. Menu z zakładkami, danie dnia, przyjęcia i rezerwacja stolika.',
+    textWiz: 'Krótkie menu, godziny otwarcia, mapa dojazdu i telefon do rezerwacji.',
+    pages: [
+      { path: '', label: 'Start' },
+      { path: 'menu', label: 'Menu' },
+      { path: 'o-nas', label: 'O nas i przyjęcia' },
+      { path: 'rezerwacja', label: 'Rezerwacja' },
+    ],
   },
   {
     slug: 'barber',
     name: 'Brzytwa & Grzebień',
     industry: 'Barber shop',
     text: 'Klasyczny barber z charakterem. Strzyżenia, broda, golenie brzytwą i rezerwacja terminu.',
-    image: '/img/portfolio/barber.webp',
+    textWiz: 'Cennik usług, godziny i telefon — klasyczna wizytówka zakładu.',
+    pages: [
+      { path: '', label: 'Start' },
+      { path: 'cennik', label: 'Cennik' },
+      { path: 'o-nas', label: 'O nas i zespół' },
+      { path: 'rezerwacja', label: 'Rezerwacja' },
+    ],
   },
   {
     slug: 'fizjo',
     name: 'Fizjo Równowaga',
     industry: 'Gabinet fizjoterapii',
     text: 'Spokojna, czytelna strona gabinetu. Terapie, zespół, cennik i zapis na pierwszą wizytę.',
-    image: '/img/portfolio/fizjo.webp',
+    textWiz: 'Terapie z cenami, godziny przyjęć, mapa i telefon do rejestracji.',
+    pages: [
+      { path: '', label: 'Start' },
+      { path: 'terapie', label: 'Terapie' },
+      { path: 'zespol', label: 'Zespół' },
+      { path: 'zapisy', label: 'Zapisy' },
+    ],
   },
+];
+
+export const demoUrl = (slug: string, version: DemoVersion, page = '') =>
+  `/demo/${slug}/${version}/${page ? `${page}/` : ''}`;
+export const demoImage = (slug: string, version: DemoVersion) => `/img/portfolio/${slug}-${version}.webp`;
+/** Pakiet z configu odpowiadający wersji dema. */
+export const demoPackage = (version: DemoVersion) =>
+  packages.find((p) => p.id === (version === 'wizytowka' ? 'wizytowka' : 'strona-firmowa'))!;
+
+/** Tabela porównawcza nad portfolio: [funkcja, Wizytówka, Strona firmowa]. true/false = ✓/—, tekst = wartość. */
+export const packageComparison: [string, boolean | string, boolean | string][] = [
+  ['Liczba stron', '1 strona', '3–5 podstron'],
+  ['O firmie, usługi, kontakt, mapa dojazdu', true, true],
+  ['Wersja mobilna', true, true],
+  ['Rozbudowana oferta / cennik', false, true],
+  ['Formularz z automatyczną odpowiedzią', false, true],
+  ['Zapis zapytań do arkusza', false, true],
 ];
 
 /**

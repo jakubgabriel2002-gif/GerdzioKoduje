@@ -1,0 +1,243 @@
+---
+/** Sekcje dema Forma Od Podstaw — Wizytówka i Strona firmowa. */
+import DemoForm from '../../components/demo/DemoForm.astro';
+import DemoMap from '../../components/demo/DemoMap.astro';
+import DemoHours from '../../components/demo/DemoHours.astro';
+import DemoContact from '../../components/demo/DemoContact.astro';
+import { demoUrl } from '../../config';
+
+interface Props { part: string }
+const { part } = Astro.props;
+const url = (p = '') => demoUrl('trener', 'firmowa', p);
+
+const offers = [
+  { name: 'Trening próbny', price: '0 zł', unit: 'pierwsze spotkanie', points: ['rozmowa o celu', 'test sprawności', 'plan na start'] },
+  { name: 'Pakiet 8 treningów', price: '760 zł', unit: '95 zł / trening', points: ['trening 1:1 (60 min)', 'plan ćwiczeń w aplikacji', 'pomiary co 4 tygodnie'], featured: true },
+  { name: 'Prowadzenie online', price: '249 zł', unit: 'miesięcznie', points: ['plan treningowy', 'wskazówki żywieniowe', 'cotygodniowy kontakt'] },
+];
+const short = [
+  { name: 'Trening próbny', price: '0 zł' },
+  { name: 'Trening 1:1 (60 min)', price: '120 zł' },
+  { name: 'Pakiet 8 treningów', price: '760 zł' },
+  { name: 'Trening w parze (60 min)', price: '160 zł' },
+  { name: 'Prowadzenie online', price: '249 zł / mies.' },
+];
+const steps = [
+  { title: 'Diagnoza', text: 'Sprawdzamy, jak się ruszasz, co boli i na czym Ci zależy.' },
+  { title: 'Plan', text: 'Dostajesz plan dopasowany do grafiku, a nie odwrotnie.' },
+  { title: 'Trening', text: 'Ćwiczymy razem, technika jest ważniejsza niż ciężar.' },
+  { title: 'Efekt', text: 'Pomiary co 4 tygodnie pokazują postęp czarno na białym.' },
+];
+const results = [{ label: 'Siła', value: 86 }, { label: 'Kondycja', value: 72 }, { label: 'Mobilność', value: 64 }];
+const forWhom = [
+  { t: 'Zaczynasz od zera', d: 'Nauczę Cię techniki od podstaw, bez przeciążeń i bez wstydu na siłowni.' },
+  { t: 'Wracasz po przerwie', d: 'Bezpieczny powrót po kontuzji, ciąży albo latach przy biurku.' },
+  { t: 'Chcesz konkretnego efektu', d: 'Redukcja, siła albo kondycja — z planem i pomiarami co 4 tygodnie.' },
+];
+const included = ['rozgrzewka i mobilizacja', 'trening główny pod Twój cel', 'korekta techniki na bieżąco', 'plan na dni bez treningu', 'kontakt między treningami'];
+const faq = [
+  { q: 'Czy muszę mieć kondycję na pierwszy trening?', a: 'Nie. Pierwsze spotkanie to rozmowa i spokojny test — dopasuję intensywność do Ciebie.' },
+  { q: 'Ile treningów w tygodniu?', a: 'Najczęściej 2–3. Ustalamy to razem, tak żeby dało się to utrzymać.' },
+  { q: 'Czy pakiet ma termin ważności?', a: 'Pakiet 8 treningów wykorzystasz w ciągu 8 tygodni.' },
+];
+const reviews = [
+  { text: 'Pierwszy raz od lat ćwiczę regularnie. Treningi są ciężkie, ale nigdy nie przesadzone.', who: 'Michał, 34 lata' },
+  { text: 'Kręgosłup przestał boleć po dwóch miesiącach. Najlepsza decyzja tego roku.', who: 'Ania, 41 lat' },
+  { text: 'Plan online idealnie wpasował się w moją pracę zmianową.', who: 'Kamil, 29 lat' },
+];
+const hours: [string, string][] = [
+  ['Poniedziałek – piątek', '6:00 – 21:00'],
+  ['Sobota', '8:00 – 14:00'],
+  ['Niedziela', 'po umówieniu'],
+];
+const marquee = ['siła', 'kondycja', 'redukcja', 'mobilność', 'zdrowy kręgosłup', 'trening 1:1'];
+---
+{part === 'hero' && (
+  <section class="t-hero">
+    <div class="d-container t-hero__in">
+      <div class="t-hero__copy">
+        <p class="t-kicker">Trener personalny · Przykładowo</p>
+        <h1><span>Silniejszy</span> <span>każdego</span> <span class="t-hl">tygodnia.</span></h1>
+        <p class="t-lead">Treningi 1:1 i prowadzenie online. Bez cudownych diet i bez krzyku — za to z planem, który da się utrzymać.</p>
+        <div class="t-cta">
+          <a class="t-btn" href={url('zapisy')}>Umów trening próbny</a>
+          <a class="t-link" href={url('oferta')}>Zobacz cennik →</a>
+        </div>
+      </div>
+      <div class="t-hero__art" aria-hidden="true">
+        <span class="t-ring t-ring--1"></span><span class="t-ring t-ring--2"></span><span class="t-bar"><i></i></span>
+        <div class="t-card"><p>Postęp klienta</p><b><span data-count="12">12</span> tyg.</b><span class="t-card__chart"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+      </div>
+    </div>
+    <div class="d-marquee t-marquee" aria-hidden="true">
+      <div class="d-marquee__track">{[...marquee, ...marquee].map((m) => <span>{m} <i>/</i></span>)}</div>
+    </div>
+  </section>
+)}
+
+{part === 'hero-wiz' && (
+  <section class="t-wiz">
+    <div class="d-container t-wiz__in">
+      <div class="t-wiz__copy">
+        <p class="t-kicker">Trener personalny · Przykładowo</p>
+        <h1>Forma <span class="t-hl">Od Podstaw</span></h1>
+        <p class="t-lead">Treningi 1:1 dla początkujących i wracających do formy. Pierwsze spotkanie za darmo.</p>
+        <ul class="t-chips">
+          <li><span>Telefon</span><a href="tel:000000000">000 000 000</a></li>
+          <li><span>Siłownia</span>ul. Przykładowa 1</li>
+          <li><span>Treningi</span>pn–pt 6:00–21:00</li>
+        </ul>
+        <div class="t-cta">
+          <a class="t-btn" href="tel:000000000">Zadzwoń i umów się</a>
+          <a class="t-link" href="#uslugi">Cennik →</a>
+        </div>
+      </div>
+      <div class="t-wiz__art" aria-hidden="true"><span class="t-ring t-ring--1"></span><span class="t-ring t-ring--2"></span><span class="t-bar"><i></i></span></div>
+    </div>
+  </section>
+)}
+
+{part === 'stats' && (
+  <section class="t-stats">
+    <div class="d-container t-stats__in">
+      <div data-anim><b><span data-count="350" data-suffix="+">350+</span></b><span>przeprowadzonych treningów</span></div>
+      <div data-anim><b><span data-count="48">48</span></b><span>podopiecznych</span></div>
+      <div data-anim><b><span data-count="8">8</span> lat</b><span>doświadczenia</span></div>
+    </div>
+  </section>
+)}
+
+{part === 'for-whom' && (
+  <section class="d-section">
+    <div class="d-container">
+      <div class="t-head" data-anim><p class="t-kicker">Dla kogo</p><h2>Trenuję z ludźmi, którzy</h2></div>
+      <ul class="t-high">{forWhom.map((h, i) => <li data-anim><span class="t-steps__no">{String(i + 1).padStart(2, '0')}</span><h3>{h.t}</h3><p>{h.d}</p></li>)}</ul>
+      <p class="t-more" data-anim><a class="t-btn" href={url('oferta')}>Zobacz ofertę i ceny</a></p>
+    </div>
+  </section>
+)}
+
+{part === 'offers' && (
+  <section class="d-section">
+    <div class="d-container">
+      <h2 class="d-visually-hidden">Pakiety i ceny</h2>
+      <ul class="t-offers">
+        {offers.map((o) => (
+          <li class:list={['t-offer', { 't-offer--featured': o.featured }]} data-anim>
+            {o.featured && <p class="t-offer__badge">Najpopularniejszy</p>}
+            <h3>{o.name}</h3><p class="t-offer__price">{o.price}</p><p class="t-offer__unit">{o.unit}</p>
+            <ul>{o.points.map((p) => <li>{p}</li>)}</ul>
+            <a href={url('zapisy')} class="t-btn t-btn--block">Wybieram</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+
+{part === 'included' && (
+  <section class="d-section t-method">
+    <div class="d-container t-method__in">
+      <div data-anim="left">
+        <p class="t-kicker">W każdym treningu</p><h2>Co dostajesz</h2>
+        <ul class="t-incl">{included.map((i) => <li>{i}</li>)}</ul>
+      </div>
+      <div class="t-faq" data-anim="right">
+        <p class="t-kicker">Pytania</p>
+        {faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'method' && (
+  <section class="d-section t-method">
+    <div class="d-container t-method__in">
+      <ol class="t-steps">
+        {steps.map((s, i) => (
+          <li data-anim="left"><span class="t-steps__no">{String(i + 1).padStart(2, '0')}</span><div><h3>{s.title}</h3><p>{s.text}</p></div></li>
+        ))}
+      </ol>
+      <div class="t-progress" data-anim="right">
+        <p class="t-progress__title">Przykładowy postęp po 12 tygodniach</p>
+        {results.map((r) => (
+          <div class="t-progress__row"><span>{r.label}</span><b>+{r.value}%</b><span class="t-progress__track"><i style={`--w:${r.value}%`}></i></span></div>
+        ))}
+        <p class="t-progress__note">Dane przykładowe.</p>
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'services-short' && (
+  <section id="uslugi" class="d-section">
+    <div class="d-container t-narrow">
+      <div class="t-head" data-anim><p class="t-kicker">Cennik</p><h2>Treningi i ceny</h2></div>
+      <ul class="t-list" data-anim>{short.map((s) => <li><span>{s.name}</span><i aria-hidden="true"></i><b>{s.price}</b></li>)}</ul>
+      <p class="t-note">Ceny przykładowe — trener jest fikcyjny.</p>
+    </div>
+  </section>
+)}
+
+{part === 'about-short' && (
+  <section id="o-nas" class="d-section t-method">
+    <div class="d-container t-about">
+      <div data-anim="left">
+        <p class="t-kicker">O mnie</p>
+        <h2>Trenuję ludzi, nie sylwetki</h2>
+        <p>Od 8 lat pomagam początkującym i osobom wracającym do ruchu. Uczę techniki, pilnuję bezpieczeństwa i dobieram plan do Twojego grafiku — tak, żeby trening stał się nawykiem.</p>
+      </div>
+      <ul class="t-about__facts" data-anim="right">
+        <li><b><span data-count="8">8</span> lat</b><span>doświadczenia</span></li>
+        <li><b><span data-count="48">48</span></b><span>podopiecznych</span></li>
+      </ul>
+    </div>
+  </section>
+)}
+
+{part === 'reviews' && (
+  <section class="d-section">
+    <div class="d-container">
+      <div class="t-head" data-anim><p class="t-kicker">Opinie <span class="t-tag">przykładowe</span></p><h2>Podopieczni mówią</h2></div>
+      <ul class="t-reviews">{reviews.map((r) => <li data-anim><blockquote><p>„{r.text}”</p></blockquote><p class="t-reviews__who">{r.who}</p></li>)}</ul>
+      <p class="t-note">Opinie przykładowe — trener jest fikcyjny.</p>
+    </div>
+  </section>
+)}
+
+{part === 'cta' && (
+  <section class="t-band">
+    <div class="d-container t-band__in" data-anim>
+      <h2>Pierwszy trening jest za darmo</h2>
+      <a class="t-btn t-btn--dark" href={url('zapisy')}>Zapisz się</a>
+    </div>
+  </section>
+)}
+
+{part === 'contact-form' && (
+  <section class="d-section t-contact">
+    <div class="d-container t-contact__in">
+      <div class="t-contact__info" data-anim>
+        <h2>Kontakt i dojazd</h2>
+        <p>Siłownia przy ul. Przykładowej 1, 00-000 Przykładowo<br />tel. <a href="tel:000000000">000 000 000</a> · kontakt@example.com</p>
+        <h3>Dostępność</h3>
+        <DemoHours hours={hours} caption="Dostępność trenera" />
+        <DemoMap address="ul. Przykładowa 1, 00-000 Przykładowo" />
+      </div>
+      <div class="t-formcard" data-anim>
+        <h3>Zapisz się na trening próbny</h3>
+        <p class="t-contact__lead">Po wysłaniu od razu dostajesz automatyczne potwierdzenie, a ja oddzwaniam w ciągu dnia.</p>
+        <DemoForm id="t" services={offers.map((o) => o.name)} submitLabel="Zapisuję się" />
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'contact-simple' && (
+  <section id="kontakt" class="d-section t-contact">
+    <div class="d-container">
+      <div class="t-head" data-anim><p class="t-kicker">Kontakt</p><h2>Zadzwoń i umów trening</h2></div>
+      <div data-anim><DemoContact hours={hours} hoursCaption="Dostępność" address="ul. Przykładowa 1, 00-000 Przykładowo (siłownia)" /></div>
+    </div>
+  </section>
+)}

@@ -1,12 +1,37 @@
 ---
+/**
+ * Pasek na górze każdego dema: pakiet (nazwa i cena z configu), przełącznik wersji i „Chcę taką →”.
+ */
 import '@fontsource/jetbrains-mono/latin-500.css';
 import '@fontsource/jetbrains-mono/latin-ext-500.css';
+import '@fontsource/jetbrains-mono/latin-800.css';
+import '@fontsource/jetbrains-mono/latin-ext-800.css';
+import { demoUrl, demoPackage, formatPrice, type DemoVersion } from '../../config';
+interface Props { firm: string; version: DemoVersion }
+const { firm, version } = Astro.props;
+const pkg = demoPackage(version);
+const versions: { v: DemoVersion; label: string }[] = [
+  { v: 'wizytowka', label: demoPackage('wizytowka').name },
+  { v: 'firmowa', label: demoPackage('firmowa').name },
+];
 ---
-<div class="demo-bar" role="note">
-  <p>
-    Strona pokazowa fikcyjnej firmy, zrobiona przez <a href="/" class="demo-bar__brand">Gerdzio Koduje</a>.{' '}
-    <span class="demo-bar__q">Chcesz taką?</span>{' '}<a href="/dla-firm#kontakt" class="demo-bar__cta">→ Wyceń</a>
-  </p>
+<div class="demo-bar" role="region" aria-label="Informacja o stronie pokazowej">
+  <div class="demo-bar__in">
+    <p class="demo-bar__info">
+      <span class="demo-bar__tag">Strona pokazowa fikcyjnej firmy</span>
+      <span class="demo-bar__sep" aria-hidden="true">·</span>
+      <span>Pakiet: <b>{pkg.name}</b> (od {formatPrice(pkg.price!)})</span>
+    </p>
+    <div class="demo-bar__actions">
+      <nav class="demo-bar__switch" aria-label="Zobacz wersję">
+        <span class="demo-bar__switch-label">Zobacz wersję:</span>
+        {versions.map((x) => (
+          <a href={demoUrl(firm, x.v)} aria-current={x.v === version ? 'page' : undefined}>{x.label}</a>
+        ))}
+      </nav>
+      <a href="/dla-firm#kontakt" class="demo-bar__cta">Chcę taką <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
 </div>
 
 <style>
@@ -18,13 +43,42 @@ import '@fontsource/jetbrains-mono/latin-ext-500.css';
     color: #f5f5f2;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-weight: 500;
-    font-size: 0.8rem;
-    line-height: 1.4;
-    padding: 0.55rem 1rem;
-    text-align: center;
+    font-size: 0.74rem;
+    line-height: 1.35;
     border-bottom: 1px solid #22e07a;
   }
-  .demo-bar a { color: #22e07a; font-weight: 500; }
-  .demo-bar__cta { display: inline-block; padding: 0.15rem 0.2rem; white-space: nowrap; }
+  .demo-bar__in {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem 1rem;
+    width: min(100% - 1.5rem, 76rem);
+    margin-inline: auto;
+    padding-block: 0.45rem;
+  }
+  .demo-bar__info { margin: 0; display: flex; flex-wrap: wrap; gap: 0 0.45rem; color: #c9c9c4; }
+  .demo-bar__info b { color: #22e07a; font-weight: 800; }
+  .demo-bar__tag { color: #f5f5f2; }
+  .demo-bar__actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+  .demo-bar__switch { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border-radius: 8px; background: #19191c; border: 1px solid #2c2c31; }
+  .demo-bar__switch-label { padding: 0 0.4rem 0 0.35rem; color: #8a8a86; }
+  .demo-bar__switch a {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    color: #f5f5f2;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .demo-bar__switch a:hover { background: #26262b; }
+  .demo-bar__switch a[aria-current='page'] { background: #22e07a; color: #0b0b0c; font-weight: 800; }
+  .demo-bar__cta { color: #22e07a; font-weight: 800; text-decoration: none; white-space: nowrap; padding: 0.3rem 0.2rem; }
+  .demo-bar__cta:hover { text-decoration: underline; }
   .demo-bar a:focus-visible { outline: 2px solid #22e07a; outline-offset: 2px; }
+  @media (max-width: 34rem) {
+    .demo-bar__sep, .demo-bar__switch-label { display: none; }
+    .demo-bar__info { flex-direction: column; }
+    .demo-bar__actions { width: 100%; justify-content: space-between; }
+  }
 </style>

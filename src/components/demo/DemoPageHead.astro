@@ -1,0 +1,12 @@
+---
+/** Nagłówek podstrony Strony firmowej (tytuł + krótki opis). Styl z motywu firmy (.d-pagehead). */
+interface Props { kicker: string; title: string; lead?: string }
+const { kicker, title, lead } = Astro.props;
+---
+<section class="d-pagehead">
+  <div class="d-container d-pagehead__in">
+    <p class="d-pagehead__kicker">{kicker}</p>
+    <h1>{title}</h1>
+    {lead && <p class="d-pagehead__lead">{lead}</p>}
+  </div>
+</section>

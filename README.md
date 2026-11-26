@@ -47,9 +47,11 @@ Bez `TURNSTILE_SECRET` weryfikacja antyspamowa jest pomijana (tryb dev).
 │  ├─ components/          Logo, Lockup, Header, Footer…
 │  │  ├─ home/             sekcje strony głównej
 │  │  ├─ forms/            LeadForm, WaitlistForm, Turnstile
-│  │  └─ demo/             pasek demo, formularz demo, mapa, godziny
+│  │  └─ demo/             pasek demo, nagłówek z menu mobilnym, formularz demo, kontakt, mapa, godziny
+│  ├─ demos/<firma>/       każde demo: Layout (nagłówek, stopka), Sections (sekcje), theme.css (wygląd)
 │  ├─ scripts/form.ts      wysyłka formularzy przez fetch (progressive enhancement)
-│  └─ pages/               podstrony: / (ekran wyboru), /dla-firm, /nauka, /aplikacje, /polityka-prywatnosci, /dziekuje, 404, /demo/*
+│  └─ pages/               podstrony: / (ekran wyboru), /dla-firm, /nauka, /aplikacje, /regulamin, /polityka-prywatnosci, /wycena, /dziekuje, 404,
+│                          /demo/<firma>/wizytowka/ i /demo/<firma>/firmowa/<podstrona>/
 ├─ functions/
 │  ├─ _lib/                walidacja, Turnstile, wysyłka do Apps Script, odpowiedzi
 │  └─ api/                 lead.ts, waitlist.ts → endpointy POST /api/lead i /api/waitlist
@@ -73,6 +75,13 @@ Prawie wszystko jest w **`src/config.ts`**:
 | e-mail kontaktowy | `site.email` (zapisany w dwóch częściach, składany w przeglądarce — ochrona przed botami) |
 | opisy dem w portfolio | `demos` |
 | nawigacja | `nav` |
+
+### Dema w portfolio
+
+Każda z 5 fikcyjnych firm ma dwie wersje: **Wizytówka** (`/demo/<firma>/wizytowka/`, jedna strona bez formularza)
+i **Strona firmowa** (`/demo/<firma>/firmowa/` + 3 podstrony, z formularzem demo). Lista firm i ich podstron jest w `src/config.ts` (`demos`),
+tabela porównawcza nad portfolio — w `packageComparison`. Treści i wygląd danej firmy: `src/demos/<firma>/`.
+Po zmianie wyglądu dem odśwież miniatury: `npm run build && npm run images`. Stare adresy `/demo/<firma>/` przekierowuje `public/_redirects`.
 
 ### Jak dodać aplikację na /aplikacje
 

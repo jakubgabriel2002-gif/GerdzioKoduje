@@ -115,16 +115,19 @@ try {
   await mkdir(join(pub, 'img/portfolio'), { recursive: true });
   // reducedMotion: zrzut bez animacji wejścia (wszystko od razu widoczne)
   const shot = await browser.newPage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
+  // Dema: każda firma w 2 wersjach (lista musi się zgadzać z `demos` w src/config.ts)
   for (const slug of ['beauty', 'trener', 'restauracja', 'barber', 'fizjo']) {
-    const res = await shot.goto(`http://localhost:${port}/demo/${slug}/`, { waitUntil: 'networkidle' });
-    if (!res?.ok()) {
-      console.warn(`! /demo/${slug} niedostępne — najpierw npm run build`);
-      continue;
+    for (const version of ['wizytowka', 'firmowa']) {
+      const res = await shot.goto(`http://localhost:${port}/demo/${slug}/${version}/`, { waitUntil: 'networkidle' });
+      if (!res?.ok()) {
+        console.warn(`! /demo/${slug}/${version} niedostępne — najpierw npm run build`);
+        continue;
+      }
+      await shot.evaluate(() => document.fonts.ready);
+      const png = await shot.screenshot();
+      await writeFile(join(pub, `img/portfolio/${slug}-${version}.webp`), await toWebp(shot, png, 800, 500));
+      console.log(`✓ public/img/portfolio/${slug}-${version}.webp`);
     }
-    await shot.evaluate(() => document.fonts.ready);
-    const png = await shot.screenshot();
-    await writeFile(join(pub, `img/portfolio/${slug}.webp`), await toWebp(shot, png, 800, 500));
-    console.log(`✓ public/img/portfolio/${slug}.webp`);
   }
   server.close();
 } finally {

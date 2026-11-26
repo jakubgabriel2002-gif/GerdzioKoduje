@@ -1,0 +1,49 @@
+---
+import '@fontsource/dm-serif-display/latin-400.css';
+import '@fontsource/dm-serif-display/latin-ext-400.css';
+import '@fontsource/dm-serif-display/latin-400-italic.css';
+import '@fontsource/dm-serif-display/latin-ext-400-italic.css';
+import '@fontsource/manrope/latin-400.css';
+import '@fontsource/manrope/latin-ext-400.css';
+import '@fontsource/manrope/latin-600.css';
+import '@fontsource/manrope/latin-ext-600.css';
+import './theme.css';
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoHeader from '../../components/demo/DemoHeader.astro';
+import { demos, demoUrl, demoPackage, type DemoVersion } from '../../config';
+
+interface Props { version: DemoVersion; page?: string; title: string }
+const { version, page = '', title } = Astro.props;
+const firm = demos.find((d) => d.slug === 'restauracja')!;
+const links =
+  version === 'firmowa'
+    ? firm.pages.map((p) => ({ label: p.label, href: demoUrl(firm.slug, 'firmowa', p.path), current: p.path === page }))
+    : [{ label: 'O nas', href: '#o-nas' }, { label: 'Menu', href: '#uslugi' }, { label: 'Kontakt', href: '#kontakt' }];
+const cta = version === 'firmowa'
+  ? { label: 'Zarezerwuj stolik', href: demoUrl(firm.slug, 'firmowa', 'rezerwacja') }
+  : { label: 'Zadzwoń', href: 'tel:000000000' };
+---
+<DemoLayout
+  title={`${title} — ${firm.name} (demo: ${demoPackage(version).name}) | Gerdzio Koduje`}
+  description={`Strona pokazowa fikcyjnej restauracji ${firm.name} w pakiecie ${demoPackage(version).name}. Projekt: Gerdzio Koduje.`}
+  themeColor="#f6efe4"
+  theme="restauracja"
+  firm={firm.slug}
+  version={version}
+>
+  <DemoHeader links={links} cta={cta} brandHref={demoUrl(firm.slug, version)}>
+    <span slot="brand" class="r-logo">Bistro <em>Kminek</em></span>
+  </DemoHeader>
+  <main id="tresc"><slot /></main>
+  <footer class="r-footer">
+    <div class="d-container">
+      <p class="r-logo">Bistro <em>Kminek</em></p>
+      {version === 'firmowa' && (
+        <ul class="r-footer__links">
+          {firm.pages.map((p) => <li><a href={demoUrl(firm.slug, 'firmowa', p.path)}>{p.label}</a></li>)}
+        </ul>
+      )}
+      <p>Restauracja fikcyjna · dane przykładowe · ul. Przykładowa 1, 00-000 Przykładowo · tel. 000 000 000</p>
+    </div>
+  </footer>
+</DemoLayout>

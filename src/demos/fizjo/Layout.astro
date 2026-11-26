@@ -1,0 +1,47 @@
+---
+import '@fontsource/nunito/latin-400.css';
+import '@fontsource/nunito/latin-ext-400.css';
+import '@fontsource/nunito/latin-700.css';
+import '@fontsource/nunito/latin-ext-700.css';
+import '@fontsource/nunito/latin-800.css';
+import '@fontsource/nunito/latin-ext-800.css';
+import './theme.css';
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoHeader from '../../components/demo/DemoHeader.astro';
+import { demos, demoUrl, demoPackage, type DemoVersion } from '../../config';
+
+interface Props { version: DemoVersion; page?: string; title: string }
+const { version, page = '', title } = Astro.props;
+const firm = demos.find((d) => d.slug === 'fizjo')!;
+const links =
+  version === 'firmowa'
+    ? firm.pages.map((p) => ({ label: p.label, href: demoUrl(firm.slug, 'firmowa', p.path), current: p.path === page }))
+    : [{ label: 'O nas', href: '#o-nas' }, { label: 'Terapie', href: '#uslugi' }, { label: 'Kontakt', href: '#kontakt' }];
+const cta = version === 'firmowa'
+  ? { label: 'Umów wizytę', href: demoUrl(firm.slug, 'firmowa', 'zapisy') }
+  : { label: 'Zadzwoń', href: 'tel:000000000' };
+---
+<DemoLayout
+  title={`${title} — ${firm.name} (demo: ${demoPackage(version).name}) | Gerdzio Koduje`}
+  description={`Strona pokazowa fikcyjnego gabinetu ${firm.name} w pakiecie ${demoPackage(version).name}. Projekt: Gerdzio Koduje.`}
+  themeColor="#f6f7f3"
+  theme="fizjo"
+  firm={firm.slug}
+  version={version}
+>
+  <DemoHeader links={links} cta={cta} brandHref={demoUrl(firm.slug, version)}>
+    <span slot="brand" class="f-logo"><span class="f-logo__dot" aria-hidden="true"></span>Fizjo Równowaga</span>
+  </DemoHeader>
+  <main id="tresc"><slot /></main>
+  <footer class="f-footer">
+    <div class="d-container">
+      <p><strong>Fizjo Równowaga</strong> — gabinet fikcyjny, dane przykładowe.</p>
+      {version === 'firmowa' && (
+        <ul class="f-footer__links">
+          {firm.pages.map((p) => <li><a href={demoUrl(firm.slug, 'firmowa', p.path)}>{p.label}</a></li>)}
+        </ul>
+      )}
+      <p>ul. Przykładowa 1, 00-000 Przykładowo · tel. 000 000 000</p>
+    </div>
+  </footer>
+</DemoLayout>

@@ -1,0 +1,280 @@
+---
+/** Sekcje dema Bistro Kminek — Wizytówka i Strona firmowa. */
+import DemoForm from '../../components/demo/DemoForm.astro';
+import DemoMap from '../../components/demo/DemoMap.astro';
+import DemoHours from '../../components/demo/DemoHours.astro';
+import DemoContact from '../../components/demo/DemoContact.astro';
+import { demoUrl } from '../../config';
+
+interface Props { part: string }
+const { part } = Astro.props;
+const url = (p = '') => demoUrl('restauracja', 'firmowa', p);
+
+const menu = [
+  { id: 'sniadania', name: 'Śniadania', items: [
+    { name: 'Szakszuka z kozim serem', desc: 'pomidory, papryka, jajka, pieczywo na zakwasie', price: '32 zł' },
+    { name: 'Omlet z kurkami', desc: 'masło klarowane, szczypiorek, sałatka', price: '34 zł' },
+    { name: 'Granola z jogurtem', desc: 'domowa granola, owoce sezonowe, miód', price: '24 zł' },
+    { name: 'Tosty francuskie', desc: 'brioszka, mascarpone, owoce leśne', price: '29 zł' },
+  ] },
+  { id: 'obiady', name: 'Obiady', items: [
+    { name: 'Pierś z kaczki', desc: 'puree z pieczonej dyni, sos wiśniowy', price: '62 zł' },
+    { name: 'Pierogi z kaszanką', desc: 'cebula karmelizowana, jabłko, majeranek', price: '36 zł' },
+    { name: 'Risotto z grzybami leśnymi', desc: 'parmezan, tymianek, oliwa truflowa', price: '44 zł' },
+    { name: 'Zupa dnia', desc: 'zapytaj obsługę', price: '18 zł' },
+  ] },
+  { id: 'desery', name: 'Desery', items: [
+    { name: 'Sernik baskijski', desc: 'sos z kwaśnej wiśni', price: '22 zł' },
+    { name: 'Szarlotka na ciepło', desc: 'lody waniliowe, kruszonka', price: '20 zł' },
+    { name: 'Lody domowe', desc: '3 gałki, smaki dnia', price: '18 zł' },
+  ] },
+];
+const short = [
+  { name: 'Szakszuka z kozim serem', price: '32 zł' },
+  { name: 'Pierogi z kaszanką', price: '36 zł' },
+  { name: 'Risotto z grzybami leśnymi', price: '44 zł' },
+  { name: 'Pierś z kaczki', price: '62 zł' },
+  { name: 'Zupa dnia', price: '18 zł' },
+  { name: 'Sernik baskijski', price: '22 zł' },
+];
+const specials = [menu[1].items[0], menu[0].items[0], menu[2].items[0]];
+const highlights = [
+  { t: 'Menu z porami roku', d: 'Karta zmienia się co kilka tygodni — gotujemy z tego, co akurat najlepsze.' },
+  { t: 'Chleb z własnego pieca', d: 'Pieczywo na zakwasie pieczemy codziennie rano, a masło robimy sami.' },
+  { t: 'Lokalni dostawcy', d: 'Warzywa, mięso i nabiał bierzemy od rolników z okolicy.' },
+];
+const parties = [
+  { name: 'Chrzciny i komunie', price: 'od 129 zł / os.', d: 'Obiad trzydaniowy, ciasto, napoje. Sala do 30 osób.' },
+  { name: 'Urodziny i rocznice', price: 'od 99 zł / os.', d: 'Menu degustacyjne albo bufet, tort na zamówienie.' },
+  { name: 'Spotkania firmowe', price: 'od 89 zł / os.', d: 'Lunch lub kolacja, rachunek na firmę, rzutnik na życzenie.' },
+];
+const hours: [string, string][] = [
+  ['Poniedziałek', 'zamknięte'],
+  ['Wtorek – czwartek', '12:00 – 21:00'],
+  ['Piątek – sobota', '10:00 – 22:00'],
+  ['Niedziela', '10:00 – 20:00'],
+];
+const reviews = [
+  { text: 'Kaczka rozpływa się w ustach. Wracamy z rodziną co niedzielę.', who: 'Paweł' },
+  { text: 'Najlepsza szakszuka w okolicy i świetna kawa. Obsługa bardzo miła.', who: 'Magda' },
+  { text: 'Zamówiłam stolik przez stronę — wszystko gotowe, nawet tort przechowali.', who: 'Ola' },
+];
+---
+{part === 'hero' && (
+  <section class="r-hero">
+    <div class="d-container r-hero__in">
+      <div class="r-hero__copy">
+        <p class="r-kicker">Kuchnia sezonowa · Przykładowo</p>
+        <h1>Domowe smaki,<br /><em>podane z pomysłem.</em></h1>
+        <p class="r-lead">Lokalne produkty, menu zmieniane z porami roku i kuchnia, w której wszystko robimy sami — od pieczywa po lody.</p>
+        <div class="r-cta">
+          <a class="r-btn" href={url('rezerwacja')}>Zarezerwuj stolik</a>
+          <a class="r-btn r-btn--ghost" href={url('menu')}>Zobacz menu</a>
+        </div>
+      </div>
+      <div class="r-hero__art" aria-hidden="true">
+        <span class="r-plate"><span class="r-plate__food"><i class="r-f r-f--1"></i><i class="r-f r-f--2"></i><i class="r-f r-f--3"></i><i class="r-f r-f--4"></i><i class="r-f r-f--5"></i></span></span>
+        <span class="r-steam"><i></i><i></i><i></i></span>
+        <span class="r-leaf r-leaf--1"></span><span class="r-leaf r-leaf--2"></span>
+        <div class="r-dish"><p>Danie dnia</p><b>Pierś z kaczki</b><span>z puree z dyni · 62 zł</span></div>
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'hero-wiz' && (
+  <section class="r-wiz">
+    <div class="d-container r-wiz__in">
+      <div class="r-wiz__copy">
+        <p class="r-kicker">Restauracja · Przykładowo</p>
+        <h1>Bistro <em>Kminek</em></h1>
+        <p class="r-lead">Kuchnia sezonowa, chleb z własnego pieca i domowe desery.</p>
+        <ul class="r-chips">
+          <li><span>Rezerwacje</span><a href="tel:000000000">000 000 000</a></li>
+          <li><span>Adres</span>ul. Przykładowa 1</li>
+          <li><span>Dziś</span>12:00 – 21:00</li>
+        </ul>
+        <div class="r-cta">
+          <a class="r-btn" href="tel:000000000">Zadzwoń i zarezerwuj</a>
+          <a class="r-btn r-btn--ghost" href="#uslugi">Menu</a>
+        </div>
+      </div>
+      <div class="r-wiz__art" aria-hidden="true">
+        <span class="r-plate r-plate--sm"><span class="r-plate__food"><i class="r-f r-f--1"></i><i class="r-f r-f--2"></i><i class="r-f r-f--3"></i><i class="r-f r-f--4"></i><i class="r-f r-f--5"></i></span></span>
+        <span class="r-leaf r-leaf--1"></span>
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'highlights' && (
+  <section class="d-section">
+    <div class="d-container">
+      <div class="r-head" data-anim><p class="r-kicker">Dlaczego Kminek</p><h2>Gotujemy <em>po swojemu</em></h2></div>
+      <ul class="r-high">{highlights.map((h) => <li data-anim><h3>{h.t}</h3><p>{h.d}</p></li>)}</ul>
+    </div>
+  </section>
+)}
+
+{part === 'specials' && (
+  <section class="d-section r-menu">
+    <div class="d-container">
+      <div class="r-head" data-anim><p class="r-kicker">Polecamy</p><h2>Ulubione dania gości</h2></div>
+      <ul class="r-specials">
+        {specials.map((d) => <li data-anim><h3>{d.name}</h3><p>{d.desc}</p><b>{d.price}</b></li>)}
+      </ul>
+      <p class="r-more" data-anim><a class="r-btn" href={url('menu')}>Całe menu</a></p>
+    </div>
+  </section>
+)}
+
+{part === 'menu-full' && (
+  <section class="d-section r-menu">
+    <div class="d-container">
+      <div class="r-tabs" role="tablist" aria-label="Kategorie menu">
+        {menu.map((c, i) => (
+          <button type="button" role="tab" id={`tab-${c.id}`} aria-controls={`panel-${c.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>{c.name}</button>
+        ))}
+      </div>
+      {menu.map((c) => (
+        <div class="r-panel" role="tabpanel" id={`panel-${c.id}`} aria-labelledby={`tab-${c.id}`}>
+          <h2 class="r-panel__title">{c.name}</h2>
+          <ul>
+            {c.items.map((it) => (
+              <li>
+                <div class="r-item__top"><span class="r-item__name">{it.name}</span><span class="r-item__dots" aria-hidden="true"></span><span class="r-item__price">{it.price}</span></div>
+                <p class="r-item__desc">{it.desc}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      <p class="r-note">Menu i ceny przykładowe — restauracja jest fikcyjna.</p>
+    </div>
+  </section>
+)}
+
+{part === 'menu-short' && (
+  <section id="uslugi" class="d-section r-menu">
+    <div class="d-container r-narrow">
+      <div class="r-head" data-anim><p class="r-kicker">Menu</p><h2>Co dziś gotujemy</h2></div>
+      <ul class="r-list" data-anim>
+        {short.map((s) => <li><span class="r-item__name">{s.name}</span><span class="r-item__dots" aria-hidden="true"></span><span class="r-item__price">{s.price}</span></li>)}
+      </ul>
+      <p class="r-note">Pełne menu w restauracji — zmienia się z porami roku.</p>
+    </div>
+  </section>
+)}
+
+{part === 'about' && (
+  <section id="o-nas" class="d-section">
+    <div class="d-container r-about__in">
+      <div data-anim="left">
+        <p class="r-kicker">Nasza historia</p>
+        <h2>Mała kuchnia, <em>wielkie serce</em></h2>
+        <p>Bistro Kminek prowadzimy we dwoje: ona gotuje, on piecze chleb i pilnuje sali. Produkty bierzemy od rolników z okolicy, dlatego menu zmienia się co kilka tygodni.</p>
+        <p>Organizujemy też małe przyjęcia — chrzciny, urodziny, spotkania firmowe do 30 osób.</p>
+      </div>
+      <ul class="r-facts" data-anim="right">
+        <li><b><span data-count="40">40</span></b><span>miejsc na sali</span></li>
+        <li><b><span data-count="12">12</span></b><span>lokalnych dostawców</span></li>
+        <li><b><span data-count="100" data-suffix="%">100%</span></b><span>pieczywa z naszego pieca</span></li>
+        <li><b>4×</b><span>w roku nowe menu</span></li>
+      </ul>
+    </div>
+  </section>
+)}
+
+{part === 'about-short' && (
+  <section id="o-nas" class="d-section">
+    <div class="d-container r-narrow" data-anim>
+      <p class="r-kicker">O nas</p>
+      <h2>Mała kuchnia, <em>wielkie serce</em></h2>
+      <p class="r-about-p">Rodzinne bistro na 40 miejsc. Gotujemy z lokalnych produktów, chleb pieczemy sami, a menu zmieniamy z porami roku. Wpadnij na śniadanie, obiad albo deser.</p>
+    </div>
+  </section>
+)}
+
+{part === 'parties' && (
+  <section class="d-section r-menu">
+    <div class="d-container">
+      <div class="r-head" data-anim><p class="r-kicker">Przyjęcia</p><h2>Twoje święto, <em>nasza kuchnia</em></h2></div>
+      <ul class="r-parties">{parties.map((p) => <li data-anim><h3>{p.name}</h3><p>{p.d}</p><b>{p.price}</b></li>)}</ul>
+      <p class="r-more" data-anim><a class="r-btn" href={url('rezerwacja')}>Zapytaj o termin przyjęcia</a></p>
+    </div>
+  </section>
+)}
+
+{part === 'reviews' && (
+  <section class="d-section">
+    <div class="d-container">
+      <div class="r-head" data-anim><p class="r-kicker">Opinie <span class="r-tag">przykładowe</span></p><h2>Goście o nas</h2></div>
+      <ul class="r-reviews">{reviews.map((r) => <li data-anim><p class="r-stars" aria-label="Ocena 5 na 5">★★★★★</p><blockquote><p>„{r.text}”</p></blockquote><p class="r-reviews__who">— {r.who}</p></li>)}</ul>
+      <p class="r-note">Opinie przykładowe — restauracja jest fikcyjna.</p>
+    </div>
+  </section>
+)}
+
+{part === 'cta' && (
+  <section class="r-band">
+    <div class="d-container r-band__in" data-anim>
+      <h2>Stolik na dziś <em>wieczór?</em></h2>
+      <a class="r-btn r-btn--light" href={url('rezerwacja')}>Zarezerwuj stolik</a>
+    </div>
+  </section>
+)}
+
+{part === 'contact-form' && (
+  <section class="d-section r-contact">
+    <div class="d-container r-contact__in">
+      <div class="r-contact__info" data-anim>
+        <h2>Kontakt i dojazd</h2>
+        <p>ul. Przykładowa 1, 00-000 Przykładowo<br />tel. <a href="tel:000000000">000 000 000</a> · kontakt@example.com</p>
+        <h3>Godziny otwarcia</h3>
+        <DemoHours hours={hours} />
+        <DemoMap address="ul. Przykładowa 1, 00-000 Przykładowo" />
+      </div>
+      <div class="r-card" data-anim>
+        <h3>Rezerwacja online</h3>
+        <p class="r-card__lead">Od razu dostaniesz automatyczne potwierdzenie, a my oddzwonimy, jeśli coś będzie wymagało ustaleń.</p>
+        <DemoForm id="r" services={['Stolik dla 2 osób', 'Stolik dla 4 osób', 'Stolik dla 6+ osób', 'Przyjęcie okolicznościowe']} submitLabel="Rezerwuję" />
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'contact-simple' && (
+  <section id="kontakt" class="d-section r-contact">
+    <div class="d-container">
+      <div class="r-head" data-anim><p class="r-kicker">Kontakt</p><h2>Zadzwoń i zarezerwuj stolik</h2></div>
+      <div data-anim><DemoContact hours={hours} /></div>
+    </div>
+  </section>
+)}
+
+<script>
+  // Zakładki menu (bez JS widać wszystkie kategorie jedna pod drugą).
+  const tablist = document.querySelector<HTMLElement>('.r-tabs');
+  if (tablist) {
+    const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const select = (tab: HTMLButtonElement, focus = false) => {
+      tabs.forEach((t) => {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        const panel = document.getElementById(t.getAttribute('aria-controls')!);
+        if (panel) panel.hidden = !on;
+      });
+      if (focus) tab.focus();
+    };
+    document.documentElement.classList.add('r-tabs-ready');
+    select(tabs[0]);
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t));
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') select(tabs[(i + 1) % tabs.length], true);
+        if (e.key === 'ArrowLeft') select(tabs[(i - 1 + tabs.length) % tabs.length], true);
+      });
+    });
+  }
+</script>

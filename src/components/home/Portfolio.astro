@@ -1,67 +1,182 @@
 ---
-import { demos } from '../../config';
+/**
+ * Portfolio: tabela porównawcza pakietów + dema w dwóch zakładkach (Strony firmowe / Wizytówki).
+ * Dane: `demos`, `packageComparison`, `packages` w src/config.ts.
+ */
+import { demos, demoUrl, demoImage, demoPackage, packageComparison, formatPrice, type DemoVersion } from '../../config';
+
+const wiz = demoPackage('wizytowka');
+const firm = demoPackage('firmowa');
+const tabs: { v: DemoVersion; label: string; lead: string }[] = [
+  { v: 'firmowa', label: `${firm.name}`, lead: '3–5 podstron, rozbudowana oferta i formularz z automatyczną odpowiedzią.' },
+  { v: 'wizytowka', label: `${wiz.name}`, lead: 'Jedna dopracowana strona: o firmie, usługi, kontakt i mapa dojazdu.' },
+];
+const other = (v: DemoVersion): DemoVersion => (v === 'firmowa' ? 'wizytowka' : 'firmowa');
 ---
 <section id="portfolio" class="section" aria-labelledby="portfolio-title">
   <div class="container">
     <div class="section-head">
       <h2 id="portfolio-title">Zobacz, jak to może wyglądać</h2>
-      <p>Trzy kompletne strony pokazowe dla fikcyjnych lokalnych firm. Każda w innym stylu — strona ma pasować do Twojej branży, nie do mnie.</p>
+      <p>Pięć fikcyjnych firm, każda w dwóch wersjach — jako {wiz.name} i jako {firm.name}. Porównaj pakiety i otwórz dema.</p>
     </div>
-    <ul class="demos">
-      {demos.map((d) => (
-        <li>
-          <a href={`/demo/${d.slug}`} class="demo-card">
-            <span class="demo-card__media">
-              <img src={d.image} width="800" height="500" loading="lazy" decoding="async" alt={`Podgląd strony pokazowej: ${d.name}`} />
-              <span class="demo-card__label">DEMO · firma fikcyjna</span>
-            </span>
-            <span class="demo-card__meta">
-              <span class="demo-card__name">{d.name}</span>
-              <span class="demo-card__industry">{d.industry}</span>
-            </span>
-            <span class="demo-card__text">{d.text}</span>
-            <span class="demo-card__cta">Otwórz demo <span aria-hidden="true">→</span></span>
-          </a>
-        </li>
+
+    <div class="compare-wrap">
+      <table class="compare">
+        <caption class="sr-only">Porównanie pakietów {wiz.name} i {firm.name}</caption>
+        <thead>
+          <tr>
+            <th scope="col"><span class="sr-only">Funkcja</span></th>
+            <th scope="col">{wiz.name}<span class="compare__price">od {formatPrice(wiz.price!)}</span></th>
+            <th scope="col" class="compare__hl">{firm.name}<span class="compare__price">od {formatPrice(firm.price!)}</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {packageComparison.map(([label, a, b]) => (
+            <tr>
+              <th scope="row">{label}</th>
+              {[a, b].map((v, i) => (
+                <td class:list={{ compare__hl: i === 1 }}>
+                  {v === true ? <span class="yes" role="img" aria-label="tak"></span> : v === false ? <span class="no" role="img" aria-label="nie">—</span> : v}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ptabs" role="tablist" aria-label="Rodzaj dema" hidden>
+      {tabs.map((t, i) => (
+        <button type="button" role="tab" id={`ptab-${t.v}`} aria-controls={`ppanel-${t.v}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>
+          {t.label} <span class="ptabs__count">{demos.length}</span>
+        </button>
       ))}
-    </ul>
+    </div>
+
+    {tabs.map((t) => (
+      <div class="ppanel" role="tabpanel" id={`ppanel-${t.v}`} aria-labelledby={`ptab-${t.v}`}>
+        <div class="ppanel__head">
+          <h3>{t.label} <span class="dim">· od {formatPrice(demoPackage(t.v).price!)}</span></h3>
+          <p class="muted">{t.lead}</p>
+        </div>
+        <ul class="demos">
+          {demos.map((d) => (
+            <li class="demo-card">
+              <a href={demoUrl(d.slug, t.v)} class="demo-card__media" tabindex="-1" aria-hidden="true">
+                <img src={demoImage(d.slug, t.v)} width="800" height="500" loading="lazy" decoding="async" alt="" />
+                <span class="demo-card__label">DEMO · firma fikcyjna</span>
+              </a>
+              <span class="demo-card__meta">
+                <span class="demo-card__name">{d.name}</span>
+                <span class="demo-card__industry">{d.industry}</span>
+              </span>
+              <span class="demo-card__text">{t.v === 'wizytowka' ? d.textWiz : d.text}</span>
+              <span class="demo-card__actions">
+                <a class="btn btn--sm" href={demoUrl(d.slug, t.v)}>
+                  {demoPackage(t.v).name}<span class="sr-only"> — {d.name}</span> <span class="btn__arrow" aria-hidden="true">→</span>
+                </a>
+                <a class="btn btn--sm btn--secondary" href={demoUrl(d.slug, other(t.v))}>
+                  {demoPackage(other(t.v)).name}<span class="sr-only"> — {d.name}</span>
+                </a>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
   </div>
 </section>
 
 <style>
+  /* Tabela porównawcza */
+  .compare-wrap { overflow-x: auto; margin-bottom: clamp(2.5rem, 2rem + 2vw, 3.5rem); border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--bg-raised); }
+  .compare { width: 100%; border-collapse: collapse; font-size: var(--step--1); }
+  .compare th, .compare td { padding: 0.85rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+  .compare tbody tr:last-child th, .compare tbody tr:last-child td { border-bottom: 0; }
+  .compare thead th { font-size: var(--step-0); font-weight: 800; vertical-align: bottom; }
+  .compare tbody th { font-weight: 500; color: var(--text-muted); }
+  .compare td { text-align: center; width: 28%; }
+  .compare thead th:not(:first-child) { text-align: center; }
+  .compare__price { display: block; margin-top: 0.2rem; font-size: var(--step--1); font-weight: 800; color: var(--accent); }
+  .compare__hl { background: var(--accent-tint); }
+  .compare .yes { display: inline-block; width: 0.45rem; height: 0.8rem; border: solid var(--accent); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .compare .no { color: var(--text-dim); }
+  @media (max-width: 40rem) {
+    .compare { font-size: 0.78rem; }
+    .compare th, .compare td { padding: 0.7rem 0.55rem; }
+    .compare thead th { font-size: 0.82rem; }
+    .compare td { width: 26%; }
+    .ptabs { display: grid !important; grid-template-columns: 1fr 1fr; width: 100%; border-radius: 16px; }
+    .ptabs button { justify-content: center; padding: 0.5rem 0.5rem; border-radius: 12px; font-size: 0.82rem; }
+    .ptabs__count { display: none; }
+  }
+
+  /* Zakładki */
+  :global(.js) .ptabs { display: inline-flex; }
+  .ptabs { gap: 0.3rem; padding: 0.3rem; margin-bottom: 1.75rem; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--bg-raised); flex-wrap: wrap; }
+  .ptabs button {
+    display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; padding: 0.5rem 1.1rem;
+    border: 0; border-radius: 999px; background: transparent; color: var(--text-muted); font-weight: 800; cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .ptabs button:hover { color: var(--text); }
+  .ptabs button[aria-selected='true'] { background: var(--accent); color: var(--accent-ink); }
+  .ptabs__count { display: inline-grid; place-items: center; min-width: 1.5rem; height: 1.5rem; padding: 0 0.35rem; border-radius: 999px; background: rgba(255, 255, 255, 0.08); font-size: 0.75rem; }
+  .ptabs button[aria-selected='true'] .ptabs__count { background: rgba(11, 11, 12, 0.18); }
+  .ppanel + .ppanel { margin-top: 3rem; }
+  :global(.js) .ppanel + .ppanel { margin-top: 0; }
+  .ppanel__head { margin-bottom: 1.5rem; display: grid; gap: 0.4rem; }
+  .ppanel__head h3 { font-size: var(--step-1); }
+  :global(.js) .ppanel__head h3 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  /* Karty */
   .demos { list-style: none; padding: 0; display: grid; gap: 2.5rem 1.5rem; }
-  .demo-card { display: grid; gap: 0.75rem; color: var(--text); text-decoration: none; }
-  .demo-card__media {
-    position: relative;
-    display: block;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    border: 1px solid var(--border);
-    background: var(--bg-raised-2);
-    margin-bottom: 0.4rem;
-  }
+  .demo-card { display: grid; gap: 0.7rem; align-content: start; }
+  .demo-card__media { position: relative; display: block; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); background: var(--bg-raised-2); margin-bottom: 0.3rem; }
   .demo-card img { width: 100%; aspect-ratio: 8 / 5; object-fit: cover; object-position: top; transition: transform 0.4s ease; }
-  .demo-card:hover img { transform: scale(1.03); }
-  .demo-card:hover .demo-card__media { border-color: var(--border-strong); }
-  .demo-card__label {
-    position: absolute;
-    left: 0.75rem;
-    top: 0.75rem;
-    padding: 0.3rem 0.65rem;
-    border-radius: 999px;
-    background: rgba(11, 11, 12, 0.88);
-    color: var(--text);
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-  }
+  .demo-card__media:hover img { transform: scale(1.03); }
+  .demo-card__media:hover { border-color: var(--border-strong); }
+  .demo-card__label { position: absolute; left: 0.75rem; bottom: 0.75rem; padding: 0.3rem 0.65rem; border-radius: 999px; background: rgba(11, 11, 12, 0.88); color: var(--text); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.02em; }
   .demo-card__meta { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.25rem 1rem; }
   .demo-card__name { font-weight: 800; font-size: var(--step-1); letter-spacing: -0.02em; }
   .demo-card__industry { color: var(--text-dim); font-size: var(--step--1); }
   .demo-card__text { color: var(--text-muted); }
-  .demo-card__cta { font-weight: 800; }
-  .demo-card__cta span { display: inline-block; color: var(--accent); transition: transform 0.18s; }
-  .demo-card:hover .demo-card__cta span { transform: translateX(4px); }
+  .demo-card__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.3rem; }
   @media (min-width: 48rem) { .demos { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 64rem) { .demos { grid-template-columns: repeat(3, 1fr); } }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .ppanel:not([hidden]) .demo-card { animation: p-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+    :global(.js) .ppanel:not([hidden]) .demo-card:nth-child(2) { animation-delay: 0.05s; }
+    :global(.js) .ppanel:not([hidden]) .demo-card:nth-child(3) { animation-delay: 0.1s; }
+    :global(.js) .ppanel:not([hidden]) .demo-card:nth-child(4) { animation-delay: 0.15s; }
+    :global(.js) .ppanel:not([hidden]) .demo-card:nth-child(5) { animation-delay: 0.2s; }
+  }
+  @keyframes p-in { from { opacity: 0; transform: translateY(14px); } }
 </style>
+
+<script>
+  // Zakładki portfolio (bez JS obie listy są widoczne jedna pod drugą).
+  const list = document.querySelector<HTMLElement>('.ptabs');
+  if (list) {
+    list.hidden = false;
+    const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const select = (tab: HTMLButtonElement, focus = false) => {
+      tabs.forEach((t) => {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        const panel = document.getElementById(t.getAttribute('aria-controls')!);
+        if (panel) panel.hidden = !on;
+      });
+      if (focus) tab.focus();
+    };
+    select(tabs[0]);
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t));
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') select(tabs[(i + 1) % tabs.length], true);
+        if (e.key === 'ArrowLeft') select(tabs[(i - 1 + tabs.length) % tabs.length], true);
+      });
+    });
+  }
+</script>

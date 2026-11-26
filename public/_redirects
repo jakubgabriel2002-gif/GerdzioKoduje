@@ -1,0 +1,14 @@
+# Stare adresy dem (przed podziałem na Wizytówkę i Stronę firmową)
+/demo/beauty              /demo/beauty/firmowa/        301
+/demo/beauty/             /demo/beauty/firmowa/        301
+/demo/trener              /demo/trener/firmowa/        301
+/demo/trener/             /demo/trener/firmowa/        301
+/demo/restauracja         /demo/restauracja/firmowa/   301
+/demo/restauracja/        /demo/restauracja/firmowa/   301
+/demo/barber              /demo/barber/firmowa/        301
+/demo/barber/             /demo/barber/firmowa/        301
+/demo/fizjo               /demo/fizjo/firmowa/         301
+/demo/fizjo/              /demo/fizjo/firmowa/         301
+# Usunięte demo warsztatu
+/demo/warsztat            /dla-firm/#portfolio         301
+/demo/warsztat/           /dla-firm/#portfolio         301

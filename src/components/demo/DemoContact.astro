@@ -1,0 +1,37 @@
+---
+/** Kontakt w Wizytówce: bez formularza — telefon, e-mail, mapa, godziny. Dane fikcyjne. */
+import DemoMap from './DemoMap.astro';
+import DemoHours from './DemoHours.astro';
+interface Props { hours: [string, string][]; hoursCaption?: string; address?: string }
+const { hours, hoursCaption = 'Godziny otwarcia', address = 'ul. Przykładowa 1, 00-000 Przykładowo' } = Astro.props;
+---
+<div class="dc">
+  <div class="dc__info">
+    <div class="dc__actions">
+      <a class="d-btn" href="tel:000000000">Zadzwoń: 000 000 000</a>
+      <a class="d-btn d-btn--ghost" href="mailto:kontakt@example.com">Napisz e-mail</a>
+      <a class="d-btn d-btn--ghost" href="#mapa">Jak dojechać</a>
+    </div>
+    <dl class="dc__list">
+      <div><dt>Adres</dt><dd>{address}</dd></div>
+      <div><dt>Telefon</dt><dd>000 000 000</dd></div>
+      <div><dt>E-mail</dt><dd>kontakt@example.com</dd></div>
+    </dl>
+    <h3 class="dc__h3">{hoursCaption}</h3>
+    <DemoHours hours={hours} caption={hoursCaption} />
+  </div>
+  <div id="mapa" class="dc__map">
+    <DemoMap address={address} />
+  </div>
+</div>
+
+<style is:global>
+  .dc { display: grid; gap: 2rem; }
+  .dc__info { display: grid; gap: 1.25rem; align-content: start; }
+  .dc__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .dc__list { display: grid; gap: 0.6rem; margin: 0; }
+  .dc__list dt { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--d-muted); }
+  .dc__list dd { margin: 0; }
+  .dc__h3 { margin-top: 0.5rem; }
+  @media (min-width: 56rem) { .dc { grid-template-columns: 1.1fr 1fr; align-items: start; } }
+</style>

@@ -1,0 +1,113 @@
+---
+/**
+ * Nagłówek dema z menu mobilnym. Wygląd z motywu firmy przez zmienne CSS (--dh-*).
+ * Bez JS: na telefonie linki wyświetlają się pod logo.
+ */
+interface Link { label: string; href: string; current?: boolean }
+interface Props { links: Link[]; cta: { label: string; href: string }; brandHref: string }
+const { links, cta, brandHref } = Astro.props;
+const id = 'dh-panel';
+---
+<header class="dh">
+  <div class="d-container dh__in">
+    <a class="dh__brand" href={brandHref}><slot name="brand" /></a>
+    <nav class="dh__nav" aria-label="Menu strony">
+      <ul>
+        {links.map((l) => <li><a href={l.href} aria-current={l.current ? 'page' : undefined}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+    <a class="dh__cta" href={cta.href}>{cta.label}</a>
+    <button class="dh__toggle" type="button" aria-expanded="false" aria-controls={id}>
+      <span class="dh__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="d-visually-hidden">Menu</span>
+    </button>
+  </div>
+  <div class="dh__panel" id={id} hidden>
+    <ul>
+      {links.map((l) => <li><a href={l.href} aria-current={l.current ? 'page' : undefined}>{l.label}</a></li>)}
+    </ul>
+    <a class="dh__panel-cta" href={cta.href}>{cta.label}</a>
+  </div>
+</header>
+
+<style is:global>
+  .dh { position: relative; z-index: 50; background: var(--dh-bg, var(--d-bg)); color: var(--dh-text, var(--d-text)); border-bottom: 1px solid var(--dh-border, var(--d-line)); }
+  .dh__in { display: flex; align-items: center; gap: 1rem; min-height: 4.25rem; }
+  .dh__brand { text-decoration: none; color: inherit !important; display: inline-flex; align-items: center; min-height: 2.75rem; margin-right: auto; }
+  .dh__nav ul, .dh__panel ul { list-style: none; padding: 0; margin: 0; }
+  .dh__nav ul { display: flex; gap: clamp(1rem, 0.5rem + 1.5vw, 2rem); }
+  .dh__nav a, .dh__panel a {
+    color: var(--dh-text, var(--d-text)) !important;
+    text-decoration: none;
+    font-family: var(--dh-font, inherit);
+    font-size: var(--dh-size, 0.92rem);
+    font-weight: var(--dh-weight, 600);
+    text-transform: var(--dh-transform, none);
+    letter-spacing: var(--dh-spacing, 0);
+  }
+  .dh__nav a { display: inline-block; padding-block: 0.5rem; border-bottom: 2px solid transparent; }
+  .dh__nav a:hover { color: var(--dh-accent, var(--d-accent)) !important; }
+  .dh__nav a[aria-current='page'] { border-bottom-color: var(--dh-accent, var(--d-accent)); }
+  .dh__cta {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 2.6rem; padding: 0.45rem 1.05rem;
+    background: var(--dh-cta-bg, var(--d-accent)); color: var(--dh-cta-text, #fff) !important;
+    border-radius: var(--dh-cta-radius, 6px); text-decoration: none; font-weight: 600; font-size: 0.88rem; white-space: nowrap;
+    font-family: var(--dh-cta-font, inherit); text-transform: var(--dh-cta-transform, none); letter-spacing: var(--dh-cta-spacing, 0);
+    transition: filter 0.2s, transform 0.2s;
+  }
+  .dh__cta:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .dh__toggle {
+    display: none; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; flex: none;
+    border-radius: var(--dh-cta-radius, 6px); border: 1px solid var(--dh-border, var(--d-line)); background: transparent; cursor: pointer;
+  }
+  .dh__bars { display: grid; gap: 4px; }
+  .dh__bars i { display: block; width: 18px; height: 2px; border-radius: 1px; background: var(--dh-text, var(--d-text)); transition: transform 0.25s, opacity 0.2s; }
+  .dh__toggle[aria-expanded='true'] .dh__bars i:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .dh__toggle[aria-expanded='true'] .dh__bars i:nth-child(2) { opacity: 0; }
+  .dh__toggle[aria-expanded='true'] .dh__bars i:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  .dh__panel { border-top: 1px solid var(--dh-border, var(--d-line)); background: var(--dh-panel-bg, var(--dh-bg, var(--d-bg))); padding: 0.5rem 1rem 1.25rem; }
+  .dh__panel li a { display: block; padding: 0.85rem 0.25rem; border-bottom: 1px solid var(--dh-border, var(--d-line)); font-size: 1.05rem; }
+  .dh__panel li a[aria-current='page'] { color: var(--dh-accent, var(--d-accent)) !important; }
+  .dh__panel .dh__panel-cta {
+    display: flex !important; justify-content: center; align-items: center; margin-top: 1rem; min-height: 3rem; border-radius: var(--dh-cta-radius, 6px);
+    background: var(--dh-cta-bg, var(--d-accent)); color: var(--dh-cta-text, #fff) !important; font-weight: 700 !important; text-transform: var(--dh-cta-transform, none) !important;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .dh__panel:not([hidden]) { animation: dh-open 0.25s ease-out; }
+  }
+  @keyframes dh-open { from { opacity: 0; transform: translateY(-8px); } }
+
+  /* Telefon: menu za przyciskiem (z JS) albo linki pod logo (bez JS) */
+  @media (max-width: 52rem) {
+    .dh__in { flex-wrap: wrap; }
+    .dh__nav { order: 3; width: 100%; padding-bottom: 0.5rem; }
+    .dh__nav ul { flex-wrap: wrap; gap: 0.25rem 1.25rem; }
+    .d-js .dh__nav { display: none; }
+    .d-js .dh__toggle { display: inline-flex; }
+    .d-js .dh__in { flex-wrap: nowrap; }
+  }
+  @media (max-width: 30rem) {
+    .d-js .dh__cta { display: none; }
+  }
+  @media (min-width: 52.01rem) {
+    .dh__panel { display: none !important; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.dh').forEach((header) => {
+    const btn = header.querySelector<HTMLButtonElement>('.dh__toggle');
+    const panel = header.querySelector<HTMLElement>('.dh__panel');
+    if (!btn || !panel) return;
+    const set = (open: boolean) => {
+      btn.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+    };
+    btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+    panel.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) set(false); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') { set(false); btn.focus(); }
+    });
+    window.matchMedia('(min-width: 52.01rem)').addEventListener('change', () => set(false));
+  });
+</script>

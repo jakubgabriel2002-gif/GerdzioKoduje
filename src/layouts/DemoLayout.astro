@@ -2,17 +2,19 @@
 /** Layout stron demo — bez stylu Gerdzio Koduje; każde demo ma własny motyw. */
 import Head from './Head.astro';
 import DemoBar from '../components/demo/DemoBar.astro';
-interface Props { title: string; description: string; themeColor: string; theme: string }
-const { title, description, themeColor, theme } = Astro.props;
+import type { DemoVersion } from '../config';
+interface Props { title: string; description: string; themeColor: string; theme: string; firm: string; version: DemoVersion }
+const { title, description, themeColor, theme, firm, version } = Astro.props;
 ---
 <!doctype html>
 <html lang="pl">
   <head>
     <Head title={title} description={description} themeColor={themeColor} />
+    <script is:inline>document.documentElement.classList.add('d-js');</script>
   </head>
   <body class:list={['demo', `demo--${theme}`]}>
     <a class="d-skip" href="#tresc">Przejdź do treści</a>
-    <DemoBar />
+    <DemoBar firm={firm} version={version} />
     <slot />
     <script>
       import '../scripts/demo-anim';
@@ -41,6 +43,10 @@ const { title, description, themeColor, theme } = Astro.props;
   .d-section { padding-block: clamp(3.5rem, 2.5rem + 4vw, 6rem); }
   .d-skip { position: absolute; left: 1rem; top: -100px; z-index: 200; background: #fff; color: #000; padding: 0.5rem 1rem; }
   .d-skip:focus { top: 3.5rem; }
+  /* Przycisk drugorzędny (np. w kontakcie Wizytówki) */
+  .demo .d-btn--ghost { background: transparent !important; color: var(--d-text) !important; box-shadow: inset 0 0 0 1.5px currentColor; }
+  .demo .d-btn--ghost:hover { background: transparent !important; color: var(--d-accent) !important; }
+  .demo a.d-btn { text-decoration: none; }
   .d-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   html:has(.demo) { scroll-padding-top: 4.5rem; }
 

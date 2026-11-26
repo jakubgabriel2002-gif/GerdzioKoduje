@@ -1,0 +1,217 @@
+---
+/** Sekcje dema Fizjo Równowaga — Wizytówka i Strona firmowa. */
+import DemoForm from '../../components/demo/DemoForm.astro';
+import DemoMap from '../../components/demo/DemoMap.astro';
+import DemoHours from '../../components/demo/DemoHours.astro';
+import DemoContact from '../../components/demo/DemoContact.astro';
+import { demoUrl } from '../../config';
+
+interface Props { part: string }
+const { part } = Astro.props;
+const url = (p = '') => demoUrl('fizjo', 'firmowa', p);
+
+const services = [
+  { name: 'Konsultacja fizjoterapeutyczna', time: '60 min', price: '180 zł', text: 'Wywiad, badanie funkcjonalne i plan terapii. Od tego zaczynamy.' },
+  { name: 'Terapia manualna', time: '50 min', price: '170 zł', text: 'Praca na stawach i tkankach miękkich przy bólu kręgosłupa i stawów.' },
+  { name: 'Masaż leczniczy', time: '45 min', price: '150 zł', text: 'Rozluźnienie napiętych mięśni, ulga przy przeciążeniach.' },
+  { name: 'Rehabilitacja po urazach', time: '60 min', price: '180 zł', text: 'Powrót do sprawności po skręceniach, złamaniach i zabiegach.' },
+  { name: 'Kinesiotaping', time: '20 min', price: '70 zł', text: 'Plastrowanie wspierające terapię i codzienną aktywność.' },
+  { name: 'Wizyta domowa', time: '60 min', price: '250 zł', text: 'Dla osób, którym trudno dotrzeć do gabinetu.' },
+];
+const problems = [
+  { t: 'Ból pleców i karku', d: 'Praca przy biurku, dźwiganie, napięcia — szukamy przyczyny, nie tylko ulgi.' },
+  { t: 'Urazy sportowe', d: 'Skręcenia, przeciążenia, powrót do biegania i treningu bez nawrotów.' },
+  { t: 'Po operacji', d: 'Rehabilitacja po zabiegach ortopedycznych, także w domu pacjenta.' },
+];
+const team = [
+  { name: 'Anna', role: 'fizjoterapeutka, terapia manualna', d: 'Specjalizuje się w bólu kręgosłupa i stawów skroniowo-żuchwowych.' },
+  { name: 'Kasia', role: 'fizjoterapeutka sportowa', d: 'Urazy sportowe, kinesiotaping i powroty do aktywności.' },
+];
+const steps = ['Rozmowa i badanie', 'Plan terapii na piśmie', 'Terapia w gabinecie', 'Ćwiczenia do domu'];
+const hours: [string, string][] = [
+  ['Poniedziałek – czwartek', '8:00 – 20:00'],
+  ['Piątek', '8:00 – 16:00'],
+  ['Sobota', '9:00 – 13:00 (co drugą)'],
+  ['Niedziela', 'zamknięte'],
+];
+const reviews = [
+  { text: 'Po trzech wizytach przestał mnie budzić ból karku. Dostałam też ćwiczenia do domu, które naprawdę robię.', who: 'Joanna, 41 lat' },
+  { text: 'Spokojna atmosfera, wszystko wytłumaczone. Wróciłem do biegania po kontuzji kolana.', who: 'Piotr, 35 lat' },
+  { text: 'Wizyty domowe u mojej mamy po operacji biodra — ogromna pomoc.', who: 'Ewa, córka pacjentki' },
+];
+---
+{part === 'hero' && (
+  <section class="f-hero">
+    <div class="d-container f-hero__in">
+      <div class="f-hero__copy">
+        <p class="f-pill">Gabinet fizjoterapii · Przykładowo</p>
+        <h1>Wróć do ruchu bez bólu.</h1>
+        <p class="f-lead">Szukamy przyczyny, a nie tylko gasimy objawy. Każdą terapię zaczynamy od rozmowy i badania — potem dostajesz jasny plan.</p>
+        <div class="f-cta">
+          <a class="f-btn" href={url('zapisy')}>Umów pierwszą wizytę</a>
+          <a class="f-btn f-btn--soft" href={url('terapie')}>Zobacz terapie</a>
+        </div>
+      </div>
+      <div class="f-hero__art" aria-hidden="true">
+        <span class="f-blob f-blob--1"></span><span class="f-blob f-blob--2"></span><span class="f-blob f-blob--3"></span>
+        <p class="f-hero__badge"><strong>1:1</strong> pełna godzina tylko dla Ciebie</p>
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'hero-wiz' && (
+  <section class="f-hero f-wiz">
+    <div class="d-container f-hero__in">
+      <div class="f-hero__copy">
+        <p class="f-pill">Gabinet fizjoterapii · Przykładowo</p>
+        <h1>Fizjo Równowaga</h1>
+        <p class="f-lead">Fizjoterapia, terapia manualna i rehabilitacja po urazach. Spokojnie i bez pośpiechu.</p>
+        <ul class="f-chips">
+          <li><span>Telefon</span><a href="tel:000000000">000 000 000</a></li>
+          <li><span>Adres</span>ul. Przykładowa 1</li>
+          <li><span>Pn–czw</span>8:00 – 20:00</li>
+        </ul>
+        <div class="f-cta">
+          <a class="f-btn" href="tel:000000000">Zadzwoń i umów się</a>
+          <a class="f-btn f-btn--soft" href="#uslugi">Cennik</a>
+        </div>
+      </div>
+      <div class="f-hero__art f-hero__art--sm" aria-hidden="true"><span class="f-blob f-blob--1"></span><span class="f-blob f-blob--2"></span><span class="f-blob f-blob--3"></span></div>
+    </div>
+  </section>
+)}
+
+{part === 'problems' && (
+  <section class="d-section">
+    <div class="d-container">
+      <p class="f-pill" data-anim>Z czym przychodzą pacjenci</p>
+      <h2 data-anim>W czym pomagamy</h2>
+      <ul class="f-problems">{problems.map((p, i) => <li data-anim><span class="f-problems__ic">{i + 1}</span><h3>{p.t}</h3><p>{p.d}</p></li>)}</ul>
+      <p class="f-more" data-anim><a class="f-btn" href={url('terapie')}>Terapie i ceny</a></p>
+    </div>
+  </section>
+)}
+
+{part === 'process' && (
+  <section class="d-section f-about">
+    <div class="d-container">
+      <p class="f-pill" data-anim>Jak pracujemy</p>
+      <h2 data-anim>Pierwsza wizyta krok po kroku</h2>
+      <ol class="f-steps">{steps.map((s, i) => <li data-anim><b>{i + 1}</b><span>{s}</span></li>)}</ol>
+    </div>
+  </section>
+)}
+
+{part === 'services-full' && (
+  <section class="d-section">
+    <div class="d-container">
+      <h2 class="d-visually-hidden">Terapie i ceny</h2>
+      <ul class="f-services">
+        {services.map((s) => (
+          <li data-anim><h3>{s.name}</h3><p>{s.text}</p><p class="f-services__meta"><span>{s.time}</span><strong>{s.price}</strong></p></li>
+        ))}
+      </ul>
+      <p class="f-note">Ceny przykładowe — gabinet jest fikcyjny.</p>
+    </div>
+  </section>
+)}
+
+{part === 'services-short' && (
+  <section id="uslugi" class="d-section">
+    <div class="d-container f-narrow">
+      <p class="f-pill" data-anim>Cennik</p>
+      <h2 data-anim>Terapie</h2>
+      <ul class="f-list" data-anim>{services.slice(0, 5).map((s) => <li><span>{s.name}</span><i aria-hidden="true"></i><b>{s.price}</b></li>)}</ul>
+      <p class="f-note">Wizyty domowe i szczegóły — zadzwoń, doradzimy.</p>
+    </div>
+  </section>
+)}
+
+{part === 'about' && (
+  <section id="o-nas" class="d-section f-about">
+    <div class="d-container f-about__in">
+      <div data-anim="left">
+        <p class="f-pill">O nas</p>
+        <h2>Mały gabinet, dużo uwagi</h2>
+        <p>W Fizjo Równowadze pracują dwie fizjoterapeutki. Przyjmujemy dorosłych i młodzież — z bólem pleców, po urazach sportowych, po zabiegach ortopedycznych i z przeciążeniami od pracy przy biurku.</p>
+        <p>Nie sprzedajemy pakietów na zapas. Po każdej wizycie wiesz, co dalej i ile spotkań jest potrzebnych.</p>
+      </div>
+      <ul class="f-facts" data-anim="right">
+        <li><strong><span data-count="60">60</span> min</strong><span>pierwsza wizyta</span></li>
+        <li><strong><span data-count="2">2</span></strong><span>fizjoterapeutki</span></li>
+        <li><strong>parter</strong><span>bez schodów, parking</span></li>
+      </ul>
+    </div>
+  </section>
+)}
+
+{part === 'about-short' && (
+  <section id="o-nas" class="d-section f-about">
+    <div class="d-container f-narrow" data-anim>
+      <p class="f-pill">O nas</p>
+      <h2>Mały gabinet, dużo uwagi</h2>
+      <p class="f-about-p">Dwie fizjoterapeutki, pełna godzina na pierwszą wizytę i jasny plan terapii. Gabinet na parterze, bez schodów, z parkingiem.</p>
+    </div>
+  </section>
+)}
+
+{part === 'team' && (
+  <section class="d-section">
+    <div class="d-container">
+      <p class="f-pill" data-anim>Zespół</p>
+      <h2 data-anim>Kto się Tobą zajmie</h2>
+      <ul class="f-team">{team.map((p) => <li data-anim><span class="f-team__avatar" aria-hidden="true">{p.name[0]}</span><div><h3>{p.name}</h3><p class="f-team__role">{p.role}</p><p>{p.d}</p></div></li>)}</ul>
+      <p class="f-note">Osoby fikcyjne — gabinet jest pokazowy.</p>
+    </div>
+  </section>
+)}
+
+{part === 'reviews' && (
+  <section class="d-section">
+    <div class="d-container">
+      <p class="f-pill" data-anim>Opinie · przykładowe</p>
+      <h2 data-anim>Pacjenci o nas</h2>
+      <ul class="f-reviews">{reviews.map((r) => <li data-anim><blockquote><p>„{r.text}”</p></blockquote><p class="f-reviews__who">{r.who}</p></li>)}</ul>
+      <p class="f-note">Opinie przykładowe — gabinet jest fikcyjny.</p>
+    </div>
+  </section>
+)}
+
+{part === 'cta' && (
+  <section class="f-band">
+    <div class="d-container f-band__in" data-anim>
+      <h2>Pierwszy krok? Rozmowa i badanie.</h2>
+      <a class="f-btn f-btn--white" href={url('zapisy')}>Umów pierwszą wizytę</a>
+    </div>
+  </section>
+)}
+
+{part === 'contact-form' && (
+  <section class="d-section f-contact">
+    <div class="d-container f-contact__in">
+      <div class="f-contact__info" data-anim>
+        <h2>Kontakt i dojazd</h2>
+        <p>ul. Przykładowa 1, 00-000 Przykładowo<br />tel. <a href="tel:000000000">000 000 000</a> · kontakt@example.com</p>
+        <h3>Godziny przyjęć</h3>
+        <DemoHours hours={hours} caption="Godziny przyjęć" />
+        <DemoMap address="ul. Przykładowa 1, 00-000 Przykładowo" />
+      </div>
+      <div class="f-card" data-anim>
+        <h3>Poproś o termin</h3>
+        <p class="f-card__lead">Od razu dostaniesz automatyczne potwierdzenie, a termin ustalimy telefonicznie.</p>
+        <DemoForm id="f" services={services.map((s) => s.name)} submitLabel="Wyślij prośbę o termin" />
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'contact-simple' && (
+  <section id="kontakt" class="d-section f-contact">
+    <div class="d-container">
+      <p class="f-pill" data-anim>Kontakt</p>
+      <h2 data-anim>Zadzwoń i umów wizytę</h2>
+      <div data-anim><DemoContact hours={hours} hoursCaption="Godziny przyjęć" /></div>
+    </div>
+  </section>
+)}

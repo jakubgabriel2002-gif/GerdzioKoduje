@@ -1,0 +1,49 @@
+---
+import '@fontsource/cormorant-garamond/latin-500.css';
+import '@fontsource/cormorant-garamond/latin-ext-500.css';
+import '@fontsource/cormorant-garamond/latin-500-italic.css';
+import '@fontsource/cormorant-garamond/latin-ext-500-italic.css';
+import '@fontsource/jost/latin-400.css';
+import '@fontsource/jost/latin-ext-400.css';
+import '@fontsource/jost/latin-500.css';
+import '@fontsource/jost/latin-ext-500.css';
+import './theme.css';
+import DemoLayout from '../../layouts/DemoLayout.astro';
+import DemoHeader from '../../components/demo/DemoHeader.astro';
+import { demos, demoUrl, demoPackage, type DemoVersion } from '../../config';
+
+interface Props { version: DemoVersion; page?: string; title: string }
+const { version, page = '', title } = Astro.props;
+const firm = demos.find((d) => d.slug === 'beauty')!;
+const links =
+  version === 'firmowa'
+    ? firm.pages.map((p) => ({ label: p.label, href: demoUrl(firm.slug, 'firmowa', p.path), current: p.path === page }))
+    : [{ label: 'O nas', href: '#o-nas' }, { label: 'Zabiegi', href: '#uslugi' }, { label: 'Kontakt', href: '#kontakt' }];
+const cta = version === 'firmowa'
+  ? { label: 'Zarezerwuj', href: demoUrl(firm.slug, 'firmowa', 'rezerwacja') }
+  : { label: 'Zadzwoń', href: 'tel:000000000' };
+---
+<DemoLayout
+  title={`${title} — ${firm.name} (demo: ${demoPackage(version).name}) | Gerdzio Koduje`}
+  description={`Strona pokazowa fikcyjnego salonu ${firm.name} w pakiecie ${demoPackage(version).name}. Projekt: Gerdzio Koduje.`}
+  themeColor="#fbf6f2"
+  theme="beauty"
+  firm={firm.slug}
+  version={version}
+>
+  <DemoHeader links={links} cta={cta} brandHref={demoUrl(firm.slug, version)}>
+    <span slot="brand" class="m-logo">Atelier <em>Malwa</em></span>
+  </DemoHeader>
+  <main id="tresc"><slot /></main>
+  <footer class="m-footer">
+    <div class="d-container">
+      <p class="m-logo">Atelier <em>Malwa</em></p>
+      {version === 'firmowa' && (
+        <ul class="m-footer__links">
+          {firm.pages.map((p) => <li><a href={demoUrl(firm.slug, 'firmowa', p.path)}>{p.label}</a></li>)}
+        </ul>
+      )}
+      <p>Salon fikcyjny · dane przykładowe · ul. Przykładowa 1, 00-000 Przykładowo · tel. 000 000 000</p>
+    </div>
+  </footer>
+</DemoLayout>

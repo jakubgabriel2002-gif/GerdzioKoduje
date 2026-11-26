@@ -1,0 +1,229 @@
+---
+/** Sekcje dema Brzytwa & Grzebień — Wizytówka i Strona firmowa. */
+import DemoForm from '../../components/demo/DemoForm.astro';
+import DemoMap from '../../components/demo/DemoMap.astro';
+import DemoHours from '../../components/demo/DemoHours.astro';
+import DemoContact from '../../components/demo/DemoContact.astro';
+import { demoUrl } from '../../config';
+
+interface Props { part: string }
+const { part } = Astro.props;
+const url = (p = '') => demoUrl('barber', 'firmowa', p);
+
+const menu = [
+  { group: 'Włosy', items: [
+    { name: 'Strzyżenie klasyczne', time: '45 min', price: '70 zł' },
+    { name: 'Strzyżenie fade', time: '50 min', price: '80 zł' },
+    { name: 'Strzyżenie maszynką', time: '25 min', price: '45 zł' },
+    { name: 'Strzyżenie dziecięce (do 12 lat)', time: '30 min', price: '50 zł' },
+  ] },
+  { group: 'Broda', items: [
+    { name: 'Trymowanie i konturowanie brody', time: '30 min', price: '50 zł' },
+    { name: 'Golenie brzytwą z gorącym ręcznikiem', time: '40 min', price: '70 zł' },
+    { name: 'Combo: włosy + broda', time: '75 min', price: '110 zł' },
+  ] },
+  { group: 'Dodatki', items: [
+    { name: 'Odsiwianie', time: '20 min', price: '40 zł' },
+    { name: 'Woskowanie nosa i uszu', time: '10 min', price: '20 zł' },
+  ] },
+];
+const short = [
+  { name: 'Strzyżenie klasyczne', price: '70 zł' },
+  { name: 'Strzyżenie fade', price: '80 zł' },
+  { name: 'Trymowanie brody', price: '50 zł' },
+  { name: 'Golenie brzytwą', price: '70 zł' },
+  { name: 'Combo: włosy + broda', price: '110 zł' },
+];
+const signature = [menu[0].items[1], menu[1].items[1], menu[1].items[2]];
+const hours: [string, string][] = [
+  ['Poniedziałek', 'zamknięte'],
+  ['Wtorek – piątek', '10:00 – 20:00'],
+  ['Sobota', '9:00 – 15:00'],
+  ['Niedziela', 'zamknięte'],
+];
+const reviews = [
+  { text: 'Najlepszy fade, jaki miałem. Kawa, spokojna muzyka i zero pośpiechu.', who: 'Kuba' },
+  { text: 'Golenie brzytwą to rytuał. Wychodzę jak nowy.', who: 'Paweł' },
+  { text: 'Synek wreszcie lubi chodzić do fryzjera. Cierpliwość barberów — 10/10.', who: 'Ola, mama Antka' },
+];
+const team = [
+  { name: 'Bartek', role: 'założyciel, master barber', d: 'Klasyczne strzyżenia nożyczkami i golenie brzytwą.' },
+  { name: 'Igor', role: 'barber', d: 'Fade, skin fade i wzory. Precyzja co do milimetra.' },
+  { name: 'Szymon', role: 'barber', d: 'Broda w każdej formie i strzyżenia dla dzieci.' },
+];
+const rituals = [
+  { t: 'Gorący ręcznik', d: 'Każde golenie zaczynamy od gorącego ręcznika i olejku przed goleniem.' },
+  { t: 'Kawa albo coś mocniejszego', d: 'Espresso z ekspresu kolbowego albo zimne piwo — na koszt firmy.' },
+  { t: 'Pełny czas wizyty', d: 'Rezerwujemy pełny czas na każdego klienta. Nikt nie patrzy na zegarek.' },
+];
+const services = menu.flatMap((g) => g.items.map((i) => i.name));
+---
+{part === 'hero' && (
+  <section class="b-hero">
+    <div class="d-container b-hero__in">
+      <p class="b-eyebrow">Barber shop · Przykładowo</p>
+      <h1><span>Klasyczne strzyżenie.</span><br /><em>Bez pośpiechu.</em></h1>
+      <p class="b-lead">Męskie strzyżenia, broda i golenie brzytwą w kameralnym zakładzie na trzy fotele.</p>
+      <div class="b-cta">
+        <a class="b-btn" href={url('rezerwacja')}>Zarezerwuj wizytę</a>
+        <a class="b-link" href={url('cennik')}>Zobacz cennik</a>
+      </div>
+    </div>
+    <div class="b-ornament" aria-hidden="true"><span></span>✦<span></span></div>
+  </section>
+)}
+
+{part === 'hero-wiz' && (
+  <section class="b-wiz">
+    <div class="d-container b-wiz__in">
+      <p class="b-eyebrow">Barber shop · Przykładowo</p>
+      <h1>Brzytwa <em>&amp;</em> Grzebień</h1>
+      <p class="b-lead">Strzyżenia, broda i golenie brzytwą. Trzy fotele, zero pośpiechu.</p>
+      <ul class="b-chips">
+        <li><span>Telefon</span><a href="tel:000000000">000 000 000</a></li>
+        <li><span>Adres</span>ul. Przykładowa 1</li>
+        <li><span>Wt–pt</span>10:00 – 20:00</li>
+      </ul>
+      <div class="b-cta">
+        <a class="b-btn" href="tel:000000000">Zadzwoń i umów się</a>
+        <a class="b-link" href="#uslugi">Cennik</a>
+      </div>
+    </div>
+    <div class="b-ornament" aria-hidden="true"><span></span>✦<span></span></div>
+  </section>
+)}
+
+{part === 'rituals' && (
+  <section class="d-section">
+    <div class="d-container">
+      <div class="b-head" data-anim><p class="b-eyebrow">Rytuał</p><h2>Wizyta, nie usługa</h2></div>
+      <ul class="b-rituals">{rituals.map((r, i) => <li data-anim><span class="b-rituals__no">{['I', 'II', 'III'][i]}</span><h3>{r.t}</h3><p>{r.d}</p></li>)}</ul>
+    </div>
+  </section>
+)}
+
+{part === 'signature' && (
+  <section class="d-section b-about">
+    <div class="d-container">
+      <div class="b-head" data-anim><p class="b-eyebrow">Najczęściej wybierane</p><h2>Klasyka domu</h2></div>
+      <ul class="b-sign">{signature.map((s) => <li data-anim><h3>{s.name}</h3><p>{s.time}</p><b>{s.price}</b></li>)}</ul>
+      <p class="b-more" data-anim><a class="b-btn" href={url('cennik')}>Pełny cennik</a></p>
+    </div>
+  </section>
+)}
+
+{part === 'menu-full' && (
+  <section class="d-section">
+    <div class="d-container b-narrow">
+      <h2 class="d-visually-hidden">Cennik usług</h2>
+      {menu.map((g) => (
+        <div class="b-menu" data-anim>
+          <h3>{g.group}</h3>
+          <ul>
+            {g.items.map((i) => (
+              <li><span class="b-menu__name">{i.name} <small>{i.time}</small></span><span class="b-menu__dots" aria-hidden="true"></span><span class="b-menu__price">{i.price}</span></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      <p class="b-note">Ceny przykładowe — firma jest fikcyjna.</p>
+    </div>
+  </section>
+)}
+
+{part === 'menu-short' && (
+  <section id="uslugi" class="d-section">
+    <div class="d-container b-narrow">
+      <div class="b-head" data-anim><p class="b-eyebrow">Cennik</p><h2>Usługi</h2></div>
+      <div class="b-menu" data-anim>
+        <ul>{short.map((i) => <li><span class="b-menu__name">{i.name}</span><span class="b-menu__dots" aria-hidden="true"></span><span class="b-menu__price">{i.price}</span></li>)}</ul>
+      </div>
+      <p class="b-note">Pełny cennik w zakładzie — zadzwoń, doradzimy.</p>
+    </div>
+  </section>
+)}
+
+{part === 'about' && (
+  <section id="o-nas" class="d-section b-about">
+    <div class="d-container b-about__in">
+      <div class="b-about__frame" data-anim="zoom" aria-hidden="true"><span>B<em>&amp;</em>G</span><small>est. 2016</small></div>
+      <div data-anim="right">
+        <p class="b-eyebrow">O nas</p>
+        <h2>Trzy fotele, dużo rozmów</h2>
+        <p>Nie jesteśmy salonem na taśmę. Na każdą wizytę mamy zarezerwowany pełny czas, więc nikt nie patrzy na zegarek. Pracujemy na kosmetykach, które sami lubimy — i chętnie doradzimy, jak dbać o brodę między wizytami.</p>
+        <ul class="b-stats">
+          <li><b><span data-count="3">3</span></b><span>fotele</span></li>
+          <li><b><span data-count="9">9</span> lat</b><span>w jednym miejscu</span></li>
+          <li><b><span data-count="7000" data-suffix="+">7000+</span></b><span>strzyżeń</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'about-short' && (
+  <section id="o-nas" class="d-section b-about">
+    <div class="d-container b-narrow b-center" data-anim>
+      <p class="b-eyebrow">O nas</p>
+      <h2>Trzy fotele, dużo rozmów</h2>
+      <p class="b-about-p">Kameralny zakład z charakterem. Na każdą wizytę rezerwujemy pełny czas, a golenie brzytwą zaczynamy od gorącego ręcznika.</p>
+    </div>
+  </section>
+)}
+
+{part === 'team' && (
+  <section class="d-section">
+    <div class="d-container">
+      <div class="b-head" data-anim><p class="b-eyebrow">Zespół</p><h2>Kto Cię ostrzyże</h2></div>
+      <ul class="b-team">{team.map((p) => <li data-anim><span class="b-team__avatar" aria-hidden="true">{p.name[0]}</span><h3>{p.name}</h3><p class="b-team__role">{p.role}</p><p>{p.d}</p></li>)}</ul>
+      <p class="b-note">Osoby fikcyjne — firma jest pokazowa.</p>
+    </div>
+  </section>
+)}
+
+{part === 'reviews' && (
+  <section class="d-section">
+    <div class="d-container">
+      <div class="b-head" data-anim><p class="b-eyebrow">Opinie <span class="b-tag">przykładowe</span></p><h2>Słowo od klientów</h2></div>
+      <ul class="b-reviews">{reviews.map((r) => <li data-anim><blockquote><p>„{r.text}”</p></blockquote><p class="b-reviews__who">{r.who}</p></li>)}</ul>
+      <p class="b-note">Opinie przykładowe — firma jest fikcyjna.</p>
+    </div>
+  </section>
+)}
+
+{part === 'cta' && (
+  <section class="b-band">
+    <div class="d-container b-band__in" data-anim>
+      <h2>Fotel czeka. <em>Ty też?</em></h2>
+      <a class="b-btn" href={url('rezerwacja')}>Zarezerwuj wizytę</a>
+    </div>
+  </section>
+)}
+
+{part === 'contact-form' && (
+  <section class="d-section b-contact">
+    <div class="d-container b-contact__in">
+      <div class="b-contact__info" data-anim>
+        <h2>Kontakt i dojazd</h2>
+        <p>ul. Przykładowa 1, 00-000 Przykładowo<br />tel. <a href="tel:000000000">000 000 000</a><br />kontakt@example.com</p>
+        <h3>Godziny otwarcia</h3>
+        <DemoHours hours={hours} />
+        <DemoMap address="ul. Przykładowa 1, 00-000 Przykładowo" />
+      </div>
+      <div class="b-card" data-anim>
+        <h3>Zapytaj o termin</h3>
+        <p class="b-card__lead">Automatyczne potwierdzenie przyjdzie od razu, termin potwierdzimy SMS-em.</p>
+        <DemoForm id="b" services={services} submitLabel="Poproś o termin" />
+      </div>
+    </div>
+  </section>
+)}
+
+{part === 'contact-simple' && (
+  <section id="kontakt" class="d-section b-contact">
+    <div class="d-container">
+      <div class="b-head" data-anim><p class="b-eyebrow">Kontakt</p><h2>Zadzwoń i umów się</h2></div>
+      <div data-anim><DemoContact hours={hours} /></div>
+    </div>
+  </section>
+)}

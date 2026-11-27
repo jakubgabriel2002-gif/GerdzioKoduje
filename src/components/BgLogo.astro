@@ -14,24 +14,16 @@
     try { return !!document.createElement('canvas').getContext('webgl2'); } catch { return false; }
   };
   if (layer && !reduce && hasGL()) {
-    const root = document.documentElement;
-    root.classList.add('will-3d'); // płaskie logo chowamy od razu — kawałki 3D „wpadną” na jego miejsce
-    const slow = setTimeout(() => root.classList.remove('will-3d'), 1800); // długie ładowanie → na chwilę płaskie
-    const go = () =>
-      import('../scripts/logo3d')
-        .then((m) => {
-          m.mountBgLogo(layer, anchor);
-          clearTimeout(slow);
-          root.classList.remove('will-3d');
-          root.classList.add('is-3d');
-        })
-        .catch(() => root.classList.remove('will-3d'));
-    if (document.readyState === 'complete') go();
-    else window.addEventListener('load', go, { once: true });
+    // ładujemy od razu (nie czekamy na obrazki strony); do czasu gotowości widać płaskie logo „łapiące ostrość”
+    import('../scripts/logo3d')
+      .then((m) => {
+        m.mountBgLogo(layer, anchor, () => document.documentElement.classList.add('is-3d'));
+      })
+      .catch(() => { /* zostaje płaskie logo */ });
   }
 </script>
 
 <style>
   .bg-logo { position: fixed; inset: 0 0 auto 0; height: 100lvh; z-index: 0; pointer-events: none; }
-  .bg-logo :global(.bg-logo__canvas) { display: block; width: 100%; height: 100%; will-change: filter, opacity; }
+  .bg-logo :global(.bg-logo__canvas) { display: block; width: 100%; height: 100%; opacity: 0; will-change: filter, opacity; }
 </style>

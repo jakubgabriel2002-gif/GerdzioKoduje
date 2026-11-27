@@ -1,7 +1,8 @@
 ---
 /**
- * Miejsce logo w nagłówku strony. Gdy działa WebGL, logo 3D (tło strony, BgLogo) startuje dokładnie tutaj,
- * a płaskie SVG się chowa. Bez WebGL / przy ograniczonym ruchu zostaje płaskie logo.
+ * Miejsce logo w nagłówku strony. Płaskie logo SVG widać od razu — wjeżdża z rozmycia do ostrości.
+ * Gdy logo 3D (tło strony, BgLogo) jest gotowe, startuje dokładnie tutaj i płynnie zastępuje SVG.
+ * Bez WebGL / przy ograniczonym ruchu zostaje płaskie logo.
  */
 interface Props { class?: string }
 const { class: cls = '' } = Astro.props;
@@ -24,8 +25,14 @@ const { class: cls = '' } = Astro.props;
     background: radial-gradient(closest-side, rgba(34, 224, 122, 0.2), transparent);
     filter: blur(18px); pointer-events: none;
   }
-  .logo-anchor__svg { position: absolute; inset: 7%; width: 86%; height: 86%; filter: drop-shadow(0 12px 30px rgba(34, 224, 122, 0.25)); transition: opacity 0.25s; }
-  :global(.will-3d) .logo-anchor__svg { opacity: 0; transition: none; }
+  .logo-anchor__svg { position: absolute; inset: 7%; width: 86%; height: 86%; filter: drop-shadow(0 12px 30px rgba(34, 224, 122, 0.25)); transition: opacity 0.45s ease-out; }
+  @media (prefers-reduced-motion: no-preference) {
+    /* od razu na ekranie: z rozmycia „łapie ostrość” */
+    .logo-anchor__svg { animation: logo-focus 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+  }
+  @keyframes logo-focus {
+    from { opacity: 0.35; scale: 1.06; filter: blur(14px) drop-shadow(0 12px 30px rgba(34, 224, 122, 0.25)); }
+  }
   :global(.is-3d) .logo-anchor__svg { opacity: 0; }
   :global(.is-3d) .logo-anchor::before { opacity: 0; transition: opacity 0.6s; }
 </style>

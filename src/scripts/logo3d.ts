@@ -7,7 +7,7 @@
  *   2) przesuwa się na środek ekranu i zostaje z tyłu jako tło,
  *   3) dalej się ROZMYWA i przygasa — do ok. 55% długości strony, potem zostaje rozmyte.
  * Przy przewijaniu w górę wszystko się zwija z powrotem.
- * Na wejściu kawałki spadają z góry i składają się (tylko gdy strona startuje z góry).
+ * Na wejściu logo 3D „łapie ostrość” (z rozmycia do ostrego) — zastępuje płaskie logo, które jest widoczne od razu.
  * Mobile first: mniejsza rozdzielczość na telefonie, rysuje tylko gdy coś się zmienia, pauza w tle.
  * Kształty przeliczone z favicon.svg (te same ścieżki, siatka 64×64).
  */
@@ -92,7 +92,6 @@ const PIECES: { pts: P[]; w: number; color: number; spread: [number, number] }[]
 ];
 const LAYERS = 3; // warstwy każdego znaku (przód → tył)
 
-const easeOutBack = (t: number) => 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2);
 const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
 const smooth = (a: number, b: number, x: number) => {
   const t = clamp01((x - a) / Math.max(1e-6, b - a));
@@ -100,7 +99,7 @@ const smooth = (a: number, b: number, x: number) => {
 };
 const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 
-export function mountBgLogo(layer: HTMLElement, anchor: HTMLElement | null) {
+export function mountBgLogo(layer: HTMLElement, anchor: HTMLElement | null, onReady?: () => void) {
   const mobile = window.matchMedia('(max-width: 47.99rem)').matches;
   const DPR = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2);
   const renderer = new WebGLRenderer({ antialias: true, alpha: true, powerPreference: mobile ? 'low-power' : 'high-performance' });
@@ -223,10 +222,13 @@ export function mountBgLogo(layer: HTMLElement, anchor: HTMLElement | null) {
   ro.observe(layer);
   measure();
   readScroll();
+  // fonty / obrazki mogą jeszcze przesunąć nagłówek — mierzymy ponownie, gdy się wczytają
+  document.fonts?.ready.then(measure);
+  if (document.readyState !== 'complete') window.addEventListener('load', measure, { once: true });
   Object.assign(cur, { e: tgt.e, b: tgt.b });
 
-  // wejście: tylko jeśli strona startuje z góry
-  const intro = window.scrollY < vh * 0.3;
+  // wejście: z rozmycia do ostrości (krótko — płaskie logo jest już na ekranie)
+  const FOCUS = 0.7;
   let t0 = -1, frames = 0, last = 0;
   let lastBlur = -1, lastOpacity = -1, lowRes = false;
 
@@ -245,7 +247,7 @@ export function mountBgLogo(layer: HTMLElement, anchor: HTMLElement | null) {
       const d = tgt[key] - cur[key];
       if (Math.abs(d) > 0.0005) { cur[key] += d * a; moving = true; } else cur[key] = tgt[key];
     }
-    const introOn = intro && t < 2.4;
+    const introOn = t < FOCUS + 0.1;
     const wobble = cur.b < 0.98; // kołysanie wyłączamy, gdy logo jest już rozmyte (oszczędność baterii)
     if (!moving && !introOn && !wobble && !dirty) return;
     dirty = false;
@@ -262,27 +264,27 @@ export function mountBgLogo(layer: HTMLElement, anchor: HTMLElement | null) {
 
     for (const p of parts) {
       const [sx, sy] = PIECES[p.piece].spread;
-      const delay = p.piece * 0.13;
-      const k = intro ? clamp01((t - delay) / 1.6) : 1;
-      const drop = 1 - easeOutBack(k);
       const layerOff = (1 - p.k) * 1.5 * e; // przód do przodu, tył do tyłu
       const sp = mobile ? 0.55 : 0.8; // jak daleko rozjeżdżają się znaki
       const fl = wobble ? Math.sin(t * 1.2 + p.piece * 1.7) * 0.04 : 0;
       p.mesh.position.set(
         p.base.x + sx * sp * e + (1 - p.k) * 0.35 * e,
-        p.base.y + sy * sp * e + drop * 5 + fl + (1 - p.k) * 0.2 * e,
-        p.base.z + layerOff - drop * 2,
+        p.base.y + sy * sp * e + fl + (1 - p.k) * 0.2 * e,
+        p.base.z + layerOff,
       );
-      p.mesh.rotation.set(drop * 1.4, drop * -0.9 + (p.piece - 1.5) * 0.12 * e, drop * 0.6);
-      p.mesh.visible = k > 0;
+      p.mesh.rotation.set(0, (p.piece - 1.5) * 0.12 * e, 0);
     }
 
     // rozmycie i przygaszenie (CSS — tanie dla GPU); przy mocnym rozmyciu rysujemy w mniejszej rozdzielczości
     // w trakcie rozwarstwiania lekko przygasa (tekst zostaje czytelny), potem rozmywa się do końca
     const blur = Math.round((e * (mobile ? 1.5 : 3) + b * (mobile ? 8 : 12)) * 10) / 10;
     const opacity = Math.round(Math.max(0.34, 1 - e * 0.5 - b * 0.2) * 100) / 100;
-    if (blur !== lastBlur) { canvas.style.filter = blur > 0 ? `blur(${blur}px)` : ''; lastBlur = blur; }
-    if (opacity !== lastOpacity) { canvas.style.opacity = String(opacity); lastOpacity = opacity; }
+    // „łapanie ostrości” na wejściu: dodatkowe rozmycie i przezroczystość znikają w FOCUS s
+    const f = clamp01(t / FOCUS), fe = 1 - Math.pow(1 - f, 3);
+    const blurAll = Math.round((blur + (1 - fe) * 4) * 10) / 10;
+    const opAll = Math.round(opacity * fe * 100) / 100;
+    if (blurAll !== lastBlur) { canvas.style.filter = blurAll > 0 ? `blur(${blurAll}px)` : ''; lastBlur = blurAll; }
+    if (opAll !== lastOpacity) { canvas.style.opacity = String(opAll); lastOpacity = opAll; }
     const wantLow = b > 0.45;
     if (wantLow !== lowRes) {
       lowRes = wantLow;
@@ -290,6 +292,7 @@ export function mountBgLogo(layer: HTMLElement, anchor: HTMLElement | null) {
       renderer.setSize(vw, vh, false);
     }
     renderer.render(scene, camera);
+    if (fe > 0.55 && onReady) { onReady(); onReady = undefined; } // 3D już dobrze widoczne → dopiero teraz chowamy płaskie logo
   };
 
   let raf = 0;

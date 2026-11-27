@@ -62,6 +62,36 @@ const { title, description, themeColor, theme, firm, version } = Astro.props;
   .anim-ready [data-anim='zoom'] { transform: scale(0.94); }
   .anim-ready [data-anim].is-in { opacity: 1; transform: none; }
 
+  /* Animacje RAZEM z przewijaniem (Chrome/Android, nowe Safari) — w obie strony.
+     translate/rotate/scale jako osobne właściwości, więc nie psują transformów z motywów. */
+  .demo :is(main, section, footer) { overflow-x: clip; } /* wjeżdżające z boków kafelki nie poszerzają strony */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .anim-scrub [data-anim] { animation-name: d-scrub-up; animation-timing-function: linear; animation-fill-mode: both; animation-timeline: view(); animation-range: entry 0% cover 30%; }
+      .anim-scrub li[data-anim='']:nth-child(odd), .anim-scrub [data-anim='left'] { animation-name: d-scrub-left; }
+      .anim-scrub li[data-anim='']:nth-child(even), .anim-scrub [data-anim='right'] { animation-name: d-scrub-right; }
+      .anim-scrub [data-anim='zoom'] { animation-name: d-scrub-zoom; }
+      /* nagłówek: gdy już cały przeczytany, treść odpływa w górę i w głąb, a grafika przesuwa się wolniej (paralaksa) */
+      .anim-scrub section:has(> [class*='-hero__in'], > [class*='-wiz__in']) { view-timeline: --dhero block; }
+      .anim-scrub :is(.b-hero__in, .b-wiz__in, .f-hero__in, .m-hero__in, .m-wiz__in, .r-hero__in, .r-wiz__in, .t-hero__in, .t-wiz__in) {
+        animation-name: d-hero-out; animation-timing-function: linear; animation-fill-mode: both; animation-timeline: --dhero; animation-range: exit 0% exit 90%;
+      }
+      .anim-scrub :is(.f-hero__art, .m-hero__art, .m-wiz__art, .r-hero__art, .r-wiz__art, .t-hero__art, .t-wiz__art) {
+        animation-name: d-art-par; animation-timing-function: linear; animation-fill-mode: both; animation-timeline: --dhero; animation-range: exit 0% exit 100%;
+      }
+    }
+  }
+  @keyframes d-scrub-up { from { opacity: 0; translate: 0 56px; scale: 0.95; } }
+  @keyframes d-scrub-left { from { opacity: 0; translate: -38% 30px; rotate: -4deg; scale: 0.92; } 70% { opacity: 1; } }
+  @keyframes d-scrub-right { from { opacity: 0; translate: 38% 30px; rotate: 4deg; scale: 0.92; } 70% { opacity: 1; } }
+  @keyframes d-scrub-zoom { from { opacity: 0; scale: 0.82; } }
+  @keyframes d-hero-out { to { opacity: 0.05; translate: 0 18vh; scale: 0.9; filter: blur(6px); } }
+  @keyframes d-art-par { to { translate: 0 12vh; scale: 1.1; } }
+  @media (min-width: 48rem) {
+    @keyframes d-scrub-left { from { opacity: 0; translate: -14% 50px; rotate: -3deg; scale: 0.94; } 70% { opacity: 1; } }
+    @keyframes d-scrub-right { from { opacity: 0; translate: 14% 50px; rotate: 3deg; scale: 0.94; } 70% { opacity: 1; } }
+  }
+
   /* Wspólne: przewijany pasek (marquee) */
   .d-marquee { overflow: hidden; white-space: nowrap; }
   .d-marquee__track { display: inline-flex; gap: 3rem; padding-right: 3rem; animation: d-marquee 28s linear infinite; }

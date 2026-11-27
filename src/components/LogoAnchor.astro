@@ -1,0 +1,31 @@
+---
+/**
+ * Miejsce logo w nagłówku strony. Gdy działa WebGL, logo 3D (tło strony, BgLogo) startuje dokładnie tutaj,
+ * a płaskie SVG się chowa. Bez WebGL / przy ograniczonym ruchu zostaje płaskie logo.
+ */
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+---
+<div class:list={['logo-anchor', cls]} data-logo-anchor aria-hidden="true">
+  <svg class="logo-anchor__svg" viewBox="2 16 60 32">
+    <g fill="none" stroke-linecap="square" stroke-linejoin="miter">
+      <path d="M13.5 22 L5.5 32 L13.5 42" stroke="#22E07A" stroke-width="4.2"/>
+      <path d="M17.5 45 L24 19" stroke="#22E07A" stroke-width="4"/>
+      <path d="M43.4 24.6 A 8 12 0 1 0 44.2 38.6 L 44.2 33.2 L 38.6 33.2" stroke="#F5F5F2" stroke-width="4.4"/>
+      <path d="M50.5 22 L58.5 32 L50.5 42" stroke="#22E07A" stroke-width="4.2"/>
+    </g>
+  </svg>
+</div>
+
+<style>
+  .logo-anchor { position: relative; }
+  .logo-anchor::before {
+    content: ''; position: absolute; inset: 5% 12%; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(34, 224, 122, 0.2), transparent);
+    filter: blur(18px); pointer-events: none;
+  }
+  .logo-anchor__svg { position: absolute; inset: 7%; width: 86%; height: 86%; filter: drop-shadow(0 12px 30px rgba(34, 224, 122, 0.25)); transition: opacity 0.25s; }
+  :global(.will-3d) .logo-anchor__svg { opacity: 0; transition: none; }
+  :global(.is-3d) .logo-anchor__svg { opacity: 0; }
+  :global(.is-3d) .logo-anchor::before { opacity: 0; transition: opacity 0.6s; }
+</style>

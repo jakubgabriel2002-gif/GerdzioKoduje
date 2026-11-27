@@ -314,3 +314,27 @@ form[data-sending] .q-options { opacity: 0.5; pointer-events: none; transition: 
   transition-delay: var(--reveal-delay, 0s);
 }
 [data-reveal].is-in { opacity: 1; transform: none; }
+
+/* Kafelki wjeżdżające RAZEM z przewijaniem (src/scripts/reveal.ts → data-scrub).
+   Osobne właściwości translate/rotate/scale — nie gryzą się z transform przy hover. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-scrub] {
+      /* osobne właściwości (nie skrót animation) — inaczej minifikator skleja je razem z view() i przeglądarka odrzuca regułę */
+      animation-name: scrub-up;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 32%;
+    }
+    [data-scrub='left'] { animation-name: scrub-left; }
+    [data-scrub='right'] { animation-name: scrub-right; }
+  }
+}
+@keyframes scrub-up { from { opacity: 0; translate: 0 48px; scale: 0.96; } }
+@keyframes scrub-left { from { opacity: 0; translate: -42% 36px; rotate: -5deg; scale: 0.9; } 70% { opacity: 1; } }
+@keyframes scrub-right { from { opacity: 0; translate: 42% 36px; rotate: 5deg; scale: 0.9; } 70% { opacity: 1; } }
+@media (min-width: 48rem) {
+  @keyframes scrub-left { from { opacity: 0; translate: -18% 60px; rotate: -3deg; scale: 0.92; } 70% { opacity: 1; } }
+  @keyframes scrub-right { from { opacity: 0; translate: 18% 60px; rotate: 3deg; scale: 0.92; } 70% { opacity: 1; } }
+}

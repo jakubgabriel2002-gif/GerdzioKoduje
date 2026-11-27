@@ -3,13 +3,16 @@ import '../styles/global.css';
 import Head from './Head.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import BgLogo from '../components/BgLogo.astro';
 
 interface Props {
   title: string;
   description?: string;
   noindex?: boolean;
+  /** Logo 3D jako tło strony (rozwarstwia się i rozmywa przy przewijaniu). */
+  bgLogo?: boolean;
 }
-const { title, description, noindex } = Astro.props;
+const { title, description, noindex, bgLogo } = Astro.props;
 ---
 <!doctype html>
 <html lang="pl">
@@ -19,6 +22,7 @@ const { title, description, noindex } = Astro.props;
   </head>
   <body>
     <a class="skip-link" href="#tresc">Przejdź do treści</a>
+    {bgLogo && <BgLogo />}
     <div class="page">
       <Header />
       <main id="tresc" tabindex="-1">
@@ -33,7 +37,9 @@ const { title, description, noindex } = Astro.props;
 </html>
 
 <style>
-  .page { min-height: 100vh; display: flex; flex-direction: column; }
+  .page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+  /* kafelki wjeżdżają z boków — bez poziomego przewijania strony */
+  main { overflow-x: clip; }
   main { flex: 1; }
   main:focus { outline: none; }
 </style>

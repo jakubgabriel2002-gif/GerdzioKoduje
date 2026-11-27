@@ -2,6 +2,8 @@
  * Animacje w demach:
  *  - [data-anim]            → element „wjeżdża” przy przewijaniu (wariant: data-anim="left|right|zoom"),
  *  - [data-count="120"]     → liczba odlicza od 0 do wartości, gdy pojawi się na ekranie.
+ * Gdy przeglądarka ma animacje sterowane przewijaniem (animation-timeline), [data-anim] wjeżdżają RAZEM
+ * z przewijaniem (i cofają się przy przewijaniu w górę), a nagłówek odpływa w głąb — klasa .anim-scrub, CSS w DemoLayout.
  * Przy prefers-reduced-motion wszystko jest od razu widoczne.
  */
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -21,14 +23,16 @@ function countUp(el: HTMLElement) {
   requestAnimationFrame(tick);
 }
 
-const animated = document.querySelectorAll<HTMLElement>('[data-anim]');
+const scrub = !reduce && CSS.supports?.('animation-timeline: view()');
+if (scrub) document.documentElement.classList.add('anim-scrub');
+const animated = scrub ? ([] as unknown as NodeListOf<HTMLElement>) : document.querySelectorAll<HTMLElement>('[data-anim]');
 const counters = document.querySelectorAll<HTMLElement>('[data-count]');
 
 if (reduce || !('IntersectionObserver' in window)) {
   animated.forEach((el) => el.classList.add('is-in'));
   counters.forEach((el) => (el.textContent = (el.dataset.count ?? '') + (el.dataset.suffix ?? '')));
 } else {
-  document.documentElement.classList.add('anim-ready');
+  if (!scrub) document.documentElement.classList.add('anim-ready'); // przy .anim-scrub wjeżdżanie robi CSS
   const io = new IntersectionObserver(
     (entries) => {
       for (const e of entries) {

@@ -1,4 +1,5 @@
 ---
+import LogoAnchor from '../LogoAnchor.astro';
 ---
 <section class="hero" aria-labelledby="hero-title">
   <div class="container hero__grid">
@@ -14,16 +15,7 @@
     </div>
 
     <div class="hero__visual" aria-hidden="true">
-      <div class="logo3d" data-logo3d>
-        <svg class="logo3d__fallback" viewBox="2 16 60 32" aria-hidden="true">
-          <g fill="none" stroke-linecap="square" stroke-linejoin="miter">
-            <path d="M13.5 22 L5.5 32 L13.5 42" stroke="#22E07A" stroke-width="4.2"/>
-            <path d="M17.5 45 L24 19" stroke="#22E07A" stroke-width="4"/>
-            <path d="M43.4 24.6 A 8 12 0 1 0 44.2 38.6 L 44.2 33.2 L 38.6 33.2" stroke="#F5F5F2" stroke-width="4.4"/>
-            <path d="M50.5 22 L58.5 32 L50.5 42" stroke="#22E07A" stroke-width="4.2"/>
-          </g>
-        </svg>
-      </div>
+      <LogoAnchor class="hero__logo" />
       <div class="notify">
         <span class="notify__dot"></span>
         <div>
@@ -37,50 +29,22 @@
 
 </section>
 
-<script>
-  // Logo 3D ładujemy dopiero, gdy strona jest gotowa (Three.js w osobnym pliku, tylko tutaj).
-  const host = document.querySelector<HTMLElement>('[data-logo3d]');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const hasGL = () => {
-    try { return !!document.createElement('canvas').getContext('webgl2'); } catch { return false; }
-  };
-  if (host && !reduce && hasGL()) {
-    // płaskie logo chowamy od razu, żeby kawałki 3D „wpadły” na puste miejsce (bez podmiany)
-    host.classList.add('will-3d');
-    // jeśli 3D długo się ładuje (słaby internet / telefon), na chwilę wraca płaskie logo
-    const slow = setTimeout(() => host.classList.remove('will-3d'), 1800);
-    new MutationObserver((_, mo) => {
-      if (host.classList.contains('is-3d')) { clearTimeout(slow); mo.disconnect(); }
-    }).observe(host, { attributes: true, attributeFilter: ['class'] });
-    const go = () =>
-      import('../../scripts/logo3d')
-        .then((m) => m.mountLogo3D(host, { trigger: host.closest('section') ?? host }))
-        .catch(() => host.classList.remove('will-3d')); // błąd = wraca płaskie logo
-    if (document.readyState === 'complete') go();
-    else window.addEventListener('load', go, { once: true });
-  }
-</script>
-
 <style>
   .hero {
     position: relative;
     view-transition-name: vt-firm;
-    padding-block: clamp(3rem, 2rem + 5vw, 6.5rem) clamp(3rem, 2rem + 4vw, 5rem);
+    padding-block: clamp(1.25rem, 0.25rem + 4.5vw, 6.5rem) clamp(3rem, 2rem + 4vw, 5rem);
+  }
+  /* siatka w tle wygasa ku dołowi (przezroczyście — spod spodu prześwituje logo 3D) */
+  .hero::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
     background-image:
       linear-gradient(var(--grid-line) 1px, transparent 1px),
       linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 56px 56px;
     background-position: center top;
-  }
-  .hero::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 0 0;
-    height: 45%;
-    background: var(--bg);
-    mask-image: linear-gradient(to bottom, transparent, #000);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000);
-    pointer-events: none;
+    mask-image: linear-gradient(to bottom, #000 40%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent);
   }
   .hero > .container { position: relative; z-index: 1; }
 
@@ -92,18 +56,9 @@
   @media (min-width: 40rem) { .hero__actions .btn { flex: 0 0 auto; } }
 
   .hero__visual { position: relative; order: -1; margin-block: -1rem -1.5rem; }
-  /* Logo 3D (src/scripts/logo3d.ts); bez WebGL / przy ograniczonym ruchu zostaje płaskie SVG */
-  .logo3d { position: relative; height: clamp(11rem, 48vw, 15rem); }
-  .logo3d::before {
-    content: ''; position: absolute; inset: 10% 15%; border-radius: 50%;
-    background: radial-gradient(closest-side, rgba(34, 224, 122, 0.22), transparent);
-    filter: blur(20px); pointer-events: none;
-  }
-  .logo3d__fallback { position: absolute; inset: 12% 8%; width: 84%; height: 76%; filter: drop-shadow(0 12px 30px rgba(34, 224, 122, 0.25)); transition: opacity 0.5s; }
-  .logo3d :global(.logo3d__canvas) { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; }
-  .logo3d.will-3d .logo3d__fallback { opacity: 0; transition: none; }
-  .logo3d.is-3d .logo3d__fallback { opacity: 0; transition: opacity 0.25s; }
-    .notify {
+  /* miejsce startu logo 3D (tło strony: BgLogo) — mobile first: nad tytułem */
+  :global(.hero__logo) { height: clamp(10.5rem, 46vw, 14rem); }
+  .notify {
     position: absolute;
     left: -3rem;
     bottom: -3.25rem;
@@ -125,7 +80,7 @@
   @media (min-width: 64rem) {
     .hero__grid { grid-template-columns: 1.05fr 1fr; }
     .hero__visual { order: 0; margin: 0; }
-    .logo3d { height: clamp(20rem, 30vw, 27rem); }
+    :global(.hero__logo) { height: clamp(20rem, 30vw, 27rem); }
     .notify { display: flex; }
   }
   @media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {

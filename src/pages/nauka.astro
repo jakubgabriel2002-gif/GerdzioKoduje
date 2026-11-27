@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import WaitlistForm from '../components/forms/WaitlistForm.astro';
+import LogoAnchor from '../components/LogoAnchor.astro';
 
 const plans = [
   { title: 'Materiały', text: 'Poradniki i nagrania: od pomysłu do działającej aplikacji, krok po kroku, z AI jako pomocnikiem.' },
@@ -9,12 +10,14 @@ const plans = [
 ];
 ---
 <BaseLayout
+  bgLogo
   title="Nauka — buduj aplikacje z AI | Gerdzio Koduje"
   description="Uczę budować aplikacje z AI. Materiały, kurs i mentoring 1:1 — startujemy wkrótce. Zapisz się na listę oczekujących."
 >
   <section class="nauka-hero" aria-labelledby="nauka-title">
     <div class="container nauka-hero__grid">
       <div class="nauka-hero__copy">
+        <LogoAnchor class="nauka-hero__logo" />
         <p class="status"><span class="status__dot" aria-hidden="true"></span>Zapisy na listę oczekujących</p>
         <h1 id="nauka-title">Uczę budować aplikacje z AI. <span class="accent">Startujemy wkrótce.</span></h1>
         <p class="lead">Pokazuję, jak z pomysłu zrobić działającą aplikację — z AI jako pomocnikiem, bez magii i bez ściemy.</p>
@@ -52,12 +55,22 @@ const plans = [
 <style>
   .nauka-hero {
     view-transition-name: vt-learn;
-    padding-block: clamp(2.5rem, 1.5rem + 4vw, 5.5rem);
+    position: relative;
+    padding-block: clamp(1rem, 0.25rem + 4vw, 5.5rem) clamp(2.5rem, 1.5rem + 4vw, 5.5rem);
+  }
+  .nauka-hero::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
     background-image:
       linear-gradient(var(--grid-line) 1px, transparent 1px),
       linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 56px 56px;
+    mask-image: linear-gradient(to bottom, #000 45%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent);
   }
+  .nauka-hero > .container { position: relative; }
+  /* miejsce startu logo 3D — mobile first: nad tytułem, na komputerze pod opisem */
+  :global(.nauka-hero__logo) { height: clamp(9.5rem, 42vw, 12.5rem); margin: 0 auto 0.75rem; max-width: 26rem; }
+  @media (min-width: 60rem) { .nauka-hero__copy { display: flex; flex-direction: column; align-items: flex-start; } :global(.nauka-hero__logo) { order: 9; height: 13rem; width: 100%; max-width: 28rem; margin: 2rem 0 0; } }
   .nauka-hero__grid { display: grid; gap: 2rem; align-items: center; }
   .nauka-hero h1 { font-size: clamp(2rem, 1.5rem + 2.6vw, 3.5rem); line-height: 1.08; letter-spacing: -0.035em; max-width: 17ch; }
   .status {

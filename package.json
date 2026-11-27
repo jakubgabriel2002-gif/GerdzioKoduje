@@ -22,10 +22,12 @@
     "@fontsource/nunito": "^5.3.0",
     "@fontsource/oswald": "^5.3.0",
     "@fontsource/playfair-display": "^5.3.0",
-    "astro": "^7.4.13"
+    "astro": "^7.4.13",
+    "three": "^0.181.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261125.1",
+    "@types/three": "^0.181.0",
     "typescript": "^7.0.2",
     "wrangler": "^4.168.0"
   }
